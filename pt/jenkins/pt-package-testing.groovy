@@ -23,7 +23,8 @@ setup_ol8_package_tests = { ->
 sh """
         sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
         sudo yum -y update
-        sudo yum install -y ansible python3
+        sudo yum install -y ansible
+        sudo yum install -y python3
 cat << EOF > ${WORKSPACE}/ansible.cfg
 [defaults]
 interpreter_python=/usr/bin/python3.6
