@@ -117,13 +117,13 @@ pipeline {
             name: 'install_repo'
         )
         string(
-            defaultValue: 'https://github.com/Percona-QA/package-testing.git',
+            defaultValue: 'https://github.com/panchal-yash/package-testing.git',
             description: '',
             name: 'git_repo',
             trim: false
         )
         string(
-            defaultValue: 'master',
+            defaultValue: 'PT-2085-pxc57-ansible-eth0-issue',
             description: '',
             name: 'git_branch',
             trim: false
