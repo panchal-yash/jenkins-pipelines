@@ -24,7 +24,7 @@ if (params.node_to_test == "all") {
 
 void runNodeBuild(String node_to_test) {
     build(
-        job: 'package-testing-ps57-build',
+        job: 'package-testing-ps57-build-yash-test',
         parameters: [
             string(name: "product_to_test", value: product_to_test),
             string(name: "install_repo", value: params.install_repo),
