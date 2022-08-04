@@ -4,7 +4,7 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
 ]) _
 
 List all_nodes = [
-    "min-bullseye-x64"
+    "min-bullseye-x64",
     "min-buster-x64",
     "min-centos-7-x64",
     "min-ol-8-x64",
