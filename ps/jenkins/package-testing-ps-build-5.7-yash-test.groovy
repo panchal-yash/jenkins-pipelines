@@ -103,7 +103,7 @@ void runPlaybook(String action_to_test) {
     setup_package_tests()
 
     sh '''
-        git clone --depth 1 https://github.com/Percona-QA/package-testing
+        git clone --depth 1 -b PS-8342-add-debian-11-support-for-ps-5.7-test https://github.com/panchal-yash/package-testing
     '''
 
     sh """
