@@ -28,7 +28,7 @@ List nodes_to_test = []
 if (params.node_to_test == "all") {
     nodes_to_test = all_nodes
 }
-elif (params.node_to_test == "all_nodes_except_bullseye") {
+else if(params.node_to_test == "all_nodes_except_bullseye") {
     nodes_to_test = all_nodes_except_bullseye
 }
 else {
