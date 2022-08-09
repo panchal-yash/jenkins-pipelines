@@ -1,0 +1,55 @@
+- job:
+    name: package-testing-ps80-build-yash-test
+    project-type: pipeline
+    description: |
+        Use package-testing-ps to run in all nodes
+        Do not edit this job through the web!
+    concurrent: true
+    properties:
+        - build-discarder:
+            artifact-days-to-keep: -1
+            artifact-num-to-keep: 10
+            days-to-keep: -1
+            num-to-keep: 50
+    pipeline-scm:
+        scm:
+            - git:
+                url: https://github.com/panchal-yash/jenkins-pipelines.git
+                branches:
+                    - 'PS-8347-add-check-for-warnings-PS-test'
+                wipe-workspace: true
+        lightweight-checkout: true
+        script-path: ps/jenkins/package-testing-ps-build-8.0-yash-test.groovy
+    parameters:
+        - choice:
+            name: product_to_test
+            choices:
+                - "ps80"
+                - "client_test"
+            description: "Product for which the packages will be tested"
+        - choice:
+            name: install_repo
+            choices:
+                - "testing"
+                - "main"
+                - "experimental"
+            description: "Repo to use in install test"
+        - choice:
+            name: node_to_test
+            choices:
+                - "min-buster-x64"
+                - "min-bullseye-x64"
+                - "min-centos-7-x64"
+                - "min-ol-8-x64"
+                - "min-bionic-x64"
+                - "min-focal-x64"
+                - "min-amazon-2-x64"
+            description: "Node in which to test the product"
+        - choice:
+            name: action_to_test
+            choices:
+                - "all"
+                - "install"
+                - "upgrade"
+                - "maj-upgrade-to"
+            description: "Action to test on the product"
