@@ -30,6 +30,7 @@ void runNodeBuild(String node_to_test) {
             string(name: "install_repo", value: params.install_repo),
             string(name: "node_to_test", value: node_to_test),
             string(name: "action_to_test", value: params.action_to_test)
+            string(name: "check_warnings", value: params.check_warnings)
         ],
         propagate: true,
         wait: true
