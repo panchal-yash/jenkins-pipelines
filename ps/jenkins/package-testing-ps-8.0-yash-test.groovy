@@ -63,6 +63,13 @@ pipeline {
             choices: ["all", "install", "upgrade", "maj-upgrade-to"],
             description: "Action to test on the product"
         )
+
+        choice(
+            name: "check_warnings",
+            choices: ["yes", "no"],
+            description: "For checking warnings after the tests for mysql shell"
+        )
+
     }
 
     stages {

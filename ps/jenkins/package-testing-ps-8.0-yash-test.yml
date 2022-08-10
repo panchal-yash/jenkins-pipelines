@@ -52,3 +52,8 @@
                 - "upgrade"
                 - "maj-upgrade-to"
             description: "Action to test on the product"
+        - choice:
+            name: check_warnings
+                - yes
+                - no
+            description: "For checking warnings after the tests for mysql shell"
