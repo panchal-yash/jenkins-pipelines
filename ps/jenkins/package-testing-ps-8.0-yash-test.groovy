@@ -30,7 +30,8 @@ void runNodeBuild(String node_to_test) {
             string(name: "install_repo", value: params.install_repo),
             string(name: "node_to_test", value: node_to_test),
             string(name: "action_to_test", value: params.action_to_test),
-            string(name: "check_warnings", value: params.check_warnings)
+            string(name: "check_warnings", value: params.check_warnings),
+            string(name: "install_mysql_shell", value: params.install_mysql_shell)
         ],
         propagate: true,
         wait: true
@@ -69,6 +70,12 @@ pipeline {
             name: "check_warnings",
             choices: ["yes", "no"],
             description: "For checking warnings after the tests for mysql shell"
+        )
+
+        choice(
+            name: "install_mysql_shell",
+            choices: ["yes", "no"],
+            description: "install mysql shell for ps80 option"
         )
 
     }

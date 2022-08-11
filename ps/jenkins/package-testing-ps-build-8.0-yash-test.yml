@@ -58,4 +58,11 @@
             choices:
                 - "yes"
                 - "no"
-            description: "For checking warnings after the tests for mysql shell"
+            description: "check warning in client_test"
+        - choice:
+            name: install_mysql_shell
+            choices:
+                - "yes"
+                - "no"
+            description: "install mysql shell for ps80 option"
+                        
