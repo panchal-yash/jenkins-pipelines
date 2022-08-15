@@ -106,7 +106,6 @@ void runPlaybook(String action_to_test) {
         export client_to_test="ps80"
         export check_warning="\${check_warnings}"
         export install_mysql_shell="\${install_mysql_shell}"
-        export check_mysql_shell="\${check_mysql_shell}"
         ansible-playbook \
         --connection=local \
         --inventory 127.0.0.1, \
@@ -156,15 +155,9 @@ pipeline {
         choice(
             name: "install_mysql_shell",
             choices: ["yes", "no"],
-            description: "install mysql shell for ps80 option"
+            description: "install and check mysql shell for ps80 option"
         )
         
-        choice(
-            name: "check_mysql_shell",
-            choices: ["yes", "no"],
-            description: "check mysql shell version for ps80 option"
-        )
-
     }
 
     stages {

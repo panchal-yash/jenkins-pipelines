@@ -65,10 +65,4 @@
                 - "yes"
                 - "no"
             description: "install mysql shell for ps80 option"
-        - choice:
-            name: check_mysql_shell
-            choices:
-                - "yes"
-                - "no"
-            description: "check mysql shell version for ps80 option"
-                            
+    
