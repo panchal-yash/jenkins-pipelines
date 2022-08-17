@@ -110,7 +110,7 @@ void runPlaybook(String action_to_test) {
         --connection=local \
         --inventory 127.0.0.1, \
         --limit 127.0.0.1 \
-        ${playbook_path} -v
+        ${playbook_path}
     """
 }
 
