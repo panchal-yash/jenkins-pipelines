@@ -45,7 +45,7 @@ pipeline {
     options {
         skipDefaultCheckout()
     }
-
+    
     stages {
         stage("Prepare") {
             steps {
@@ -56,22 +56,22 @@ pipeline {
             }
         }
 
-        setup("Setup the Server"){
-
-            setup_package_tests()
-
+        stage("Setup the Server"){
+            steps {
+                setup_package_tests()
+            }
         }
 
         stage("check os") {
-
-            echo "cat /etc/os-release"
-
+            steps {
+                echo "cat /etc/os-release"
+            }
         }
 
         stage("check if percona-release is installed") {
-
-            sh "percona-release"
-            
+            steps {
+                sh "percona-release"
+            }
         }
 
     }
