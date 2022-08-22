@@ -17,4 +17,4 @@
                     - 'PXB-2850-rt-periodic-check-version-main-repo'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: ps/jenkins/periodic-product-check-for-new-releases.groovy
+        script-path: pxb/jenkins/periodic-product-check-for-new-releases.groovy
