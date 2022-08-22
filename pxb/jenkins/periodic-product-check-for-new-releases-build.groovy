@@ -50,8 +50,8 @@ pipeline {
         stage("Prepare") {
             steps {
                 script {
-                    currentBuild.displayName = "#${BUILD_NUMBER}-${params.product_to_test}-${params.install_repo}-${params.node_to_test}"
-                    currentBuild.description = "action: ${params.action_to_test}"
+                    currentBuild.displayName = "#${BUILD_NUMBER}"
+                    currentBuild.description = "action: install and check the percona-release"
                 }
             }
         }
