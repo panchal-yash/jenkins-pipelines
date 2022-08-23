@@ -8,9 +8,18 @@ void runNodeBuild(String node_to_test) {
     build(
         job: 'periodic-product-check-for-new-releases-build',
         propagate: true,
+        parameters: [
+        string(name: "node_to_test", value: node_to_test),
+        ]
         wait: true
     )
 }
+
+
+List all_nodes = node_setups.keySet().collect()
+
+
+
 
 pipeline {
     agent none
