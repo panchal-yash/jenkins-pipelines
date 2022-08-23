@@ -102,7 +102,6 @@ pipeline {
 
             stage("OS based checks") {
 
-                steps {
                     if (node_to_test.contains("min-centos-7-x64")) {
                         echo 'Centos 7'
                     } 
@@ -112,7 +111,7 @@ pipeline {
                     else if (node_to_test.contains("min-buster-x64")){
                         echo 'Buster'
                     }
-                }
+
                 
             }
 
