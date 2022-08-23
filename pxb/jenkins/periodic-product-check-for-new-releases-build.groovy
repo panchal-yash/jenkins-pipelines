@@ -94,7 +94,7 @@ pipeline {
                 }
             }
             
-            stage("Show existing percona-release enabled packages") {
+            stage("check for the packages again") {
                 steps {
                     sh "sudo percona-release show"
                 }
