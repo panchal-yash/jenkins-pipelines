@@ -90,7 +90,7 @@ pipeline {
 
             stage("Disable existing percona-released enabled repos") {
                 steps {
-                    sh "percona-release disable all"
+                    sh "sudo percona-release disable all"
                 }
             }
             
