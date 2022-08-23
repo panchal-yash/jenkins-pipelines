@@ -56,10 +56,10 @@ sh """
 
 export FILE=/etc/yum.repos.d/percona-prel-release.repo
 
-if [ -f "$FILE" ]; then
-    sudo rm -f $FILE
+if [ -f "${FILE}" ]; then
+    sudo rm -f ${FILE}
 else 
-    echo "$FILE does not exist."
+    echo "${FILE} does not exist."
 fi
 
 sudo percona-release show
