@@ -60,8 +60,7 @@ pipeline {
 
 
     stages {
-        stage('Setup and install percona-release') {
-
+ 
             stage("Prepare") {
                 steps {
                     script {
@@ -89,6 +88,6 @@ pipeline {
                 }
             }
             
-        }
+        
     }
 }
