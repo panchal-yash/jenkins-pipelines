@@ -44,7 +44,7 @@ List all_nodes = node_setups.keySet().collect()
 
 
 pipeline {
-    agent none
+    agent 
 
     options {
         skipDefaultCheckout()
@@ -60,33 +60,35 @@ pipeline {
 
 
     stages {
-        parallel {
-            stage("Prepare") {
-                steps {
-                    script {
-                        currentBuild.displayName = "#${BUILD_NUMBER}"
-                        currentBuild.description = "action: install and check the percona-release"
+        stage('Setup and install percona-release') {
+            parallel {
+                agent { label params.node_to_test }
+                stage("Prepare") {
+                    steps {
+                        script {
+                            currentBuild.displayName = "#${BUILD_NUMBER}"
+                            currentBuild.description = "action: install and check the percona-release"
+                        }
                     }
                 }
-            }
 
-            stage("Setup the Server"){
-                steps {
-                    setup_package_tests()
+                stage("Setup the Server"){
+                    steps {
+                        setup_package_tests()
+                    }
                 }
-            }
 
-            stage("check os") {
-                steps {
-                    echo "cat /etc/os-release"
+                stage("check os") {
+                    steps {
+                        echo "cat /etc/os-release"
+                    }
                 }
-            }
 
-            stage("check if percona-release is installed") {
-                steps {
-                    sh "percona-release"
+                stage("check if percona-release is installed") {
+                    steps {
+                        sh "percona-release"
+                    }
                 }
             }
         }
     }
-}
