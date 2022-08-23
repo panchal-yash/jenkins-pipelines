@@ -19,3 +19,14 @@
                 wipe-workspace: true
         lightweight-checkout: true
         script-path: pxb/jenkins/periodic-product-check-for-new-releases-build.groovy
+    parameters:
+        - choice:
+            name: node_to_test
+            choices:
+                - "min-buster-x64"
+                - "min-bullseye-x64"
+                - "min-centos-7-x64"
+                - "min-ol-8-x64"
+                - "min-bionic-x64"
+                - "min-focal-x64"
+                - "min-amazon-2-x64"

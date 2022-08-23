@@ -25,6 +25,7 @@ setup_rhel = { ->
     '''
 }
 
+
 node_setups = [
     "min-bullseye-x64": setup_debian,
     "min-buster-x64": setup_debian,
@@ -39,13 +40,25 @@ void setup_package_tests() {
     node_setups[params.node_to_test]()
 }
 
+List all_nodes = node_setups.keySet().collect()
+
+
 pipeline {
-    agent none
+    label params.node_to_test
 
     options {
         skipDefaultCheckout()
     }
     
+    parameters{
+        choice(
+            name: "node_to_test",
+            choices: all_nodes,
+            description: "Node in which to test the script"
+        )
+    }
+
+
     stages {
         stage("Prepare") {
             steps {
