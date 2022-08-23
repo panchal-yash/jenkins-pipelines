@@ -54,7 +54,7 @@ void centos7() {
 
 sh """ 
 
-FILE=/etc/yum.repos.d/percona-prel-release.repo
+export FILE=/etc/yum.repos.d/percona-prel-release.repo
 
 if [ -f "$FILE" ]; then
     sudo rm -f $FILE
