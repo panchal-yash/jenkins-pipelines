@@ -82,18 +82,12 @@ pipeline {
                 }
             }
 
-            stage("check if percona-release is installed") {
-                steps {
-                    sh "sudo percona-release"
-                }
-            }
-            
             stage("Show existing percona-release enabled packages") {
                 steps {
                     sh "sudo percona-release show"
                 }
             }
 
-            
+
     }
 }
