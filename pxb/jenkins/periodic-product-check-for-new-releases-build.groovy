@@ -110,7 +110,7 @@ pipeline {
                                     sh 'echo Buster'
                                 }
                             }
-                            if (node_to_test.contains("min-bullseye-x64") {
+                            else if (node_to_test.contains("min-bullseye-x64") {
                                 stage (node_to_test.contains("min-bullseye-x64")) {
                                     sh 'echo bullseye'
                                 }
