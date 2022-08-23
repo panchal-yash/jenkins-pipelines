@@ -10,7 +10,7 @@ void runNodeBuild(String node_to_test) {
         propagate: true,
         parameters: [
         string(name: "node_to_test", value: node_to_test),
-        ]
+        ],
         wait: true
     )
 }
