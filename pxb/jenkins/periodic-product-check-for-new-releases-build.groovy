@@ -100,18 +100,30 @@ pipeline {
                 }
             }
 
-            stage("OS based check"){
+            stage("OS based check "){
                     when {
                         expression {
                             node_to_test.contains("min-buster-x64")
                         }
                     }
-                steps {
+                    steps {
 
-                    echo "inside min-bullseye-x64"
+                        echo "inside min-buster-x64"
 
-                }
+                    }
+            
+                    when {
+                        expression {
+                            node_to_test.contains("min-bullseye-x64")
+                        }
+                    }
+                    steps {
 
+                        echo "inside min-bullseye-x64"
+
+                    }
+            
+            
             }
 
 
