@@ -88,6 +88,19 @@ pipeline {
                 }
             }
 
+            stage("Disable existing percona-released enabled repos") {
+                steps {
+                    sh "percona-release disable all"
+                }
+            }
+            
+            stage("Show existing percona-release enabled packages") {
+                steps {
+                    sh "sudo percona-release show"
+                }
+            }
+
+
 
     }
 }
