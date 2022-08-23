@@ -54,12 +54,10 @@ void centos7() {
 
 sh """ 
 
-export FILE=/etc/yum.repos.d/percona-prel-release.repo
-
-if [ -f "${FILE}" ]; then
-    sudo rm -f ${FILE}
+if [ -f "/etc/yum.repos.d/percona-prel-release.repo" ]; then
+    sudo rm -f /etc/yum.repos.d/percona-prel-release.repo
 else 
-    echo "${FILE} does not exist."
+    echo "/etc/yum.repos.d/percona-prel-release.repo does not exist."
 fi
 
 sudo percona-release show
