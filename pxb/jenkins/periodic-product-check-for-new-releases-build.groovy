@@ -44,7 +44,7 @@ List all_nodes = node_setups.keySet().collect()
 
 
 pipeline {
-    agent 
+    agent { label params.node_to_test }
 
     options {
         skipDefaultCheckout()
@@ -62,7 +62,6 @@ pipeline {
     stages {
         stage('Setup and install percona-release') {
             parallel {
-                agent { label params.node_to_test }
                 stage("Prepare") {
                     steps {
                         script {
