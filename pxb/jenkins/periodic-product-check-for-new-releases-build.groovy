@@ -9,7 +9,7 @@ setup_debian = { ->
         sudo apt-get update -y
         sudo apt install curl -y
         curl -O https://repo.percona.com/apt/percona-release_latest.generic_all.deb
-        sudo apt install gnupg2 lsb-release ./percona-release_latest.generic_all.deb
+        sudo apt install gnupg2 lsb-release ./percona-release_latest.generic_all.deb -y
         sudo apt update -y
 
         percona-release show
@@ -44,10 +44,8 @@ List all_nodes = node_setups.keySet().collect()
 
 
 pipeline {
-    agent{
-        label params.node_to_test
-    }
-    
+    agent none
+
     options {
         skipDefaultCheckout()
     }
@@ -62,32 +60,33 @@ pipeline {
 
 
     stages {
-        stage("Prepare") {
-            steps {
-                script {
-                    currentBuild.displayName = "#${BUILD_NUMBER}"
-                    currentBuild.description = "action: install and check the percona-release"
+        parallel {
+            stage("Prepare") {
+                steps {
+                    script {
+                        currentBuild.displayName = "#${BUILD_NUMBER}"
+                        currentBuild.description = "action: install and check the percona-release"
+                    }
+                }
+            }
+
+            stage("Setup the Server"){
+                steps {
+                    setup_package_tests()
+                }
+            }
+
+            stage("check os") {
+                steps {
+                    echo "cat /etc/os-release"
+                }
+            }
+
+            stage("check if percona-release is installed") {
+                steps {
+                    sh "percona-release"
                 }
             }
         }
-
-        stage("Setup the Server"){
-            steps {
-                setup_package_tests()
-            }
-        }
-
-        stage("check os") {
-            steps {
-                echo "cat /etc/os-release"
-            }
-        }
-
-        stage("check if percona-release is installed") {
-            steps {
-                sh "percona-release"
-            }
-        }
-
     }
 }
