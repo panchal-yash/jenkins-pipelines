@@ -60,7 +60,7 @@ sudo yum --showduplicates list | grep percona
 
 sudo percona-release enable pxb-80 testing
 
-yum --showduplicates list | grep percona-xtrabackup-80.x86_64 | awk { print${2}}' > pxb-80-centos-7
+yum --showduplicates list | grep percona-xtrabackup-80.x86_64 | awk { print\$2}' > pxb-80-centos-7
 
 cat pxb-80-centos-7 | wc -l
 
