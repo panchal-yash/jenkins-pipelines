@@ -40,6 +40,11 @@ void setup_package_tests() {
     node_setups[params.node_to_test]()
 }
 
+void centos7() {
+    sh 'Hello this is centos 7'
+}
+
+
 List all_nodes = node_setups.keySet().collect()
 
 
@@ -104,7 +109,7 @@ pipeline {
                 steps{
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
-                            echo 'Centos 7'
+                            centos7()
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             echo 'Bullseye'
