@@ -40,10 +40,45 @@ void setup_package_tests() {
     node_setups[params.node_to_test]()
 }
 
-void centos7() {
-    sh 'Hello this is centos 7'
+void bullseye() {
+ 
+
 }
 
+void buster() {
+
+
+}
+
+void centos7() {
+
+sh """ 
+sudo rm -f /etc/yum.repos.d/percona-prel-release.repo 
+sudo percona-release show
+sudo yum --showduplicates | grep percona
+"""
+
+}
+
+void ol8() {
+
+
+}
+
+void bionic() {
+
+
+}
+
+void focal() {
+
+
+}
+
+void amazon() {
+
+
+}
 
 List all_nodes = node_setups.keySet().collect()
 
@@ -112,10 +147,10 @@ pipeline {
                             centos7()
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
-                            echo 'Bullseye'
+                            bullseye()
                         }
                         else if (node_to_test.contains("min-buster-x64")){
-                            echo 'Buster'
+                            buster()
                         }
                     }
                 }
