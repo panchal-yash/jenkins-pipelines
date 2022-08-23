@@ -55,7 +55,9 @@ void centos7() {
 sh """ 
 sudo rm -f /etc/yum.repos.d/percona-prel-release.repo 
 sudo percona-release show
-sudo yum --showduplicates | grep percona
+
+sudo yum --showduplicates list | grep percona
+
 """
 
 }
