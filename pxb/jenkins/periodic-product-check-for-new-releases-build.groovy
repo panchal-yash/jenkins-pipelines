@@ -100,28 +100,21 @@ pipeline {
                 }
             }
 
-            stage("OS based check "){
-               
-                    steps {
+            stage("OS based checks") {
 
-                        script {
-                            if (node_to_test.contains("min-buster-x64")) {
-                                stage ('Buster Stage') {
-                                    sh 'echo Buster'
-                                }
-                            }
-                            else if (node_to_test.contains("min-bullseye-x64") {
-                                stage (node_to_test.contains("min-bullseye-x64")) {
-                                    sh 'echo bullseye'
-                                }
-                            }
-                        }
-
+                steps {
+                    if (node_to_test.contains("min-centos-7-x64")) {
+                        echo 'Centos 7'
+                    } 
+                    else if (node_to_test.contains("min-bullseye-x64")){
+                        echo 'Bullseye'
                     }
-
+                    else if (node_to_test.contains("min-buster-x64")){
+                        echo 'Buster'
+                    }
+                }
+                
             }
-
-
 
     }
 }
