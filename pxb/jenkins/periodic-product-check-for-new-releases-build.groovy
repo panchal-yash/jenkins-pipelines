@@ -19,7 +19,7 @@ setup_debian = { ->
 setup_rhel = { ->
     sh '''
         sudo yum update -y
-        sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        sudo yum install -y -q https://repo.percona.com/yum/percona-release-latest.noarch.rpm
         sudo percona-release show
     '''
 }
@@ -62,7 +62,15 @@ sudo percona-release enable pxb-80 testing
 
 yum --showduplicates list | grep percona-xtrabackup-80.x86_64 | awk '{ print\$2}' > pxb-80-centos-7
 
-cat pxb-80-centos-7 | wc -l
+echo "-----------PXB-80-CENTOS-7-releases-----------"
+
+cat pxb-80-centos-7
+
+cat pxb-80-centos-7 | wc -l > pxb-80-centos-7-nos
+
+echo "-----------PXB-80-CENTOS-7-releases-count-----------"
+
+cat pxb-80-centos-7-nos
 
 """
 
