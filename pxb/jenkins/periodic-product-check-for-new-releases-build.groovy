@@ -44,8 +44,10 @@ List all_nodes = node_setups.keySet().collect()
 
 
 pipeline {
-    label params.node_to_test
-
+    agent{
+        label params.node_to_test
+    }
+    
     options {
         skipDefaultCheckout()
     }
