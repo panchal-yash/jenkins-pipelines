@@ -15,9 +15,15 @@ void runNodeBuild(String node_to_test) {
     )
 }
 
-
-List all_nodes = node_setups.keySet().collect()
-
+node_setups = [
+    "min-bullseye-x64": setup_debian,
+    "min-buster-x64": setup_debian,
+    "min-centos-7-x64": setup_rhel,
+    "min-ol-8-x64": setup_rhel,
+    "min-bionic-x64": setup_debian,
+    "min-focal-x64": setup_debian,
+    "min-amazon-2-x64": setup_rhel,
+]
 
 
 
