@@ -61,34 +61,34 @@ pipeline {
 
     stages {
         stage('Setup and install percona-release') {
-            parallel {
-                stage("Prepare") {
-                    steps {
-                        script {
-                            currentBuild.displayName = "#${BUILD_NUMBER}-${params.node_to_test}"
-                            currentBuild.description = "action: install and check the percona-release"
-                        }
-                    }
-                }
 
-                stage("Setup the Server"){
-                    steps {
-                        setup_package_tests()
-                    }
-                }
-
-                stage("check os") {
-                    steps {
-                        echo "cat /etc/os-release"
-                    }
-                }
-
-                stage("check if percona-release is installed") {
-                    steps {
-                        sh "percona-release"
+            stage("Prepare") {
+                steps {
+                    script {
+                        currentBuild.displayName = "#${BUILD_NUMBER}-${params.node_to_test}"
+                        currentBuild.description = "action: install and check the percona-release"
                     }
                 }
             }
+
+            stage("Setup the Server"){
+                steps {
+                    setup_package_tests()
+                }
+            }
+
+            stage("check os") {
+                steps {
+                    echo "cat /etc/os-release"
+                }
+            }
+
+            stage("check if percona-release is installed") {
+                steps {
+                    sh "percona-release"
+                }
+            }
+            
         }
     }
 }
