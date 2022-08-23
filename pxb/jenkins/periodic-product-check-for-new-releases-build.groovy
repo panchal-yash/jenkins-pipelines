@@ -51,11 +51,11 @@ pipeline {
     }
     
     parameters{
-        choice(
+        
             name: "node_to_test",
             choices: all_nodes,
             description: "Node in which to test the script"
-        )
+        
     }
 
 
