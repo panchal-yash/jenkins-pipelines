@@ -54,7 +54,14 @@ void centos7() {
 
 sh """ 
 
-sudo rm -f /etc/yum.repos.d/percona-prel-release.repo 
+FILE=/etc/yum.repos.d/percona-prel-release.repo
+
+if [ -f "$FILE" ]; then
+    sudo rm -f $FILE
+else 
+    echo "$FILE does not exist."
+fi
+
 sudo percona-release show
 
 sudo yum --showduplicates list | grep percona
