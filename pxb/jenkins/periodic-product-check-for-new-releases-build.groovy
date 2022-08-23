@@ -103,7 +103,7 @@ pipeline {
             stage("OS based check"){
                     when {
                         expression {
-                            nodes_to_test.contains("min-buster-x64")
+                            node_to_test.contains("min-buster-x64")
                         }
                     }
                 steps {
