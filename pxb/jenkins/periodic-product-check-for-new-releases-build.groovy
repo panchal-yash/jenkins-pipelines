@@ -101,7 +101,11 @@ pipeline {
             }
 
             stage("OS based check"){
-                when {{ params.node_to_test = "min-bullseye-x64"  }}
+                    when {
+                        expression {
+                            params.nodes_to_test.contains("min-buster-x64")
+                        }
+                    }
                 steps {
 
                     echo "inside min-bullseye-x64"
