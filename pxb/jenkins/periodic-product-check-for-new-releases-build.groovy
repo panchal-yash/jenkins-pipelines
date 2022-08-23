@@ -101,17 +101,19 @@ pipeline {
             }
 
             stage("OS based checks") {
-
-                    if (node_to_test.contains("min-centos-7-x64")) {
-                        echo 'Centos 7'
-                    } 
-                    else if (node_to_test.contains("min-bullseye-x64")){
-                        echo 'Bullseye'
+                steps{
+                    script {
+                        if (node_to_test.contains("min-centos-7-x64")) {
+                            echo 'Centos 7'
+                        } 
+                        else if (node_to_test.contains("min-bullseye-x64")){
+                            echo 'Bullseye'
+                        }
+                        else if (node_to_test.contains("min-buster-x64")){
+                            echo 'Buster'
+                        }
                     }
-                    else if (node_to_test.contains("min-buster-x64")){
-                        echo 'Buster'
-                    }
-
+                }
                 
             }
 
