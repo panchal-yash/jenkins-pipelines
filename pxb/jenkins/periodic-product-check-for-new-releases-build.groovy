@@ -12,7 +12,7 @@ setup_debian = { ->
         sudo apt install gnupg2 lsb-release ./percona-release_latest.generic_all.deb -y
         sudo apt update -y
 
-        percona-release show
+        sudo percona-release show
     '''
 }
 
@@ -21,7 +21,7 @@ setup_rhel = { ->
         sudo yum update -y
         sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
 
-        percona-release show
+        sudo percona-release show
     '''
 }
 
