@@ -65,7 +65,7 @@ pipeline {
                 stage("Prepare") {
                     steps {
                         script {
-                            currentBuild.displayName = "#${BUILD_NUMBER}"
+                            currentBuild.displayName = "#${BUILD_NUMBER}-${params.node_to_test}"
                             currentBuild.description = "action: install and check the percona-release"
                         }
                     }

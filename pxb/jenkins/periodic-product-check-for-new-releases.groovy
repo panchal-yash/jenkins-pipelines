@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     currentBuild.displayName = "#${BUILD_NUMBER}"
-                    currentBuild.description = "action: Install percona-release node:"
+                    currentBuild.description = "Install percona-release for checking.. node: ${params.node_to_test}"
                 }
             }
         }
