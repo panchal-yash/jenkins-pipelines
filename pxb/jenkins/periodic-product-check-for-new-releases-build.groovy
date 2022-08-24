@@ -86,6 +86,12 @@ void fetchartifact( String component){
  copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'previous' 
 }
 
+void diffchecker(String filename String filepath1 String filepath2){
+
+sh "diff ${filepath1} ${filepath2} > ${filename}-diff"
+
+}
+
 
 
 void ol8() {
@@ -182,6 +188,8 @@ pipeline {
                             fetchartifact("pxb-80-centos-7")
                             centos7()
                             archiveArtifacts 'pxb-80-centos-7*'
+                            diffchecker("pxb-80-centos-7" "pxb-80-centos-7" "previous/pxb-80-centos-7")
+                            sh "cat pxb-80-centos-7-diff"
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
