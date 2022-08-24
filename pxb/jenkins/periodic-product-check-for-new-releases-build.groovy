@@ -4,6 +4,26 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
 ]) _
 
 
+
+void pushArtifactFile(String FILE_NAME) {
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AMI/OVF', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        sh """
+            S3_PATH=s3://product-release-check
+            aws s3 ls \$S3_PATH/${FILE_NAME} || :
+            aws s3 cp --quiet ${FILE_NAME} \$S3_PATH/${FILE_NAME} || :
+        """
+    }
+}
+
+void popArtifactFile(String FILE_NAME) {
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AMI/OVF', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        sh """
+            S3_PATH=s3://product-release-check
+            aws s3 cp --quiet \$S3_PATH/${FILE_NAME} ${FILE_NAME} || :
+        """
+    }
+}
+
 setup_debian = { ->
     sh '''
         sudo apt-get update -y
@@ -85,7 +105,9 @@ cat pxb-80-centos-7-nos
 
 
 void fetchartifact( String component){
- copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'previous' 
+ copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', 
+ selector: lastSuccessful(true), 
+ target: 'previous' 
 }
 
 void diffchecker(String filename , String filepath1 , String filepath2){
@@ -194,7 +216,7 @@ pipeline {
                         if (node_to_test.contains("min-centos-7-x64")) {
                             fetchartifact("pxb-80-centos-7")
                             centos7()
-                            archiveArtifacts 'pxb-80-centos-7*'
+                            pushArtifactFile("pxb-80-centos-7")
                             diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "previous/pxb-80-centos-7")
                             sh "cat pxb-80-centos-7-diff"
                         } 
