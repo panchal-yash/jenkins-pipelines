@@ -221,9 +221,11 @@ pipeline {
                         if (node_to_test.contains("min-centos-7-x64")) {
                             //fetchartifact("pxb-80-centos-7")
                             centos7()
-                            pushArtifactFile("pxb-80-centos-7")
-                            diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "previous/pxb-80-centos-7")
+                            popArtifactFile("pxb-80-centos-7")
+                            sh "mv pxb-80-centos-7 pxb-80-centos-7-previous"
+                            diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "pxb-80-centos-7-previous")
                             sh "cat pxb-80-centos-7-diff"
+                            pushArtifactFile("pxb-80-centos-7")
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
