@@ -167,7 +167,7 @@ pipeline {
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
                             centos7()
-                            archiveArtifacts 'pxb-80-centos-7.*'
+                            archiveArtifacts 'pxb-80-centos-7*'
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
