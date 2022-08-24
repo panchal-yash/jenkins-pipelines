@@ -82,8 +82,8 @@ cat pxb-80-centos-7-nos
 }
 
 
-void centos7check(){
- copyArtifacts filter: 'pxb-80-centos-7*', projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'dest' 
+void fetchartifact( String component){
+ copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'previous' 
 }
 
 
@@ -179,7 +179,7 @@ pipeline {
                 steps{
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
-                            centos7check()
+                            fetchartifact("pxb-80-centos-7")
                             centos7()
                             archiveArtifacts 'pxb-80-centos-7*'
                         } 
