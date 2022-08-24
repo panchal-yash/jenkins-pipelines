@@ -75,6 +75,9 @@ void buster() {
 }
 
 void checkrhelpackage(String packagecode , String packagename , String reponame, String platform){
+sh """
+
+set +x 
 
 if [ -f "/etc/yum.repos.d/percona-prel-release.repo" ]; then
     sudo rm -f /etc/yum.repos.d/percona-prel-release.repo
@@ -97,6 +100,8 @@ cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos
 echo "-----------PXB-80-CENTOS-7-releases-count-----------"
 
 cat ${packagecode}-${platform}-nos
+
+"""
 
 }
 
@@ -250,7 +255,7 @@ pipeline {
                             diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "pxb-80-centos-7-previous")
                             sh "cat pxb-80-centos-7-diff"
                             pushArtifactFile("pxb-80-centos-7")
-                            
+
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
