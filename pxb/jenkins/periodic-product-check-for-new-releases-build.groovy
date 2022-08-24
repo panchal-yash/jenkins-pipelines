@@ -81,6 +81,13 @@ cat pxb-80-centos-7-nos
 
 }
 
+
+void centos7-check(){
+ copyArtifacts filter: 'pxb-80-centos-7*', projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'dest' 
+}
+
+
+
 void ol8() {
 
 
