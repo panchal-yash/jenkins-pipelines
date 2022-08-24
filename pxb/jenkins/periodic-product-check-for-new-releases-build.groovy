@@ -73,7 +73,7 @@ cat pxb-80-centos-7
 
 echo "asdasd" >> pxb-80-centos-7
 
-cat pxb-80-centos-7 | wc -l > pxb-80-centos-7-nos 2>&1
+cat pxb-80-centos-7 | wc -l > pxb-80-centos-7-nos 
 
 echo "-----------PXB-80-CENTOS-7-releases-count-----------"
 
@@ -90,7 +90,7 @@ void fetchartifact( String component){
 
 void diffchecker(String filename , String filepath1 , String filepath2){
 
-sh "diff ${filepath1} ${filepath2} > ${filename}-diff"
+sh "diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1"
 
 }
 
