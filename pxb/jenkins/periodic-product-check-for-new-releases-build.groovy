@@ -19,7 +19,7 @@ setup_debian = { ->
 setup_rhel = { ->
     sh '''
         sudo yum update -y
-        sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
         sudo percona-release show
     '''
 }
