@@ -71,6 +71,8 @@ echo "-----------PXB-80-CENTOS-7-releases-----------"
 
 cat pxb-80-centos-7
 
+echo "asdasd" >> pxb-80-centos-7
+
 cat pxb-80-centos-7 | wc -l > pxb-80-centos-7-nos
 
 echo "-----------PXB-80-CENTOS-7-releases-count-----------"
