@@ -129,9 +129,11 @@ pipeline {
 
     stages {
             stage("clean workspace"){
+                steps{
 
-                cleanws()
+                    cleanws()
 
+                }
             }
 
             stage("Prepare") {
