@@ -31,7 +31,7 @@ setup_debian = { ->
         curl -O https://repo.percona.com/apt/percona-release_latest.generic_all.deb
         sudo apt install gnupg2 lsb-release ./percona-release_latest.generic_all.deb -y
         sudo apt update -y
-
+        
         sudo percona-release show
     '''
 }
@@ -41,6 +41,10 @@ setup_rhel = { ->
         sudo yum update -y
         sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
         sudo percona-release show
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
     '''
 }
 
