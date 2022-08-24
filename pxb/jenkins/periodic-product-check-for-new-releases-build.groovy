@@ -74,6 +74,32 @@ void buster() {
 
 }
 
+void checkrhelpackage(String packagecode , String packagename , String reponame, String platform){
+
+if [ -f "/etc/yum.repos.d/percona-prel-release.repo" ]; then
+    sudo rm -f /etc/yum.repos.d/percona-prel-release.repo
+else 
+    echo "/etc/yum.repos.d/percona-prel-release.repo does not exist."
+fi
+
+sudo percona-release show
+
+sudo percona-release enable ${packagecode} ${reponame}
+
+yum --showduplicates list | grep ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+
+echo "-----------PXB-80-CENTOS-7-releases-----------"
+
+cat ${packagecode}-${platform}
+
+cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
+
+echo "-----------PXB-80-CENTOS-7-releases-count-----------"
+
+cat ${packagecode}-${platform}-nos
+
+}
+
 void centos7() {
 
 sh """ 
@@ -217,13 +243,14 @@ pipeline {
                 steps{
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
-                            //fetchartifact("pxb-80-centos-7")
+
                             popArtifactFile("pxb-80-centos-7")
                             sh "mv pxb-80-centos-7 pxb-80-centos-7-previous"
-                            centos7()
+                            checkrhelpackage("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-7")
                             diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "pxb-80-centos-7-previous")
                             sh "cat pxb-80-centos-7-diff"
                             pushArtifactFile("pxb-80-centos-7")
+                            
                         } 
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
