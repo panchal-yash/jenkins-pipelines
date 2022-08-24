@@ -90,7 +90,12 @@ void fetchartifact( String component){
 
 void diffchecker(String filename , String filepath1 , String filepath2){
 
-sh "diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1"
+sh """
+
+set +e
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
+
+"""
 
 }
 
