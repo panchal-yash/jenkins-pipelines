@@ -260,11 +260,6 @@ pipeline {
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
 
-
-
-                        }
-                        else if (){
-
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
 /*
                             popArtifactFile("pxb-24-centos-7")
