@@ -86,7 +86,7 @@ void fetchartifact( String component){
  copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', selector: lastSuccessful(), target: 'previous' 
 }
 
-void diffchecker(String filename String filepath1 String filepath2){
+void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh "diff ${filepath1} ${filepath2} > ${filename}-diff"
 
