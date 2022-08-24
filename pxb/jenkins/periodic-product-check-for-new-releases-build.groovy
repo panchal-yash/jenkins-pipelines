@@ -105,6 +105,17 @@ cat ${packagecode}-${platform}-nos
 
 }
 
+void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
+
+    popArtifactFile("${packagecode}-${platform}")
+    sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
+    checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+    diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")
+    sh "cat ${packagecode}-${platform}-diff"
+    pushArtifactFile("${packagecode}-${platform}")
+
+}
+
 void centos7() {
 
 sh """ 
@@ -249,14 +260,21 @@ pipeline {
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
 
-                            popArtifactFile("pxb-80-centos-7")
-                            sh "mv pxb-80-centos-7 pxb-80-centos-7-previous"
-                            checkrhelpackage("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-7")
-                            diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "pxb-80-centos-7-previous")
-                            sh "cat pxb-80-centos-7-diff"
-                            pushArtifactFile("pxb-80-centos-7")
 
-                        } 
+
+                        }
+                        else if (){
+
+                            popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
+/*
+                            popArtifactFile("pxb-24-centos-7")
+                            sh "mv pxb-24-centos-7 pxb-24-centos-7-previous"
+                            checkrhelpackage("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
+                            diffchecker("pxb-24-centos-7", "pxb-24-centos-7", "pxb-24-centos-7-previous")
+                            sh "cat pxb-24-centos-7-diff"
+                            pushArtifactFile("pxb-24-centos-7")
+*/
+                        }
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
                         }
