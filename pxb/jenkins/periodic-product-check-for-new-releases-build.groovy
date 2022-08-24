@@ -220,9 +220,9 @@ pipeline {
                     script {
                         if (node_to_test.contains("min-centos-7-x64")) {
                             //fetchartifact("pxb-80-centos-7")
-                            centos7()
                             popArtifactFile("pxb-80-centos-7")
                             sh "mv pxb-80-centos-7 pxb-80-centos-7-previous"
+                            centos7()
                             diffchecker("pxb-80-centos-7", "pxb-80-centos-7", "pxb-80-centos-7-previous")
                             sh "cat pxb-80-centos-7-diff"
                             pushArtifactFile("pxb-80-centos-7")
