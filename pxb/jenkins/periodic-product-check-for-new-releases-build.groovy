@@ -128,7 +128,12 @@ pipeline {
 
 
     stages {
- 
+            stage("clean workspace"){
+
+                cleanws()
+
+            }
+
             stage("Prepare") {
                 steps {
                     script {
