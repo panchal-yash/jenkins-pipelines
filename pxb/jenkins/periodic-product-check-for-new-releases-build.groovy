@@ -213,13 +213,6 @@ pipeline {
     }
 
     post {
-        always {
-            archiveArtifacts artifacts: '*.pdf', allowEmptyArchive: true
-            sh '''
-                sudo docker rmi -f \$(sudo docker images -q) || true
-            '''
-            deleteDir()
-        }
         unstable {
             slackSend channel: '#new-product-release-detection-jenkins', color: '#F6F930', message: "Building of PG docker images unstable. Please check the log ${BUILD_URL}"
         }
