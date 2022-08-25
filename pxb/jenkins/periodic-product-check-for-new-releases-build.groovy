@@ -81,15 +81,17 @@ sudo percona-release enable ${packagecode} ${reponame}
 
 yum --showduplicates list | grep ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
 
-echo "-----------PXB-80-CENTOS-7-releases-----------"
+echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
-echo "-----------PXB-80-CENTOS-7-releases-count-----------"
+echo "-----------${packagecode}-${platform}-releases-count-----------"
 
 cat ${packagecode}-${platform}-nos
+
+
 
 """
 
@@ -100,9 +102,21 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     popArtifactFile("${packagecode}-${platform}")
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-    diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")
+ 
+    if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
+
     sh "cat ${packagecode}-${platform}-diff"
     pushArtifactFile("${packagecode}-${platform}")
+
+
+    }
+    else {
+
+    echo "There is no difference"
+
+    }
+ 
+ 
 
 }
 
@@ -117,7 +131,7 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 sh """
 
 set +e
-diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || echo "Found difference"
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || exit 1
 
 """
 
