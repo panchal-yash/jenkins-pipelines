@@ -108,11 +108,14 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     sh "cat ${packagecode}-${platform}-diff"
     pushArtifactFile("${packagecode}-${platform}")
 
+    slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
+
 
     }
     else {
 
     echo "There is no difference"
+    
 
     }
  
@@ -227,11 +230,8 @@ pipeline {
     }
 
     post {
-        success {
-            slackSend channel: '#new-product-release-detection-jenkins', color: '#F6F930', message: "Testing on success   ${BUILD_URL}"
-        }
         failure {
-            slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Building of PG docker images failed. Please check the log ${BUILD_URL}"
+            slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Build Failed due to errors ${BUILD_URL}"
         }
     }
 
