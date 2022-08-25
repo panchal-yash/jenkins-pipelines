@@ -64,16 +64,6 @@ void setup_package_tests() {
     node_setups[params.node_to_test]()
 }
 
-void bullseye() {
- 
-
-}
-
-void buster() {
-
-
-}
-
 void checkrhelpackage(String packagecode , String packagename , String reponame, String platform){
 sh """
 
@@ -116,39 +106,6 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
 }
 
-void centos7() {
-
-sh """ 
-
-if [ -f "/etc/yum.repos.d/percona-prel-release.repo" ]; then
-    sudo rm -f /etc/yum.repos.d/percona-prel-release.repo
-else 
-    echo "/etc/yum.repos.d/percona-prel-release.repo does not exist."
-fi
-
-sudo percona-release show
-
-sudo yum --showduplicates list | grep percona
-
-sudo percona-release enable pxb-80 testing
-
-yum --showduplicates list | grep percona-xtrabackup-80.x86_64 | awk '{ print\$2}' > pxb-80-centos-7
-
-echo "-----------PXB-80-CENTOS-7-releases-----------"
-
-cat pxb-80-centos-7
-
-cat pxb-80-centos-7 | wc -l > pxb-80-centos-7-nos 
-
-echo "-----------PXB-80-CENTOS-7-releases-count-----------"
-
-cat pxb-80-centos-7-nos
-
-"""
-
-}
-
-
 void fetchartifact( String component){
  copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', 
  selector: lastSuccessful(true), 
@@ -163,28 +120,6 @@ set +e
 diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || echo "Found difference"
 
 """
-
-}
-
-
-
-void ol8() {
-
-
-}
-
-void bionic() {
-
-
-}
-
-void focal() {
-
-
-}
-
-void amazon() {
-
 
 }
 
@@ -261,14 +196,8 @@ pipeline {
                         if (node_to_test.contains("min-centos-7-x64")) {
 
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
-/*
-                            popArtifactFile("pxb-24-centos-7")
-                            sh "mv pxb-24-centos-7 pxb-24-centos-7-previous"
-                            checkrhelpackage("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
-                            diffchecker("pxb-24-centos-7", "pxb-24-centos-7", "pxb-24-centos-7-previous")
-                            sh "cat pxb-24-centos-7-diff"
-                            pushArtifactFile("pxb-24-centos-7")
-*/
+                            popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-7")
+
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
                             bullseye()
@@ -282,4 +211,21 @@ pipeline {
             }
 
     }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '*.pdf', allowEmptyArchive: true
+            sh '''
+                sudo docker rmi -f \$(sudo docker images -q) || true
+            '''
+            deleteDir()
+        }
+        unstable {
+            slackSend channel: '#new-product-release-detection-jenkins', color: '#F6F930', message: "Building of PG docker images unstable. Please check the log ${BUILD_URL}"
+        }
+        failure {
+            slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Building of PG docker images failed. Please check the log ${BUILD_URL}"
+        }
+    }
+
 }
