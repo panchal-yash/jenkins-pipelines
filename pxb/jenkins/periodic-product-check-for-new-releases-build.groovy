@@ -213,8 +213,8 @@ pipeline {
     }
 
     post {
-        unstable {
-            slackSend channel: '#new-product-release-detection-jenkins', color: '#F6F930', message: "Building of PG docker images unstable. Please check the log ${BUILD_URL}"
+        success {
+            slackSend channel: '#new-product-release-detection-jenkins', color: '#F6F930', message: "Testing on success   ${BUILD_URL}"
         }
         failure {
             slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Building of PG docker images failed. Please check the log ${BUILD_URL}"
