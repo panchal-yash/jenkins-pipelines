@@ -38,17 +38,18 @@ setup_debian = { ->
 
 setup_rhel = { ->
     sh '''
-        sudo yum update -y
-        sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
-        sudo percona-release show
-        sudo yum install unzip -y
+
 
         if [ -f "/usr/local/bin/aws" ]; then
         
             echo "AWS CLI already exists"
 
         else
-
+        
+            sudo yum update -y
+            sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+            sudo percona-release show
+            sudo yum install unzip -y
             echo "Installing aws cli"
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
