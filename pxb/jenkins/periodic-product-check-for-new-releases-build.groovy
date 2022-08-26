@@ -43,7 +43,7 @@ setup_rhel = { ->
         sudo percona-release show
         sudo yum install unzip -y
 
-        if [-f /usr/local/bin/aws ]; then
+        if [ -f "/usr/local/bin/aws" ]; then
         
             echo "AWS CLI already exists"
 
@@ -53,6 +53,7 @@ setup_rhel = { ->
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+
         fi
 
 
