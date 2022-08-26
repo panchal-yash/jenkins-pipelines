@@ -53,7 +53,6 @@ setup_rhel = { ->
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-
         fi
 
 
@@ -98,7 +97,7 @@ echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
-echo "asdasdas" >> ${packagecode}-${platform}
+echo "asdasdas" > ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
@@ -118,12 +117,12 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
  
-    if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
+    if (diffchecker("${packagecode}-${platform}-diff", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
 
-    sh "cat ${packagecode}-${platform}-diff"
-    pushArtifactFile("${packagecode}-${platform}")
+        sh "cat ${packagecode}-${platform}-diff"
+        pushArtifactFile("${packagecode}-${platform}")
 
-    slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
 
 
     }
@@ -148,8 +147,8 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh """
 
-        diff ${filepath1} ${filepath2} > '${filename}\-diff' 2>&1
-        $?
+    diff ${filepath1} ${filepath2} > ${filename} 2>&1
+    $?
 
 """
 
