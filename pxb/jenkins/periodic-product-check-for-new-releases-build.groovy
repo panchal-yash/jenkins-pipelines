@@ -121,18 +121,15 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
  
     if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
 
-        sh "cat ${packagecode}-${platform}-diff"
-        pushArtifactFile("${packagecode}-${platform}")
-
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
-
+        echo "There is no difference"
 
     }
     else {
 
-    echo "There is no difference"
+        sh "cat ${packagecode}-${platform}-diff"
+        pushArtifactFile("${packagecode}-${platform}")
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
     
-
     }
  
  
