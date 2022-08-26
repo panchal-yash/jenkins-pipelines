@@ -137,7 +137,7 @@ cat ${packagecode}-${platform}-nos
 
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
-
+    echo "1"
     if( checkArtifactFile("${packagecode}-${platform}") ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}")
