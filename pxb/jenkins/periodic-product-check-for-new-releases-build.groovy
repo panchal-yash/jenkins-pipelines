@@ -45,7 +45,7 @@ setup_rhel = { ->
             echo "AWS CLI already exists"
 
         else
-        
+
             sudo yum update -y
             sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
             sudo percona-release show
@@ -149,8 +149,9 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh """
 
-set +e
-diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || exit 1
+
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || echo 1
+
 
 """
 
