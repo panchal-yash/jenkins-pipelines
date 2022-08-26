@@ -31,7 +31,7 @@ void popArtifactFile(String FILE_NAME) {
 void checkArtifactFile(String FILE_NAME) {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
             S3_PATH="s3://product-release-check"
-            exists=sh(script: "aws s3 ls ${S3_PATH}/${FILE_NAME}", returnStatus: true)
+            exists=sh(script: "aws s3 ls ${S3_PATH}/${FILE_NAME} | wc -l ", returnStdout: true)
     }
 }
 
@@ -131,7 +131,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
         checkArtifactFile("${packagecode}-${platform}")
 
-        if( "${exists}" ){
+        if( "${exists}" -ne 0 ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}")
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
