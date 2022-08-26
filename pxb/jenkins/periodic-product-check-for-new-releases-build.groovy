@@ -148,9 +148,17 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh """
 
-set +e
-diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || exit 1
+        diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
 
+        if [ $? -eq 0 ]; then 
+        
+            echo 1
+        
+        else
+        
+            echo 0
+        
+        fi
 
 """
 
