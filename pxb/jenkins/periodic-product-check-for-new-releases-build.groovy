@@ -118,8 +118,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     popArtifactFile("${packagecode}-${platform}")
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-
-    def diff_check = sh(script: "diff $filepath1 $filepath2 > $filename-diff 2>&1", returnStatus:true )
+    diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")
 
     if (${diff_check}){
 
@@ -146,16 +145,7 @@ void fetchartifact( String component){
 
 void diffchecker(String filename , String filepath1 , String filepath2){
 
-sh """ 
-
-if [ \$() ]; then
-    STATUS=0
-else
-    STATUS=1
-fi
-
-
-"""
+def diff_check = sh(script: "diff $filepath1 $filepath2 > $filename-diff 2>&1", returnStatus:true )
 
 }
 
