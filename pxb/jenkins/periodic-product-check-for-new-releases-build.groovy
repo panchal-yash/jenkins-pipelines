@@ -118,8 +118,6 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
  
-
-
     if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
 
     sh "cat ${packagecode}-${platform}-diff"
@@ -147,23 +145,13 @@ void fetchartifact( String component){
 }
 
 void diffchecker(String filename , String filepath1 , String filepath2){
-        sh """
-        
-        diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
 
-        if [ $? -eq 0 ]; then 
-        
-            echo 1
-        
-        else
-        
-            echo 0
-        
-        fi
-        
-        """,
-        returnStdout: true
-    ).trim()
+sh """
+
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
+$?
+
+"""
 
 }
 
