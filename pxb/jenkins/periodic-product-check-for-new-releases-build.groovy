@@ -146,7 +146,7 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh """ 
 
-if [ $(diff $filepath1 $filepath2 > $filename-diff 2>&1) ]; then
+if [ \$(diff $filepath1 $filepath2 > $filename-diff 2>&1) ]; then
     echo 1
 else
     echo 0
