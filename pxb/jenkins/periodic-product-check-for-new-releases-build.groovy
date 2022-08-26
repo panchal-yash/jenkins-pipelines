@@ -117,7 +117,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
  
-    if (diffchecker("${packagecode}-${platform}-diff", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
+    if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
 
         sh "cat ${packagecode}-${platform}-diff"
         pushArtifactFile("${packagecode}-${platform}")
@@ -147,8 +147,8 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 
 sh """
 
-    diff \${filepath1} \${filepath2} > \${filename} 2>&1 
-    \$?
+set +e
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || exit 1
 
 """
 
