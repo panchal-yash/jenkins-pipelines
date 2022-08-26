@@ -99,7 +99,7 @@ echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
-#echo "asdasdas" >> ${packagecode}-${platform}
+echo "asdasdas" >> ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
