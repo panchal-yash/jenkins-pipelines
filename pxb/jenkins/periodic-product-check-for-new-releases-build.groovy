@@ -33,7 +33,7 @@ void checkArtifactFile(String FILE_NAME) {
         sh(script: """
 
             S3_PATH=s3://product-release-check
-            exists=(aws s3 ls \$S3_PATH/${FILE_NAME})
+            exists=\$(aws s3 ls \$S3_PATH/${FILE_NAME})
 
             if [ -z "$exists" ]; then
                 echo "0"
@@ -138,7 +138,7 @@ cat ${packagecode}-${platform}-nos
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
 
-    if(checkArtifactFile("${packagecode}-${platform}")){
+    if( checkArtifactFile("${packagecode}-${platform}") ){
 
         popArtifactFile("${packagecode}-${platform}")
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
@@ -166,12 +166,6 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     }   
  
-}
-
-void fetchartifact( String component){
- copyArtifacts filter: "${component}*", projectName: 'periodic-product-check-for-new-releases-build', 
- selector: lastSuccessful(true), 
- target: 'previous' 
 }
 
 
