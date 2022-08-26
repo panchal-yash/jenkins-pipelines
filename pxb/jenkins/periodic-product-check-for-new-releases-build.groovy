@@ -53,7 +53,7 @@ setup_rhel = { ->
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            
+
         fi
 
 
@@ -98,7 +98,7 @@ echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
-echo "asdasdas" > ${packagecode}-${platform}
+echo "asdasdas" >> ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
@@ -118,6 +118,8 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
  
+
+
     if (diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")){
 
     sh "cat ${packagecode}-${platform}-diff"
@@ -146,12 +148,24 @@ void fetchartifact( String component){
 
 void diffchecker(String filename , String filepath1 , String filepath2){
 
-sh """
+    sh (
+        script: '''
+        
+        diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
 
-set +e
-diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || exit 1
-
-"""
+        if [ $? -eq 0 ]; then 
+        
+            echo 1
+        
+        else
+        
+            echo 0
+        
+        fi
+        
+        ''',
+        returnStdout: true
+    ).trim()
 
 }
 
