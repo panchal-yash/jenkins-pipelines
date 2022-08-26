@@ -118,7 +118,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     popArtifactFile("${packagecode}-${platform}")
     sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
     checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-    diffchecker("${packagecode}-${platform}", "${packagecode}-${platform}", "${packagecode}-${platform}-previous")
+
     
     
 
@@ -145,11 +145,6 @@ void fetchartifact( String component){
  target: 'previous' 
 }
 
-void diffchecker(String filename , String filepath1 , String filepath2){
-
-def diff_check = sh(script: "diff $filepath1 $filepath2 > $filename-diff 2>&1", returnStatus:true )
-
-}
 
 List all_nodes = node_setups.keySet().collect()
 
