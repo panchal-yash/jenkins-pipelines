@@ -36,7 +36,7 @@ void checkArtifactFile(String FILE_NAME) {
                 if [ -z "${exists}" ]; then
                     echo "0"
                 else
-                    exit "1"
+                    echo "1"
                 fi        
             """, returnStdout: true)
     }
