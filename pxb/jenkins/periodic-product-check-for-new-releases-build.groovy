@@ -138,7 +138,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
         checkArtifactFile("${packagecode}-${platform}")
 
-        if( ${check_status} ){
+        if( "${check_status}" ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}")
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
