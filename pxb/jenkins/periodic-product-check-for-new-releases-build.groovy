@@ -42,9 +42,22 @@ setup_rhel = { ->
         sudo yum reinstall -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm || sudo yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
         sudo percona-release show
         sudo yum install unzip -y
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
+
+        if [-f /usr/local/bin/aws ]; then
+        
+            echo "AWS CLI already exists"
+
+        else
+
+            echo "Installing aws cli"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            
+        fi
+
+
+
 
     '''
 }
