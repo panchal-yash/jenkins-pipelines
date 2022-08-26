@@ -103,7 +103,7 @@ fi
 
 sudo percona-release show
 
-sudo percona-release enable ${packagecode} ${reponame}
+sudo percona-release enable-only ${packagecode} ${reponame}
 
 yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
 
