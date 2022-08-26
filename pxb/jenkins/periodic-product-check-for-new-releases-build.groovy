@@ -147,9 +147,7 @@ void fetchartifact( String component){
 }
 
 void diffchecker(String filename , String filepath1 , String filepath2){
-
-    sh (
-        script: """
+        sh """
         
         diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1
 
