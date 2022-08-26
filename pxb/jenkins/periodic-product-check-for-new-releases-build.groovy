@@ -32,7 +32,7 @@ void checkArtifactFile(String FILE_NAME) {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
     sh(script: """
             S3_PATH=s3://product-release-check
-            exists=\$(aws s3 ls $S3_PATH/${FILE_NAME})
+            exists=\$(aws s3 ls ${S3_PATH}/${FILE_NAME})
             if [ -z "$exists" ]; then
                 echo "0"
             else
