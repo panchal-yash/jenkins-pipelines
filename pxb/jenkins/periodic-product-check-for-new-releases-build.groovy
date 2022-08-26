@@ -152,7 +152,7 @@ sh """
 
 diff $filepath1 $filepath2 > $filename-diff 2>&1 
 
-\$?
+echo \$?
 
 
 """
