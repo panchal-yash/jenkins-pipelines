@@ -121,7 +121,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     def diff_check = sh(script: "diff $filepath1 $filepath2 > $filename-diff 2>&1", returnStatus:true )
 
-    if (${diff_check})
+    if (${diff_check}){
 
         sh "cat ${packagecode}-${platform}-diff"
         pushArtifactFile("${packagecode}-${platform}")
