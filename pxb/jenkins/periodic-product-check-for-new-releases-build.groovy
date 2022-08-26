@@ -8,9 +8,11 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
 void pushArtifactFile(String FILE_NAME) {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
         sh """
+            
             S3_PATH=s3://product-release-check
             aws s3 ls \$S3_PATH/${FILE_NAME} || :
             aws s3 cp --quiet ${FILE_NAME} \$S3_PATH/${FILE_NAME} || :
+
         """
     }
 }
@@ -18,11 +20,31 @@ void pushArtifactFile(String FILE_NAME) {
 void popArtifactFile(String FILE_NAME) {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
         sh """
+
             S3_PATH=s3://product-release-check
             aws s3 cp --quiet \$S3_PATH/${FILE_NAME} ${FILE_NAME} || :
+        
         """
     }
 }
+
+void checkArtifactFile(String FILE_NAME) {
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        sh(script: """
+
+            S3_PATH=s3://product-release-check
+            exists=$(aws s3 ls \$S3_PATH/${FILE_NAME})
+
+            if [ -z "$exists" ]; then
+                echo "0"
+            else
+                echo "1"
+            fi        
+
+        """, returnStatus: true)
+    }
+}
+
 
 setup_debian = { ->
     sh '''
@@ -93,7 +115,7 @@ sudo percona-release show
 
 sudo percona-release enable ${packagecode} ${reponame}
 
-yum --showduplicates list | grep ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
 
 echo "-----------${packagecode}-${platform}-releases-----------"
 
@@ -115,28 +137,35 @@ cat ${packagecode}-${platform}-nos
 
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
-    popArtifactFile("${packagecode}-${platform}")
-    sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
-    checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
-    
-    
+    if(checkArtifactFile("${packagecode}-${platform}")){
 
-    if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
+        popArtifactFile("${packagecode}-${platform}")
+        sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
+        checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
-        def diff_out = sh(script: "cat ${packagecode}-${platform}-diff", returnStdout: true)
+        if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
+
+            def diff_out = sh(script: "cat ${packagecode}-${platform}-diff", returnStdout: true)
+            pushArtifactFile("${packagecode}-${platform}")
+            slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases: ${diff_out}. we need to run jenkins job ${BUILD_URL}"
+
+        }
+        else {
+
+            echo "There is no difference"
+
+        }
+
+    }
+    else{
+
+        checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         pushArtifactFile("${packagecode}-${platform}")
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases: ${diff_out}. we need to run jenkins job ${BUILD_URL}"
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform} package"
 
-    }
-    else {
-
-        echo "There is no difference"
-
-    }
+    }   
  
- 
-
 }
 
 void fetchartifact( String component){
@@ -220,6 +249,9 @@ pipeline {
 
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-7")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "centos-7")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-7")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "centos-7")
 
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
