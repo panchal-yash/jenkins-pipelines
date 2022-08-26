@@ -138,7 +138,8 @@ cat ${packagecode}-${platform}-nos
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
     echo "1"
-    if( checkArtifactFile("${packagecode}-${platform}") ){
+    def check = checkArtifactFile("${packagecode}-${platform}")
+        if( ${check} ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}")
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
