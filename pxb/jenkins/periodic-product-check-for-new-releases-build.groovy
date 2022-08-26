@@ -33,7 +33,7 @@ void checkArtifactFile(String FILE_NAME) {
             
             sh """
                 S3_PATH=s3://product-release-check
-                exists=$(aws s3 ls \$S3_PATH/${FILE_NAME})
+                exists=\$(aws s3 ls \$S3_PATH/${FILE_NAME})
                 if [ -z "$exists" ]; then
                     echo "0"
                 else
