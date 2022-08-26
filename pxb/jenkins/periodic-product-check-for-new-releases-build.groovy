@@ -99,7 +99,7 @@ echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
-echo "asdasdas" > ${packagecode}-${platform}
+#echo "asdasdas" > ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
@@ -150,7 +150,9 @@ void diffchecker(String filename , String filepath1 , String filepath2){
 sh """
 
 
-diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 || echo 1
+diff ${filepath1} ${filepath2} > ${filename}-diff 2>&1 
+
+$?
 
 
 """
