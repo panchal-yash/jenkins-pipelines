@@ -126,7 +126,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
         sh "cat ${packagecode}-${platform}-diff"
         pushArtifactFile("${packagecode}-${platform}")
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases we need to run jenkins job ${BUILD_URL}"
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases cat ${packagecode}-${platform}-diff we need to run jenkins job ${BUILD_URL}"
 
     }
     else {
