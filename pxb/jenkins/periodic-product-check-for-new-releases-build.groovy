@@ -99,7 +99,7 @@ echo "-----------${packagecode}-${platform}-releases-----------"
 
 cat ${packagecode}-${platform}
 
-echo "asdasdas" >> ${packagecode}-${platform}
+#echo "asdasdas" >> ${packagecode}-${platform}
 
 cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
 
@@ -124,9 +124,9 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
 
-        sh "cat ${packagecode}-${platform}-diff"
+        def diff_out = sh(script: "cat ${packagecode}-${platform}-diff", returnStdout: true)
         pushArtifactFile("${packagecode}-${platform}")
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases cat ${packagecode}-${platform}-diff we need to run jenkins job ${BUILD_URL}"
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases: ${diff_out}. we need to run jenkins job ${BUILD_URL}"
 
     }
     else {
