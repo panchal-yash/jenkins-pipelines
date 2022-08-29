@@ -137,9 +137,13 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
 
         
-        if( "${platform}" -eq "centos-7" || "${platform}" -eq "centos-8" )
-        checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+        if( "${platform}" -eq "centos-7" || "${platform}" -eq "centos-8" ){
+            checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
+        }
+        else{
+            echo "Ubuntu Selected"   
+        }
 
 
 
