@@ -349,7 +349,7 @@ pipeline {
                             popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "debian-11")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-11")
+                            //popcheckandpush("ps-56","percona-server-server" , "testing", "debian-11")
 
 
                         }
