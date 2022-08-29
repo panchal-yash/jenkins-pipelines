@@ -205,7 +205,21 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
     }
     else{
         echo "there"
-        checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" || "${platform}" == "al-2" ){
+            echo "RHEL Selected"
+            checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+
+        }
+        else if("${platform}" == "debian-10" || "${platform}" == "debian-11"){
+            echo "Debian Selected"   
+            checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+        }
+
+        else {
+            echo "Another OS"
+        }
+
+        //checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         pushArtifactFile("${packagecode}-${platform}")
         slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform} package"
 
