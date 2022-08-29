@@ -129,13 +129,19 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     echo "1"
 
-        checkArtifactFile("${packagecode}-${platform}")
+    checkArtifactFile("${packagecode}-${platform}")
 
-        if( "${exists}" > 1 ){
+    if( "${exists}" > 1 ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}")
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
+
+        
+        if( "${platform}" -eq "centos-7" || "${platform}" -eq "centos-8" )
         checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
+
+
+
 
         if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
 
@@ -239,6 +245,15 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-7")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "centos-7")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-7")
+
+                        }
+                        else if (node_to_test.contains("min-centos-8-x64")){
+                            
+                            popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-8")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-8")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "centos-8")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-8")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "centos-8")
 
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
