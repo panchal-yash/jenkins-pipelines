@@ -305,6 +305,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-7")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-7")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "centos-7")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "centos-7")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "centos-7")
 
                         }
                         else if (node_to_test.contains("min-centos-8-x64")){
@@ -314,6 +316,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-8")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "centos-8")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "centos-8")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "centos-8")
 
                         }
                         else if (node_to_test.contains("min-ol-8-x64")){
@@ -323,6 +327,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "ol-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "ol-8")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "ol-8")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "ol-8")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "ol-8")
 
                         }
                         else if (node_to_test.contains("min-amazon-2-x64")){
@@ -332,6 +338,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "al-2")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "al-2")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "al-2")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "al-2")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "al-2")
 
                         }
                         else if (node_to_test.contains("min-buster-x64")){
@@ -341,6 +349,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "debian-10")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/stable" , "testing", "debian-10")
 
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
@@ -351,7 +361,7 @@ pipeline {
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "debian-11")
                             popcheckandpush("pxc-80","percona-xtradb-cluster-server/stable" , "testing", "debian-11")
-                            
+
                         }
 
                     }
