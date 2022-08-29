@@ -138,7 +138,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
 
         
-        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" ){
+        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" || "${platform}" == "al-2" ){
 
             checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
@@ -271,8 +271,14 @@ pipeline {
                             popcheckandpush("ps-57","percona-server-server" , "testing", "ol-8")
 
                         }
-                        else if (node_to_test.contains("min-bullseye-x64")){
-                            bullseye()
+                        else if (node_to_test.contains("min-amazon-2-x64")){
+
+                            popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "al-2")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "al-2")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "al-2")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "al-2")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "al-2")
+
                         }
                         else if (node_to_test.contains("min-buster-x64")){
                             buster()
