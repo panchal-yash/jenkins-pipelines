@@ -141,7 +141,9 @@ sudo percona-release show
 
 sudo percona-release enable-only ${packagecode} ${reponame}
 
-yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+sudo apt-get update
+
+sudo apt -a list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
 
 echo "-----------${packagecode}-${platform}-releases-----------"
 
