@@ -326,6 +326,16 @@ pipeline {
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
 
                         }
+                        else if (node_to_test.contains("min-bullseye-x64")){
+                        
+                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "debian-11")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "debian-11")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "debian-11")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-11")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
+
+                        }
+
                     }
                 }
                 
