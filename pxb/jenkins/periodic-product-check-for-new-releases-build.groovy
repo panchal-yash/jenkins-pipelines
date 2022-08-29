@@ -84,7 +84,7 @@ node_setups = [
     "min-ol-8-x64": setup_rhel,
     "min-bionic-x64": setup_debian,
     "min-focal-x64": setup_debian,
-    "min-amazon-2-x64": setup_rhel,
+  //  "min-amazon-2-x64": setup_rhel,
 ]
 
 void setup_package_tests() {
@@ -331,7 +331,7 @@ pipeline {
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "ol-8")
 
                         }
-                        else if (node_to_test.contains("min-amazon-2-x64")){
+                        /*else if (node_to_test.contains("min-amazon-2-x64")){
 
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "al-2")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "al-2")
@@ -341,7 +341,7 @@ pipeline {
                             popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "al-2")
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "al-2")
 
-                        }
+                        }*/
                         else if (node_to_test.contains("min-buster-x64")){
                         
                             popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "debian-10")

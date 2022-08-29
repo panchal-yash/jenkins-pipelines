@@ -23,7 +23,7 @@ List all_nodes = [
     "min-ol-8-x64",
     "min-bionic-x64",
     "min-focal-x64",
-    "min-amazon-2-x64",
+  //  "min-amazon-2-x64",
 ]
 
 
@@ -82,12 +82,13 @@ pipeline {
                         runNodeBuild("min-focal-x64")
                     }
                 }
-
+/*
                 stage("Amazon Linux") {
                      steps {
                         runNodeBuild("min-amazon-2-x64")
                     }
                 }
+*/                
             }
         }
     }
