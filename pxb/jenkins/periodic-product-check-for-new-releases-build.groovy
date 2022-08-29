@@ -350,7 +350,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "debian-11")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster-80" , "testing", "debian-11")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/stable" , "testing", "debian-11")
+                            
                         }
 
                     }
