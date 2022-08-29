@@ -126,6 +126,40 @@ cat ${packagecode}-${platform}-nos
 
 }
 
+void checkdebpackage(String packagecode , String packagename , String reponame, String platform){
+sh """
+
+set +x 
+
+if [ -f "/etc/apt/sources.list.d/percona-prel-release.list" ]; then
+    sudo rm -f /etc/apt/sources.list.d/percona-prel-release.list
+else 
+    echo "/etc/apt/sources.list.d/percona-prel-release.list does not exist."
+fi
+
+sudo percona-release show
+
+sudo percona-release enable-only ${packagecode} ${reponame}
+
+yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+
+echo "-----------${packagecode}-${platform}-releases-----------"
+
+cat ${packagecode}-${platform}
+
+#echo "asdasdas" >> ${packagecode}-${platform}
+
+cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
+
+echo "-----------${packagecode}-${platform}-releases-count-----------"
+
+cat ${packagecode}-${platform}-nos
+
+
+"""
+
+}
+
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
     echo "1"
@@ -144,7 +178,8 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
         }
         else{
-            echo "Ubuntu Selected"   
+            echo "Debain Selected"   
+            checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         }
 
 
@@ -281,7 +316,13 @@ pipeline {
 
                         }
                         else if (node_to_test.contains("min-buster-x64")){
-                            buster()
+                        
+                            popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "debian-10")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "debian-10")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "debian-10")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
+
                         }
                     }
                 }
