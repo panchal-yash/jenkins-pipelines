@@ -289,8 +289,8 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-7")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-7")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-7")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-7")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-7")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-7")
 
                         }
                         else if (node_to_test.contains("min-centos-8-x64")){
@@ -298,8 +298,8 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "centos-8")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "centos-8")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-8")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-8")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "centos-8")
 
                         }
                         else if (node_to_test.contains("min-ol-8-x64")){
@@ -307,8 +307,8 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "ol-8")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "ol-8")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "ol-8")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "ol-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "ol-8")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "ol-8")
 
                         }
                         else if (node_to_test.contains("min-amazon-2-x64")){
@@ -316,8 +316,8 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "al-2")
                             popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "al-2")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "al-2")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "al-2")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "al-2")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "al-2")
 
                         }
                         else if (node_to_test.contains("min-buster-x64")){
@@ -325,8 +325,8 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "debian-10")
                             popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "debian-10")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-10")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
 
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
@@ -334,8 +334,9 @@ pipeline {
                             popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "debian-11")
                             popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "debian-11")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-11")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "debian-11")
+
 
                         }
 
