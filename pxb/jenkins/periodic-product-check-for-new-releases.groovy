@@ -19,6 +19,7 @@ List all_nodes = [
     "min-buster-x64",
     "min-bullseye-x64",
     "min-centos-7-x64",
+    "min-centos-8-x64",    
     "min-ol-8-x64",
     "min-bionic-x64",
     "min-focal-x64",
@@ -55,6 +56,12 @@ pipeline {
                 stage("Centos 7") {
                     steps {
                         runNodeBuild("min-centos-7-x64")
+                    }
+                }
+
+                stage("Centos 8") {
+                    steps {
+                        runNodeBuild("min-centos-8-x64")
                     }
                 }
 

@@ -80,6 +80,7 @@ node_setups = [
     "min-bullseye-x64": setup_debian,
     "min-buster-x64": setup_debian,
     "min-centos-7-x64": setup_rhel,
+    "min-centos-8-x64": setup_rhel,
     "min-ol-8-x64": setup_rhel,
     "min-bionic-x64": setup_debian,
     "min-focal-x64": setup_debian,
@@ -137,7 +138,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
         sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
 
         
-        if( "${platform}" -eq "centos-7" || "${platform}" -eq "centos-8" ){
+        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" ){
             checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
         }
