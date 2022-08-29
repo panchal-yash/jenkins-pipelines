@@ -319,8 +319,8 @@ pipeline {
                         }
                         else if (node_to_test.contains("min-buster-x64")){
                         
-                            popcheckandpush("pxb-24","percona-xtrabackup-24.x86_64" , "testing", "debian-10")
-                            popcheckandpush("pxb-80","percona-xtrabackup-80.x86_64" , "testing", "debian-10")
+                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "debian-10")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "debian-10")
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
