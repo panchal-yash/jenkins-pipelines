@@ -3,6 +3,8 @@
     project-type: pipeline
     description: |
         Do not edit this job through the web!
+    triggers:
+        - timed: "*/15 * * * *"
     properties:
         - build-discarder:
             artifact-days-to-keep: -1
