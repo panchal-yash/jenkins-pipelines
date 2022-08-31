@@ -29,6 +29,11 @@ List all_nodes = [
 
 pipeline {
     agent none
+    triggers {
+        cron('*/15 * * * *')
+    }
+
+
     stages {
         stage("Prepare") {
             steps {
