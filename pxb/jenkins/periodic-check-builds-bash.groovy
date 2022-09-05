@@ -4,6 +4,8 @@ void checks(){
 
     #!/bin/bash
 
+    set -x
+
     ##--------------------------------------RHEL------------------------------------------------
 
     PXC_RHEL=("pxc-80" "pxc-56" "pxc-57")
@@ -127,17 +129,7 @@ void checks(){
 
     driver_rhel(){
         declare -n PRODUCT=$1
-        declare -n REPO_VERSION=$2
-        declare -n COMPONENT_NAME=$3
-        declare -n REPOSITORY_NAME=$4
-
-        echo ${PRODUCT[@]}
-        echo ${REPO_VERSION[@]}
-        echo ${COMPONENT_NAME[@]}
-        echo ${REPOSITORY_NAME[@]}
-
-        for h in ${REPOSITORY_NAME[@]}
-        do
+        declare -n REPO_VERSION=$2Rashid
             for i in ${PRODUCT[@]} 
             do
 

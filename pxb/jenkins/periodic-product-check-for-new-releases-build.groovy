@@ -316,8 +316,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "centos-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "centos-8")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "centos-8")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "centos-8")
-                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "centos-8")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-full" , "testing", "centos-8")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-full" , "testing", "centos-8")
 
                         }
                         else if (node_to_test.contains("min-ol-8-x64")){
@@ -327,8 +327,8 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "ol-8")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "ol-8")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "ol-8")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster.x86" , "testing", "ol-8")
-                            popcheckandpush("pxc-57","percona-xtradb-cluster-57.x86" , "testing", "ol-8")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-full" , "testing", "ol-8")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-full" , "testing", "ol-8")
 
                         }
 
