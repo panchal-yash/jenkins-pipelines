@@ -350,7 +350,7 @@ pipeline {
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("ps-56","percona-server-server" , "testing", "debian-10")
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "debian-10")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/stable" , "testing", "debian-10")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "debian-10")
 
                         }
                         else if (node_to_test.contains("min-bullseye-x64")){
@@ -360,7 +360,7 @@ pipeline {
                             popcheckandpush("ps-80","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("ps-57","percona-server-server" , "testing", "debian-11")
                             popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "debian-11")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/stable" , "testing", "debian-11")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "debian-11")
 
                         }
 
