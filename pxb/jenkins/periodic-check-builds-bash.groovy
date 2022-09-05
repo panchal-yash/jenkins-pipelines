@@ -170,14 +170,6 @@ List all_nodes = node_setups.keySet().collect()
 pipeline {
     agent { label params.node_to_test }
 
-    environment{
-        
-
-    }
-
-
-
-
     options {
         skipDefaultCheckout()
     }
