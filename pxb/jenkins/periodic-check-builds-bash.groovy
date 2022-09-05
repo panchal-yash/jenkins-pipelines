@@ -1,4 +1,8 @@
 
+
+
+
+
 void checks(){
     sh '''
 
@@ -380,6 +384,19 @@ List all_nodes = node_setups.keySet().collect()
 pipeline {
     agent { label params.node_to_test }
 
+    environment{
+        
+        PXC_RHEL = "pxc-80,pxc-56,pxc-57"
+        PXC_RHEL_repo_version = '2,7,7.8,7Server,8,8.0,8.2,8Server'
+      //  PXC_RHEL_component_name=("percona-xtradb-cluster-full")
+      //  PXC_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
+
+
+    }
+
+
+
+
     options {
         skipDefaultCheckout()
     }
@@ -425,7 +442,9 @@ pipeline {
 
             stage("OS based checks") {
                 steps{
-                        checks()
+                       // checks()
+                        echo ${PXC_RHEL[1]}
+
                     }              
             }
 
