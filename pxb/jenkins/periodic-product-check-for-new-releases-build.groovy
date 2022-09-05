@@ -106,19 +106,19 @@ sudo percona-release show
 
 sudo percona-release enable-only ${packagecode} ${reponame}
 
-yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+yum --showduplicates list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}-${reponame}
 
 echo "-----------${packagecode}-${platform}-releases-----------"
 
-cat ${packagecode}-${platform}
+cat ${packagecode}-${platform}-${reponame}
 
-#echo "asdasdas" >> ${packagecode}-${platform}
+#echo "asdasdas" >> ${packagecode}-${platform}-${reponame}
 
-cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
+cat ${packagecode}-${platform}-${reponame} | wc -l > ${packagecode}-${platform}-${reponame}-nos 
 
-echo "-----------${packagecode}-${platform}-releases-count-----------"
+echo "-----------${packagecode}-${platform}-${reponame}-releases-count-----------"
 
-cat ${packagecode}-${platform}-nos
+cat ${packagecode}-${platform}-${reponame}-nos
 
 
 
@@ -143,19 +143,19 @@ sudo percona-release enable-only ${packagecode} ${reponame}
 
 sudo apt-get update
 
-sudo apt -a list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}
+sudo apt -a list | grep -i ${packagename} | awk '{ print\$2}' > ${packagecode}-${platform}-${reponame}
 
-echo "-----------${packagecode}-${platform}-releases-----------"
+echo "-----------${packagecode}-${platform}-${reponame}-releases-----------"
 
-cat ${packagecode}-${platform}
+cat ${packagecode}-${platform}-${reponame}
 
-#echo "asdasdas" >> ${packagecode}-${platform}
+#echo "asdasdas" >> ${packagecode}-${platform}-${reponame}
 
-cat ${packagecode}-${platform} | wc -l > ${packagecode}-${platform}-nos 
+cat ${packagecode}-${platform}-${reponame} | wc -l > ${packagecode}-${platform}-${reponame}-nos 
 
-echo "-----------${packagecode}-${platform}-releases-count-----------"
+echo "-----------${packagecode}-${platform}-${reponame}-releases-count-----------"
 
-cat ${packagecode}-${platform}-nos
+cat ${packagecode}-${platform}-${reponame}-nos
 
 
 """
@@ -166,12 +166,12 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     echo "1"
 
-    checkArtifactFile("${packagecode}-${platform}")
+    checkArtifactFile("${packagecode}-${platform}-${reponame}")
 
     if( "${exists}" > 1 ){
         echo "Here"
-        popArtifactFile("${packagecode}-${platform}")
-        sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
+        popArtifactFile("${packagecode}-${platform}-${reponame}-${reponame}")
+        sh "mv ${packagecode}-${platform}-${reponame} ${packagecode}-${platform}-${reponame}-previous"
 
         
         if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" || "${platform}" == "al-2" ){
@@ -189,10 +189,10 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
         }
 
 
-        if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
+        if ( sh(script: "diff ${packagecode}-${platform}-${reponame} ${packagecode}-${platform}-${reponame}-previous > ${packagecode}-${platform}-${reponame}-diff 2>&1", returnStatus:true ) ){
 
-            def diff_out = sh(script: "cat ${packagecode}-${platform}-diff", returnStdout: true)
-            pushArtifactFile("${packagecode}-${platform}")
+            def diff_out = sh(script: "cat ${packagecode}-${platform}-${reponame}-diff", returnStdout: true)
+            pushArtifactFile("${packagecode}-${platform}-${reponame}")
             slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Found difference in releases: ${diff_out}. we need to run jenkins job ${BUILD_URL}"
 
         }
@@ -210,7 +210,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
             checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
         }
-        else if("${platform}" == "debian-10" || "${platform}" == "debian-11"){
+        else if("${platform}" == "debian-10" || "${platform}" == "debian-11" || "${platform}" == "focal" || "${platform}" == "bionic" ){
             echo "Debian Selected"   
             checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         }
@@ -220,8 +220,8 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
         }
 
         //checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-        pushArtifactFile("${packagecode}-${platform}")
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform} package"
+        pushArtifactFile("${packagecode}-${platform}-${reponame}")
+        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform}-${reponame} package"
 
     }   
  
@@ -357,25 +357,25 @@ pipeline {
                         
                         else if (node_to_test.contains("min-focal-x64")){
                         
-                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "focal-10")
-                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "focal-10")
-                            popcheckandpush("ps-80","percona-server-server" , "testing", "focal-10")
-                            popcheckandpush("ps-57","percona-server-server" , "testing", "focal-10")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "focal-10")
-                            popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "focal-10")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "focal-10")
+                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "focal")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "focal")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "focal")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "focal")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "focal")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "focal")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "focal")
 
                         }
 
                         else if (node_to_test.contains("min-bionic-x64")){
                         
-                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "bionic-10")
-                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "bionic-10")
-                            popcheckandpush("ps-80","percona-server-server" , "testing", "bionic-10")
-                            popcheckandpush("ps-57","percona-server-server" , "testing", "bionic-10")
-                            popcheckandpush("ps-56","percona-server-server" , "testing", "bionic-10")
-                            popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "bionic-10")
-                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "bionic-10")
+                            popcheckandpush("pxb-24","percona-xtrabackup-24" , "testing", "bionic")
+                            popcheckandpush("pxb-80","percona-xtrabackup-80" , "testing", "bionic")
+                            popcheckandpush("ps-80","percona-server-server" , "testing", "bionic")
+                            popcheckandpush("ps-57","percona-server-server" , "testing", "bionic")
+                            popcheckandpush("ps-56","percona-server-server" , "testing", "bionic")
+                            popcheckandpush("pxc-57","percona-xtradb-cluster-57" , "testing", "bionic")
+                            popcheckandpush("pxc-80","percona-xtradb-cluster-server/" , "testing", "bionic")
 
                         }                        
 
