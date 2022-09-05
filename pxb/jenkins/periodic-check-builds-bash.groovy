@@ -291,8 +291,8 @@ setup_rhel = { ->
 
 
 node_setups = [
-//    "min-buster-x64": setup_debian,
-   "min-centos-7-x64": setup_rhel,
+    "min-buster-x64": setup_debian,
+//   "min-centos-7-x64": setup_rhel,
 ]
 
 void setup_package_tests() {
