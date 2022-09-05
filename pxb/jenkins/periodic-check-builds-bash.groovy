@@ -443,7 +443,7 @@ pipeline {
             stage("OS based checks") {
                 steps{
                        // checks()
-                        echo ${PXC_RHEL[1]}
+                        "echo ${PXC_RHEL[1]}"
 
                     }              
             }
