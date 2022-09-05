@@ -164,7 +164,7 @@ pipeline {
     agent { label params.node_to_test }
 
     environment{
-        def letters = ['a', 'b', 'c', 'd']
+        letters = 'a, b, c, d'
 
 //        PXC_RHEL = "pxc-80,pxc-56,'pxc-57"
 
@@ -219,10 +219,10 @@ pipeline {
 
             stage("OS based checks") {
                 steps{
-                       // checks()
-                     
-                        echo "${letters[1]}"
-
+                       // checks()                     
+                        for (pod in letters.split(",")) {
+                            println("${pod}")
+                        }
                     }              
             }
 
