@@ -170,7 +170,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     if( "${exists}" > 1 ){
         echo "Here"
-        popArtifactFile("${packagecode}-${platform}-${reponame}-${reponame}")
+        popArtifactFile("${packagecode}-${platform}-${reponame}")
         sh "mv ${packagecode}-${platform}-${reponame} ${packagecode}-${platform}-${reponame}-previous"
 
         
@@ -179,7 +179,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
             checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
 
         }
-        else if("${platform}" == "debian-10" || "${platform}" == "debian-11"){
+        else if("${platform}" == "debian-10" || "${platform}" == "debian-11" || "${platform}" == "focal" || "${platform}" == "bionic"){
             echo "Debian Selected"   
             checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         }
