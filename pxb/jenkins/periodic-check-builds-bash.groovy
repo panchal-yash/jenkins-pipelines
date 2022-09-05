@@ -35,6 +35,12 @@ void checkArtifactFile(String FILE_NAME) {
     }
 }
 
+check = { ->
+    sh '''        
+            echo "HELLO THERE"
+    '''
+}
+
 
 setup_debian = { ->
     sh '''
@@ -63,6 +69,7 @@ setup_rhel = { ->
         fi
     '''
 }
+
 
 
 node_setups = [
@@ -164,10 +171,7 @@ pipeline {
     agent { label params.node_to_test }
 
     environment{
-        letters = 'a, b, c, d'
-
-//        PXC_RHEL = "pxc-80,pxc-56,'pxc-57"
-
+        
 
     }
 
@@ -220,13 +224,9 @@ pipeline {
             stage("OS based checks") {
                 steps{
 
-                        script{
-                        // checks()                     
-                            for (pod in letters.split(",")) {
-                                println("${pod}")
-                            }
-                        }
-                    }              
+                        check
+
+                    }
             }
 
 
