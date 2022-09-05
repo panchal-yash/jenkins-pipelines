@@ -81,21 +81,21 @@ void checks(){
         declare -n REPOSITORY_NAME=$4
         declare -n COMPONENT_PATH=$5
 
-        echo ${PRODUCT[@]}
-        echo ${REPO_VERSION[@]}
-        echo ${COMPONENT_NAME[@]}
-        echo ${REPOSITORY_NAME[@]}
-        echo ${COMPONENT_PATH[@]}
+        echo \${PRODUCT[@]}
+        echo \${REPO_VERSION[@]}
+        echo \${COMPONENT_NAME[@]}
+        echo \${REPOSITORY_NAME[@]}
+        echo \${COMPONENT_PATH[@]}
 
-        for h in ${REPOSITORY_NAME[@]}
+        for h in \${REPOSITORY_NAME[@]}
         do
-            for i in ${PRODUCT[@]} 
+            for i in \${PRODUCT[@]} 
             do
-                for j in ${REPO_VERSION[@]} 
+                for j in \${REPO_VERSION[@]} 
                 do
-                    for k in ${COMPONENT_NAME[@]} 
+                    for k in \${COMPONENT_NAME[@]} 
                     do
-                        for l in ${COMPONENT_PATH[@]} 
+                        for l in \${COMPONENT_PATH[@]} 
                         do
                             check_new_release_deb $k $j $i $h $l
                         done
@@ -132,20 +132,20 @@ void checks(){
         declare -n COMPONENT_NAME=$3
         declare -n REPOSITORY_NAME=$4
 
-        echo ${PRODUCT[@]}
-        echo ${REPO_VERSION[@]}
-        echo ${COMPONENT_NAME[@]}
-        echo ${REPOSITORY_NAME[@]}
+        echo \${PRODUCT[@]}
+        echo \${REPO_VERSION[@]}
+        echo \${COMPONENT_NAME[@]}
+        echo \${REPOSITORY_NAME[@]}
 
-        for h in ${REPOSITORY_NAME[@]}
+        for h in \${REPOSITORY_NAME[@]}
         do
-            for i in ${PRODUCT[@]} 
+            for i in \${PRODUCT[@]} 
             do
 
-                for j in ${REPO_VERSION[@]} 
+                for j in \${REPO_VERSION[@]} 
                 do
 
-                    for k in ${COMPONENT_NAME[@]} 
+                    for k in \${COMPONENT_NAME[@]} 
                     do
 
                     check_new_release_rhel $k $j $i $h
@@ -162,7 +162,7 @@ void checks(){
         LIST=("PXC_RHEL" "PXB_24_RHEL" "PXB_80_RHEL")
         mkdir rhel
 
-        for a in ${LIST[@]}
+        for a in \${LIST[@]}
         do
 
         driver_rhel "$a" "${a}_repo_version" "${a}_component_name" "${a}_component_repository"
