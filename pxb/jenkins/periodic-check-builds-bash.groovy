@@ -219,9 +219,12 @@ pipeline {
 
             stage("OS based checks") {
                 steps{
-                       // checks()                     
-                        for (pod in letters.split(",")) {
-                            println("${pod}")
+
+                        script{
+                        // checks()                     
+                            for (pod in letters.split(",")) {
+                                println("${pod}")
+                            }
                         }
                     }              
             }
