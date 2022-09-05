@@ -1,6 +1,6 @@
 
-void checks() {
-    sh """
+void checks(){
+    sh '''
 
     #!/bin/bash
 
@@ -190,7 +190,7 @@ void checks() {
 
         LIST=("PXC_80_APT" "PXC_56_APT" "PXB_24_APT" "PXB_80_APT")
 
-        for a in \${LIST[@]}
+        for a in ${LIST[@]}
         do
 
         driver_deb "$a" "${a}_repo_version" "${a}_component_name" "${a}_component_repository" "${a}_component_path"
@@ -220,7 +220,7 @@ void checks() {
 
     check_deb
     check_rhel
-    """
+    '''
 }
 
 library changelog: false, identifier: 'lib@master', retriever: modernSCM([
