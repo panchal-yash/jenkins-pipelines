@@ -216,7 +216,7 @@ pipeline {
             stage("OS based checks") {
                 steps{
                         script{
-                          sh '''
+                          sh """
                             #!/bin/bash
 
                             set -x
@@ -341,7 +341,7 @@ pipeline {
 
                             done
 
-                            '''
+                            """
 
                         }
                     }
