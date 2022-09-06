@@ -266,7 +266,7 @@ pipeline {
                                                 else     
                                                     echo "File does not exist, need to add it to the list for pushing it"
                                                     echo "Adding the release-$subpath-$version-$repository-$component file to the list"
-                                                    echo "release-$subpath-$version-$repository-$component" >> Files_to_push
+                                                    echo "release-$subpath-$version-$repository-$component" >> Files_to_push                                                    
                                                 fi
 
                                             else
@@ -356,6 +356,15 @@ pipeline {
                                     check_deb
                                     check_rhel
 
+                                    files=$(cat Files_to_push)
+                                    
+                                    for i in $files
+                                    do
+                                        send_file_to_s3 $i product-release-check debian-bash
+                                        echo "Start the builds for $i"
+                                    
+                                    done
+                                    
                                     '''
 
                         }
