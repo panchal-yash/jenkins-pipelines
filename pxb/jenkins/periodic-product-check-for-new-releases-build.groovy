@@ -179,11 +179,10 @@ cat ${packagecode}-${platform}-${reponame}-nos
 
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
-    echo "1"
 
     checkArtifactFile("${packagecode}-${platform}-${reponame}")
 
-    echo "CHECKING THE VALUE FO EXIISTS: ${exists}"
+    echo "CHECKING THE VALUE FOR EXISTS file=${packagecode}-${platform}-${reponame}: ${exists}"
 
     if( "${exists}" > 1 ){
         echo "Here"
