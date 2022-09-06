@@ -250,11 +250,11 @@ pipeline {
 
                                                 cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
                                                 rm -f rhel/$subpath-$version-$repository-yum
-                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash)
+                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash/rhel)
 
                                                 if [ "$STAT" -ge 1 ]; then
                                                     echo "File exists checking for the duplicates"
-                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash
+                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash/rhel
 
                                                     diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
                                                     if [ $diff -ge 1 ]; then
