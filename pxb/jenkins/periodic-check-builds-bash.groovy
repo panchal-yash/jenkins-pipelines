@@ -205,7 +205,7 @@ pipeline {
                         script{
 
                             sh returnStdout: true, script: '''#!/bin/bash
-
+                                    set -xe
                                     ##--------------------------------------RHEL------------------------------------------------
 
                                     PXC_RHEL=("pxc-80" "pxc-56" "pxc-57")
