@@ -250,23 +250,23 @@ pipeline {
 
                                                 cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
                                                 rm -f rhel/$subpath-$version-$repository-yum
-                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash)
+                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash)
 
                                                 if [ "$STAT" -ge 1 ]; then
                                                     echo "File exists checking for the duplicates"
-                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash
+                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash
                                                     diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
                                                     if [ $diff -ge 1 ]; then
                                                         echo "Found difference"
                                                         echo "Adding the release-$subpath-$version-$repository-$component file to the list"
-                                                        echo "release-$subpath-$version-$repository-$component" >> Files_to_push
+                                                        echo "release-$subpath-$version-$repository-$component" >> Files_to_push_rhel
                                                     else
                                                         echo "No difference found"
                                                     fi
                                                 else     
                                                     echo "File does not exist, need to add it to the list for pushing it"
                                                     echo "Adding the release-$subpath-$version-$repository-$component file to the list"
-                                                    echo "release-$subpath-$version-$repository-$component" >> Files_to_push                                                    
+                                                    echo "release-$subpath-$version-$repository-$component" >> Files_to_push_rhel                                                    
                                                 fi
 
                                             else
@@ -353,15 +353,23 @@ pipeline {
                                     }
 
 
-                                    check_deb
+                                    #check_deb
                                     check_rhel
 
-                                    files=$(cat Files_to_push)
+                                    files_rhel=$(cat Files_to_push_rhel)
                                     
-                                    for i in $files
+                                    for i in $files_rhel
                                     do
-                                        send_file_to_s3 $i product-release-check debian-bash
-                                        echo "Start the builds for $i"
+                                        send_file_to_s3 rhel/$i product-release-check rhel-bash
+                                        echo "Start the builds for rhel/$i"
+                                    
+                                    done
+
+
+                                    for i in $files_deb
+                                    do
+                                        send_file_to_s3 deb/$i product-release-check debian-bash
+                                        echo "Start the builds for rhel/$i"
                                     
                                     done
                                     
