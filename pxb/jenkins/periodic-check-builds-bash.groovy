@@ -106,6 +106,7 @@ pipeline {
             stage("Run Script") {
                 steps{
                         script{
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 
                             sh returnStdout: true, script: '''#!/bin/bash
                                     set -xe
@@ -162,7 +163,32 @@ pipeline {
 
                                     ##-------------------------------------APT-----------------------------------------
 
+                                    check_file_on_s3(){
+                                        filename=$1
+                                        bucket_name=$2
+                                        subfolder_name=$3
+                                        S3_PATH=s3://$2/$3/$1
+                                    
+                                        STATUS=$(aws s3 ls \$S3_PATH/${filename} | wc -l)
+                                        echo $STATUS
+                                    }
 
+                                    send_file_to_s3(){
+                                        filename=$1
+                                        bucket_name=$2
+                                        subfolder_name=$3
+                                        S3_PATH=s3://$2/$3/$1
+                                        aws s3 cp --quiet ${filename} \$S3_PATH/${filename} || :
+                                    }
+
+                                    fetch_file_from_s3(){
+                                        mkdir -p fetched
+                                        filename=$1
+                                        bucket_name=$2
+                                        subfolder_name=$3
+                                        S3_PATH=s3://$2/$3/$1
+                                        aws s3 cp --quiet \$S3_PATH/${filename} fetched/${filename} || :
+                                    }
 
                                     check_new_release_deb(){
 
@@ -214,8 +240,6 @@ pipeline {
 
                                     ##-------------------------------------RHEL-----------------------------------------
 
-
-
                                     check_new_release_rhel(){
 
                                             component=$1
@@ -223,10 +247,33 @@ pipeline {
                                             version=$3
                                             repository=$4
 
-                                            lftp -e "cls -1 > rhel/$subpath-$version-$repository-yum; exit" "https://repo.percona.com/$version/yum/$repository/$subpath/RPMS/x86_64/"
-                                        
+                                            lftp -e "cls -1 > rhel/$subpath-$version-$repository-yum; exit" "https://repo.percona.com/$version/yum/$repository/$subpath/RPMS/x86_64/"                                        
                                             cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
                                             rm -f rhel/$subpath-$version-$repository-yum
+
+
+                                            STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash)
+
+                                            if [ "$STAT" -ge 1 ] then
+                                                echo "File exists checking for the duplicates"
+                                                fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash
+                                                diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
+                                                if [ $diff -ge 1] then
+                                                    echo "Found difference"
+                                                    echo "Adding the release-$subpath-$version-$repository-$component file to the list"
+                                                    echo "release-$subpath-$version-$repository-$component" >> Files_to_push
+                                                else
+                                                    echo "No difference found"
+                                                fi
+                                            else     
+                                                echo "File does not exist, need to add it to the list for pushing it"
+                                                echo "Adding the release-$subpath-$version-$repository-$component file to the list"
+                                                echo "release-$subpath-$version-$repository-$component" >> Files_to_push
+                                            fi
+
+
+
+
 
                                     }
 
@@ -308,7 +355,7 @@ pipeline {
 
                                     '''
 
-
+                        }
                         }
                     }
             }
