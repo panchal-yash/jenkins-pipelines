@@ -322,9 +322,9 @@ pipeline {
 
                                         done
 
-                                        du -ksh rhel/* | awk \'{ print$2 }\' | sort > a-rhel
-                                        du -ksh rhel/* | grep "^0" | awk \'{ print$2 }\' | sort > b-rhel
-                                        diff a-rhel b-rhel | grep "<" | awk \'{print$2}\' > diffed-rhel
+                                      #  du -ksh rhel/* | awk \'{ print$2 }\' | sort > a-rhel
+                                      #  du -ksh rhel/* | grep "^0" | awk \'{ print$2 }\' | sort > b-rhel
+                                      #  diff a-rhel b-rhel | grep "<" | awk \'{print$2}\' > diffed-rhel
                                     }
                                     #-------------------------------------------RHEL-----------------------------------------------
 
@@ -341,9 +341,9 @@ pipeline {
 
                                         done
 
-                                        du -ksh deb/* | awk \'{ print$2 }\' | sort > a-deb
-                                        du -ksh deb/* | grep "^0" | awk \'{ print$2 }\' | sort > b-deb
-                                        diff a-deb b-deb | grep "<" | awk \'{print$2}\' > diffed-deb
+                                        # du -ksh deb/* | awk \'{ print$2 }\' | sort > a-deb
+                                        # du -ksh deb/* | grep "^0" | awk \'{ print$2 }\' | sort > b-deb
+                                        # diff a-deb b-deb | grep "<" | awk \'{print$2}\' > diffed-deb
 
                                     #-------------------------------------------APT-----------------------------------------------
 
