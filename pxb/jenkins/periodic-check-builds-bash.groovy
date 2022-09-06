@@ -157,7 +157,7 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
 pipeline {
     agent { 
-         label 'docker'
+         label 'min-bullseye-x64'
       }
 
     options {
