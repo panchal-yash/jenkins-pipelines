@@ -163,7 +163,7 @@ pipeline {
                                         subfolder_name=$3
                                         S3_PATH=s3://$2/$3/$1
                                     
-                                        STATUS=$(aws s3 ls \$S3_PATH/${filename} | wc -l)
+                                        STATUS=$(aws s3 ls \$S3_PATH | wc -l)
                                         echo $STATUS
                                     }
 
@@ -172,7 +172,7 @@ pipeline {
                                         bucket_name=$2
                                         subfolder_name=$3
                                         S3_PATH=s3://$2/$3/$1
-                                        aws s3 cp --quiet ${filename} \$S3_PATH/${filename} || :
+                                        aws s3 cp --quiet ${filename} \$S3_PATH || :
                                     }
 
                                     fetch_file_from_s3(){
@@ -181,7 +181,7 @@ pipeline {
                                         bucket_name=$2
                                         subfolder_name=$3
                                         S3_PATH=s3://$2/$3/$1
-                                        aws s3 cp --quiet \$S3_PATH/${filename} fetched/${filename} || :
+                                        aws s3 cp --quiet \$S3_PATH fetched/${filename} || :
                                     }
 
                                     check_new_release_deb(){
@@ -255,7 +255,7 @@ pipeline {
                                                 if [ "$STAT" -ge 1 ]; then
                                                     echo "File exists checking for the duplicates"
                                                     fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash
-                                                    
+
                                                     diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
                                                     if [ $diff -ge 1 ]; then
                                                         echo "Found difference"
@@ -361,7 +361,8 @@ pipeline {
                                     
                                     for i in $files_rhel
                                     do
-                                        send_file_to_s3 $i product-release-check rhel-bash
+                                        
+                                        send_file_to_s3 rhel/$i product-release-check rhel-bash
                                         echo "Start the builds for $i"
                                     
                                     done
@@ -369,7 +370,7 @@ pipeline {
 
                                     for i in $files_deb
                                     do
-                                        send_file_to_s3 $i product-release-check debian-bash
+                                        send_file_to_s3 deb/$i product-release-check debian-bash
                                         echo "Start the builds for $i"
                                     
                                     done
