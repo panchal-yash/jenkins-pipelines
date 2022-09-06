@@ -428,10 +428,10 @@ pipeline {
                                     }
 
 
-check_deb
-check_rhel
+                                    check_deb
+                                    check_rhel
 
-'''
+                                    '''
 
 
                         }
