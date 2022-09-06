@@ -56,7 +56,6 @@ setup_debian_aws = { ->
         sudo apt install gnupg2 lsb-release ./percona-release_latest.generic_all.deb -y
         sudo apt update -y
         sudo percona-release show
-        sudo yum install unzip -y
         echo "Installing aws cli"
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
