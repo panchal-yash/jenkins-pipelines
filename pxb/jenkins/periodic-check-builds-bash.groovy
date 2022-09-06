@@ -84,12 +84,6 @@ pipeline {
                 }
             }
 
-            stage(){
-                steps{
-
-                }
-            }
-
 
             stage("check os") {
                 steps {
