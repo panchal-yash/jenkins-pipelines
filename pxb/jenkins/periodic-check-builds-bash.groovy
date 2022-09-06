@@ -172,7 +172,7 @@ pipeline {
                                         bucket_name=$2
                                         subfolder_name=$3
                                         S3_PATH=s3://$2/$3/$1
-                                        aws s3 cp --quiet ${filename} \$S3_PATH || :
+                                        aws s3 cp ${filename} \$S3_PATH || :
                                     }
 
                                     fetch_file_from_s3(){
@@ -181,7 +181,7 @@ pipeline {
                                         bucket_name=$2
                                         subfolder_name=$3
                                         S3_PATH=s3://$2/$3/$1
-                                        aws s3 cp --quiet \$S3_PATH fetched/${filename} || :
+                                        aws s3 cp \$S3_PATH fetched/${filename} || :
                                     }
 
                                     check_new_release_deb(){
