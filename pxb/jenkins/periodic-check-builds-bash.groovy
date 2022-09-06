@@ -255,6 +255,7 @@ pipeline {
                                                 if [ "$STAT" -ge 1 ]; then
                                                     echo "File exists checking for the duplicates"
                                                     fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check rhel-bash
+                                                    
                                                     diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
                                                     if [ $diff -ge 1 ]; then
                                                         echo "Found difference"
@@ -360,16 +361,16 @@ pipeline {
                                     
                                     for i in $files_rhel
                                     do
-                                        send_file_to_s3 rhel/$i product-release-check rhel-bash
-                                        echo "Start the builds for rhel/$i"
+                                        send_file_to_s3 $i product-release-check rhel-bash
+                                        echo "Start the builds for $i"
                                     
                                     done
 
 
                                     for i in $files_deb
                                     do
-                                        send_file_to_s3 deb/$i product-release-check debian-bash
-                                        echo "Start the builds for rhel/$i"
+                                        send_file_to_s3 $i product-release-check debian-bash
+                                        echo "Start the builds for $i"
                                     
                                     done
                                     
