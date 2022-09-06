@@ -168,6 +168,8 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
     checkArtifactFile("${packagecode}-${platform}-${reponame}")
 
+    echo "CHECKING THE VALUE FO EXIISTS: ${exists}"
+
     if( "${exists}" > 1 ){
         echo "Here"
         popArtifactFile("${packagecode}-${platform}-${reponame}")
@@ -219,7 +221,6 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
             echo "Another OS"
         }
 
-        //checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
         pushArtifactFile("${packagecode}-${platform}-${reponame}")
         slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform}-${reponame} package"
 

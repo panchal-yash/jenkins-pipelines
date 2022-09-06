@@ -35,86 +35,11 @@ void checkArtifactFile(String FILE_NAME) {
     }
 }
 
-check = { ->
-    sh '''        
-            echo "HELLO THERE"
-    '''
-}
 
-
-setup_debian = { ->
-    sh '''
-        sudo apt-get update -y
-        sudo apt install curl unzip lftp -y 
-    '''
-}
-
-setup_rhel = { ->
-    sh '''
-
-
-        if [ -f "/usr/local/bin/aws" ]; then
-        
-            echo "AWS CLI already exists"
-
-        else
-
-            sudo yum update -y
-            sudo yum install unzip lftp -y
-            echo "Installing aws cli"
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-
-        fi
-    '''
-}
-
-
-
-void checkrhelpackage(String packagecode , String packagename , String reponame, String platform){
-sh """
-
-
-
-
-
-"""
-
-}
-
-void checkdebpackage(String packagecode , String packagename , String reponame, String platform){
-sh """
-
-"""
-}
 
 void popcheckandpush(String packagecode , String packagename , String reponame, String platform){
 
-    echo "1"
-
     checkArtifactFile("${packagecode}-${platform}")
-
-    if( "${exists}" > 1 ){
-        echo "Here"
-        popArtifactFile("${packagecode}-${platform}")
-        sh "mv ${packagecode}-${platform} ${packagecode}-${platform}-previous"
-
-        
-        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" || "${platform}" == "al-2" ){
-            echo "RHEL Selected"
-            checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-
-        }
-        else if("${platform}" == "debian-10" || "${platform}" == "debian-11"){
-            echo "Debian Selected"   
-            checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-        }
-
-        else {
-            echo "Another OS"
-        }
-
 
         if ( sh(script: "diff ${packagecode}-${platform} ${packagecode}-${platform}-previous > ${packagecode}-${platform}-diff 2>&1", returnStatus:true ) ){
 
@@ -129,29 +54,6 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 
         }
 
-    }
-    else{
-        echo "there"
-        if( "${platform}" == "centos-7" || "${platform}" == "centos-8" || "${platform}" == "ol-8" || "${platform}" == "al-2" ){
-            echo "RHEL Selected"
-            checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-
-        }
-        else if("${platform}" == "debian-10" || "${platform}" == "debian-11"){
-            echo "Debian Selected"   
-            checkdebpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-        }
-
-        else {
-            echo "Another OS"
-        }
-
-        //checkrhelpackage("${packagecode}","${packagename}" , "${reponame}", "${platform}")
-        pushArtifactFile("${packagecode}-${platform}")
-        slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Pushing the artifact for the ${packagecode}-${platform} package"
-
-    }   
- 
 }
 
 
@@ -182,11 +84,12 @@ pipeline {
                 }
             }
 
-            // stage("Setup the Server"){
-                // steps {
-                    // setup_package_tests()
-                // }
-            // }
+            stage(){
+                steps{
+
+                }
+            }
+
 
             stage("check os") {
                 steps {
@@ -370,15 +273,6 @@ pipeline {
 
                                         done
 
-                                        echo """
-
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-
-                                        """
                                         du -ksh rhel/* | awk \'{ print$2 }\' | sort > a-rhel
                                         du -ksh rhel/* | grep "^0" | awk \'{ print$2 }\' | sort > b-rhel
                                         diff a-rhel b-rhel | grep "<" | awk \'{print$2}\' > diffed-rhel
@@ -398,28 +292,9 @@ pipeline {
 
                                         done
 
-                                        echo """
-
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-                                        -----------------------------------------------------
-
-                                        """
                                         du -ksh deb/* | awk \'{ print$2 }\' | sort > a-deb
                                         du -ksh deb/* | grep "^0" | awk \'{ print$2 }\' | sort > b-deb
                                         diff a-deb b-deb | grep "<" | awk \'{print$2}\' > diffed-deb
-
-                                        cat diffed-deb
-
-                                    FILES=$(cat diffed-deb)
-
-                                    for i in $FILES
-                                    do 
-                                        echo "Fetching Previous     "
-                                        echo "./$i"
-                                    done
 
                                     #-------------------------------------------APT-----------------------------------------------
 
