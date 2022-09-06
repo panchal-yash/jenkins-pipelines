@@ -357,24 +357,38 @@ pipeline {
                                     #check_deb
                                     check_rhel
 
-                                    files_rhel=$(cat Files_to_push_rhel)
-                                    
-                                    for i in $files_rhel
-                                    do
+                                    if [ -f Files_to_push_rhel ]; then
+                                        files_rhel=$(cat Files_to_push_rhel)
                                         
-                                        send_file_to_s3 rhel/$i product-release-check rhel-bash
-                                        echo "Start the builds for $i"
+                                        for i in $files_rhel
+                                        do
+                                            
+                                            send_file_to_s3 rhel/$i product-release-check rhel-bash
+                                            echo "Start the builds for $i"
+                                        
+                                        done
+                                    else
+                                        echo "RHEL does not have any files to push"                                   
+                                    fi 
                                     
-                                    done
+                                    if [ -f Files_to_push_deb ]; then
+                                        files_deb=$(cat Files_to_push_deb)
+                                      
+                                        for i in $files_deb
+                                        do
+                                            send_file_to_s3 deb/$i product-release-check debian-bash
+                                            echo "Start the builds for $i"
+                                        
+                                        done
+                                    
+                                    else
 
+                                        echo "DEBIAN does not have any files to push"
 
-                                    for i in $files_deb
-                                    do
-                                        send_file_to_s3 deb/$i product-release-check debian-bash
-                                        echo "Start the builds for $i"
+                                    fi
+
                                     
-                                    done
-                                    
+
                                     '''
 
                         }
