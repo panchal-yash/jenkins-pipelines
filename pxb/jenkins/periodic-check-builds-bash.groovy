@@ -252,7 +252,7 @@ pipeline {
                                                 echo "File exists checking for the duplicates"
                                                 fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash
                                                 diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
-                                                if [ $diff -ge 1] then
+                                                if [ $diff -ge 1 ] then
                                                     echo "Found difference"
                                                     echo "Adding the release-$subpath-$version-$repository-$component file to the list"
                                                     echo "release-$subpath-$version-$repository-$component" >> Files_to_push
