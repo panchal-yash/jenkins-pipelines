@@ -194,16 +194,17 @@ pipeline {
                 }
             }
 
-            stage("OS based checks") {
+            stage("Install stuff") {
+                steps {
+                        sh "sudo apt-get install lftp -y"
+                }
+            }
+
+            stage("Run Script") {
                 steps{
                         script{
-//                          sh """
-//                                sudo apt-get install lftp -y
-//                                wget https://raw.githubusercontent.com/panchal-yash/percona-basic-scripts/main/check.sh
-//                                chmod +x check.sh
-//                                ./check.sh
-//                             """
-sh returnStdout: true, script: '''#!/bin/bash
+
+                            sh returnStdout: true, script: '''#!/bin/bash
 
                                     ##--------------------------------------RHEL------------------------------------------------
 
