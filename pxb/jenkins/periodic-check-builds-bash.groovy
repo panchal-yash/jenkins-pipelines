@@ -243,9 +243,10 @@ pipeline {
 
                                             lftp -e "cls -1 > rhel/$subpath-$version-$repository-yum; exit" "https://repo.percona.com/$version/yum/$repository/$subpath/RPMS/x86_64/"                                        
                                             
-                                            check_content=$(cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort | wc -w )
+                                            check_content_w=$(cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort | wc -w )
+                                            check_content_c=$(cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort | wc -c )
 
-                                            if [ $check_content -ge 1 ]; then
+                                            if [ $check_content_w -ge 1 -a $check_content_c -ge 11 ]; then
 
                                                 cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
                                                 rm -f rhel/$subpath-$version-$repository-yum
