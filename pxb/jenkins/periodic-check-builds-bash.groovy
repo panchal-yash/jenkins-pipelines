@@ -107,17 +107,17 @@ pipeline {
                                     ##--------------------------------------RHEL------------------------------------------------
 
                                     PXC_RHEL=("pxc-80" "pxc-56" "pxc-57")
-                                    PXC_RHEL_repo_version=("2" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server") # 2017 and 2018 dirs had 404 error
+                                    PXC_RHEL_repo_version=("2" "7" "7.8" "7Server" "8" "8.0" "8.2" "8Server") # 2017 and 2018 dirs had 404 error
                                     PXC_RHEL_component_name=("percona-xtradb-cluster-full")
                                     PXC_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
 
                                     PXB_24_RHEL=("pxb-24")
-                                    PXB_24_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server")
+                                    PXB_24_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.2" "8Server")
                                     PXB_24_RHEL_component_name=("percona-xtrabackup-24-2.4")
                                     PXB_24_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
 
                                     PXB_80_RHEL=("pxb-80")
-                                    PXB_80_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server")
+                                    PXB_80_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.2" "8Server")
                                     PXB_80_RHEL_component_name=("percona-xtrabackup-80-8.0")
                                     PXB_80_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
 
@@ -242,29 +242,37 @@ pipeline {
                                             repository=$4
 
                                             lftp -e "cls -1 > rhel/$subpath-$version-$repository-yum; exit" "https://repo.percona.com/$version/yum/$repository/$subpath/RPMS/x86_64/"                                        
-                                            cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
-                                            rm -f rhel/$subpath-$version-$repository-yum
+                                            
+                                            check_content=$(cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort | wc -w )
 
+                                            if [ $check_content -ge 1 ]; then
 
-                                            STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash)
+                                                cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
+                                                rm -f rhel/$subpath-$version-$repository-yum
+                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash)
 
-                                            if [ "$STAT" -ge 1 ] then
-                                                echo "File exists checking for the duplicates"
-                                                fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash
-                                                diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
-                                                if [ $diff -ge 1 ] then
-                                                    echo "Found difference"
+                                                if [ "$STAT" -ge 1 ]; then
+                                                    echo "File exists checking for the duplicates"
+                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$component product-release-check debian-bash
+                                                    diff=$(diff $release-$subpath-$version-$repository-$component previous/release-$subpath-$version-$repository-$component | wc -l)
+                                                    if [ $diff -ge 1 ]; then
+                                                        echo "Found difference"
+                                                        echo "Adding the release-$subpath-$version-$repository-$component file to the list"
+                                                        echo "release-$subpath-$version-$repository-$component" >> Files_to_push
+                                                    else
+                                                        echo "No difference found"
+                                                    fi
+                                                else     
+                                                    echo "File does not exist, need to add it to the list for pushing it"
                                                     echo "Adding the release-$subpath-$version-$repository-$component file to the list"
                                                     echo "release-$subpath-$version-$repository-$component" >> Files_to_push
-                                                else
-                                                    echo "No difference found"
                                                 fi
-                                            else     
-                                                echo "File does not exist, need to add it to the list for pushing it"
-                                                echo "Adding the release-$subpath-$version-$repository-$component file to the list"
-                                                echo "release-$subpath-$version-$repository-$component" >> Files_to_push
-                                            fi
 
+                                            else
+                                                
+                                                echo "EMPTY FILE $subpath-$version-$repository-yum"
+
+                                            fi
 
 
 
