@@ -198,7 +198,7 @@ pipeline {
                 steps{
                         script{
                           sh """
-                                apt-get install lftp -y
+                                sudo apt-get install lftp -y
                                 wget https://raw.githubusercontent.com/panchal-yash/percona-basic-scripts/main/check.sh
                                 chmod +x check.sh
                                 ./check.sh
