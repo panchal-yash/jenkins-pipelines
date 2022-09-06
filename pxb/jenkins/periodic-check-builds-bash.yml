@@ -19,8 +19,3 @@
                 wipe-workspace: true
         lightweight-checkout: true
         script-path: pxb/jenkins/periodic-check-builds-bash.groovy
-    parameters:
-        - choice:
-            name: node_to_test
-            choices:
-                - "min-buster-x64"

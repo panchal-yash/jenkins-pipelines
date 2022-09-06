@@ -72,15 +72,6 @@ setup_rhel = { ->
 
 
 
-node_setups = [
-    "min-buster-x64": setup_debian,
-//   "min-centos-7-x64": setup_rhel,
-]
-
-void setup_package_tests() {
-    node_setups[params.node_to_test]()
-}
-
 void checkrhelpackage(String packagecode , String packagename , String reponame, String platform){
 sh """
 
@@ -164,25 +155,15 @@ void popcheckandpush(String packagecode , String packagename , String reponame, 
 }
 
 
-List all_nodes = node_setups.keySet().collect()
-
-
 pipeline {
-    agent { label params.node_to_test }
+    agent { 
+         label 'docker'
+      }
 
     options {
         skipDefaultCheckout()
     }
     
-    parameters{
-        choice(
-            name: "node_to_test",
-            choices: all_nodes,
-            description: "Node in which to test the script"
-        )
-    }
-
-
     stages {
             stage("clean workspace"){
                 steps{
@@ -195,17 +176,17 @@ pipeline {
             stage("Prepare") {
                 steps {
                     script {
-                        currentBuild.displayName = "#${BUILD_NUMBER}-${params.node_to_test}"
+                        currentBuild.displayName = "#${BUILD_NUMBER}"
                         currentBuild.description = "action: install and check the percona-release"
                     }
                 }
             }
 
-            stage("Setup the Server"){
-                steps {
-                    setup_package_tests()
-                }
-            }
+            // stage("Setup the Server"){
+                // steps {
+                    // setup_package_tests()
+                // }
+            // }
 
             stage("check os") {
                 steps {
