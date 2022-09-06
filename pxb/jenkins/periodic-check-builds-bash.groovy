@@ -197,12 +197,238 @@ pipeline {
             stage("OS based checks") {
                 steps{
                         script{
-                          sh """
-                                sudo apt-get install lftp -y
-                                wget https://raw.githubusercontent.com/panchal-yash/percona-basic-scripts/main/check.sh
-                                chmod +x check.sh
-                                ./check.sh
-                             """
+//                          sh """
+//                                sudo apt-get install lftp -y
+//                                wget https://raw.githubusercontent.com/panchal-yash/percona-basic-scripts/main/check.sh
+//                                chmod +x check.sh
+//                                ./check.sh
+//                             """
+sh returnStdout: true, script: '''#!/bin/bash
+
+##--------------------------------------RHEL------------------------------------------------
+
+PXC_RHEL=("pxc-80" "pxc-56" "pxc-57")
+PXC_RHEL_repo_version=("2" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server") # 2017 and 2018 dirs had 404 error
+PXC_RHEL_component_name=("percona-xtradb-cluster-full")
+PXC_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
+
+PXB_24_RHEL=("pxb-24")
+PXB_24_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server")
+PXB_24_RHEL_component_name=("percona-xtrabackup-24-2.4")
+PXB_24_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
+
+PXB_80_RHEL=("pxb-80")
+PXB_80_RHEL_repo_version=("2" "2017" "2018" "7" "7.8" "7Server" "8" "8.0" "8.0" "8.2" "8Server")
+PXB_80_RHEL_component_name=("percona-xtrabackup-80-8.0")
+PXB_80_RHEL_component_repository=("testing" "experimental" "release" "laboratory")
+
+##--------------------------------------RHEL------------------------------------------------
+
+##-------------------------------------APT-----------------------------------------
+
+PXC_80_APT=("pxc-80")
+PXC_80_APT_repo_version=("p") # 2017 and 2018 dirs had 404 error
+PXC_80_APT_component_name=("percona-xtradb-cluster-full")
+PXC_80_APT_component_repository=("testing" "experimental" "main" "laboratory")
+PXC_80_APT_component_path=("percona-xtradb-cluster")
+
+PXC_56_APT=("pxc-56")
+PXC_56_APT_repo_version=("p") # 2017 and 2018 dirs had 404 error
+PXC_56_APT_component_name=("percona-xtradb-cluster-full" "percona-xtradb-cluster-galera-3.x-")
+PXC_56_APT_component_repository=("testing" "main")
+PXC_56_APT_component_path=("percona-xtradb-cluster-5.6" "percona-xtradb-cluster-galera-3.x")
+
+PXC_57_APT=("pxc-57")
+PXC_57_APT_repo_version=("p")
+PXC_57_APT_component_name=("percona-xtradb-cluster-full")
+PXC_57_APT_component_repository=("testing" "main" "experimental")
+PXC_57_APT_component_path=("percona-xtradb-cluster-5.7")
+
+PXB_24_APT=("pxb-24")
+PXB_24_APT_repo_version=("p")
+PXB_24_APT_component_name=("percona-xtrabackup-24")
+PXB_24_APT_component_repository=("testing" "main" "experimental")
+PXB_24_APT_component_path=("percona-xtrabackup-24")
+
+PXB_80_APT=("pxb-80")
+PXB_80_APT_repo_version=("p")
+PXB_80_APT_component_name=("percona-xtrabackup-80")
+PXB_80_APT_component_repository=("testing" "main" "experimental")
+PXB_80_APT_component_path=("percona-xtrabackup-80")
+
+##-------------------------------------APT-----------------------------------------
+
+
+
+check_new_release_deb(){
+
+        component=$1
+        subpath=$2        
+        version=$3
+        repository=$4
+        component_path=$5
+                
+        lftp -e "cls -1 > deb/$subpath-$version-$repository-apt; exit" "https://repo.percona.com/$version/apt/pool/$repository/$subpath/$component_path/"
+        cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
+        rm -f deb/$subpath-$version-$repository-apt
+
+}
+
+driver_deb(){
+    declare -n PRODUCT=$1
+    declare -n REPO_VERSION=$2
+    declare -n COMPONENT_NAME=$3
+    declare -n REPOSITORY_NAME=$4
+    declare -n COMPONENT_PATH=$5
+
+    echo ${PRODUCT[@]}
+    echo ${REPO_VERSION[@]}
+    echo ${COMPONENT_NAME[@]}
+    echo ${REPOSITORY_NAME[@]}
+    echo ${COMPONENT_PATH[@]}
+
+    for h in ${REPOSITORY_NAME[@]}
+    do
+        for i in ${PRODUCT[@]} 
+        do
+            for j in ${REPO_VERSION[@]} 
+            do
+                for k in ${COMPONENT_NAME[@]} 
+                do
+                    for l in ${COMPONENT_PATH[@]} 
+                    do
+                        check_new_release_deb $k $j $i $h $l
+                    done
+                done
+            done
+        done
+    done
+
+}
+
+##-------------------------------------APT-----------------------------------------
+
+##-------------------------------------RHEL-----------------------------------------
+
+
+
+check_new_release_rhel(){
+
+        component=$1
+        subpath=$2        
+        version=$3
+        repository=$4
+
+        lftp -e "cls -1 > rhel/$subpath-$version-$repository-yum; exit" "https://repo.percona.com/$version/yum/$repository/$subpath/RPMS/x86_64/"
+      
+        cat rhel/$subpath-$version-$repository-yum | grep -i "$component" | sort > rhel/release-$subpath-$version-$repository-$component
+        rm -f rhel/$subpath-$version-$repository-yum
+
+}
+
+driver_rhel(){
+    declare -n PRODUCT=$1
+    declare -n REPO_VERSION=$2
+    declare -n COMPONENT_NAME=$3
+    declare -n REPOSITORY_NAME=$4
+
+    echo ${PRODUCT[@]}
+    echo ${REPO_VERSION[@]}
+    echo ${COMPONENT_NAME[@]}
+    echo ${REPOSITORY_NAME[@]}
+
+    for h in ${REPOSITORY_NAME[@]}
+    do
+        for i in ${PRODUCT[@]} 
+        do
+
+            for j in ${REPO_VERSION[@]} 
+            do
+
+                for k in ${COMPONENT_NAME[@]} 
+                do
+
+                check_new_release_rhel $k $j $i $h
+            
+                done
+            done
+        done
+    done
+
+}
+#-------------------------------------------RHEL-----------------------------------------------
+check_rhel(){
+
+    LIST=("PXC_RHEL" "PXB_24_RHEL" "PXB_80_RHEL")
+    mkdir rhel
+
+    for a in ${LIST[@]}
+    do
+
+    driver_rhel "$a" "${a}_repo_version" "${a}_component_name" "${a}_component_repository"
+
+    done
+
+    echo """
+
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+
+    """
+    du -ksh rhel/* | awk \'{ print$2 }\' | sort > a-rhel
+    du -ksh rhel/* | grep "^0" | awk \'{ print$2 }\' | sort > b-rhel
+    diff a-rhel b-rhel | grep "<" | awk \'{print$2}\' > diffed-rhel
+}
+#-------------------------------------------RHEL-----------------------------------------------
+
+#-------------------------------------------APT------------------------------------------------
+check_deb(){
+    mkdir deb
+
+    LIST=("PXC_80_APT" "PXC_56_APT" "PXB_24_APT" "PXB_80_APT")
+
+    for a in ${LIST[@]}
+    do
+
+    driver_deb "$a" "${a}_repo_version" "${a}_component_name" "${a}_component_repository" "${a}_component_path"
+
+    done
+
+    echo """
+
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+    -----------------------------------------------------
+
+    """
+    du -ksh deb/* | awk \'{ print$2 }\' | sort > a-deb
+    du -ksh deb/* | grep "^0" | awk \'{ print$2 }\' | sort > b-deb
+    diff a-deb b-deb | grep "<" | awk \'{print$2}\' > diffed-deb
+
+    cat diffed-deb
+
+FILES=$(cat diffed-deb)
+
+for i in $FILES
+do 
+    echo "Fetching Previous     "
+    echo "./$i"
+done
+
+#-------------------------------------------APT-----------------------------------------------
+
+
+
+}
+
+
+check_deb'''
+
 
                         }
                     }
