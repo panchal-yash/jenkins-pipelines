@@ -193,8 +193,55 @@ pipeline {
                                             component_path=$5
                                                     
                                             lftp -e "cls -1 > deb/$subpath-$version-$repository-apt; exit" "https://repo.percona.com/$version/apt/pool/$repository/$subpath/$component_path/"
-                                            cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
-                                            rm -f deb/$subpath-$version-$repository-apt
+
+                                            
+                                            check_content_w=$(cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort | wc -w )
+                                            check_content_c=$(cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort | wc -c )
+
+                                            if [ $check_content_w -ge 1 -a $check_content_c -ge 11 ]; then
+
+                                                cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
+                                                rm -f deb/$subpath-$version-$repository-apt 
+
+                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check deb-bash/deb)
+
+                                                if [ "$STAT" -ge 1 ]; then
+                                                    echo "File exists checking for the duplicates"
+                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check deb-bash/deb
+
+                                                    diff=$(diff deb/release-$subpath-$version-$repository-$subpath-$component_path-$component fetched/release-$subpath-$version-$repository-$subpath-$component_path-$component | wc -l)
+
+                                                    if [ $diff -ge 1 ]; then
+                                                        echo "Found difference"
+                                                        echo "Adding the release-$subpath-$version-$repository-$component file to the list"
+                                                        echo "release-$subpath-$version-$repository-$subpath-$component_path-$component" >> Files_to_push_deb
+                                                    else
+                                                        echo "No difference found"
+                                                    fi
+                                                else     
+                                                    echo "File does not exist, need to add it to the list for pushing it"
+                                                    echo "Adding the release-$subpath-$version-$repository-$component file to the list"
+                                                    echo "release-$subpath-$version-$repository-$subpath-$component_path-$component" >> Files_to_push_deb                                                 
+                                                fi
+
+                                            else
+                                                
+                                                echo "EMPTY FILE release-$subpath-$version-$repository-$subpath-$component_path-$component"
+
+                                            fi
+
+
+
+#                                            cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
+#                                            rm -f deb/$subpath-$version-$repository-apt
+
+
+
+
+
+
+
+
 
                                     }
 
