@@ -401,7 +401,7 @@ pipeline {
                                     }
 
 
-                                    #check_deb
+                                    check_deb
                                     check_rhel
 
                                     if [ -f Files_to_push_rhel ]; then
