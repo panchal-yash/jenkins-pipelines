@@ -381,7 +381,7 @@ pipeline {
                                     check_deb(){
                                         mkdir deb
 
-                                        LIST=("PXC_80_APT" "PXC_56_APT" "PXB_24_APT" "PXB_80_APT")
+                                        LIST=("PXC_57_APT" "PXC_80_APT" "PXC_56_APT" "PXB_24_APT" "PXB_80_APT")
 
                                         for a in ${LIST[@]}
                                         do
