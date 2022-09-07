@@ -203,11 +203,11 @@ pipeline {
                                                 cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
                                                 rm -f deb/$subpath-$version-$repository-apt 
 
-                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check deb-bash/deb)
+                                                STAT=$(check_file_on_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check debian-bash/deb)
 
                                                 if [ "$STAT" -ge 1 ]; then
                                                     echo "File exists checking for the duplicates"
-                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check deb-bash/deb
+                                                    fetch_file_from_s3 release-$subpath-$version-$repository-$subpath-$component_path-$component product-release-check debian-bash/deb
 
                                                     diff=$(diff deb/release-$subpath-$version-$repository-$subpath-$component_path-$component fetched/release-$subpath-$version-$repository-$subpath-$component_path-$component | wc -l)
 
