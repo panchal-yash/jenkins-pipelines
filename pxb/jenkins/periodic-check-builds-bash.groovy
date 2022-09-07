@@ -103,8 +103,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'remotetrigger', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                         
                         
-                        echo ${USERNAME}
-                        echo ${PASSWORD}
+                        echo "${USERNAME}"
+                        echo "${PASSWORD}"
                 
                     }
 
