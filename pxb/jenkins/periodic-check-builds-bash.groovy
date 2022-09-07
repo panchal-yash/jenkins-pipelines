@@ -97,6 +97,28 @@ pipeline {
                 }
             }
 
+            stage("Trigger test build on another jenkins server") {
+                steps {
+
+                    withCredentials([usernamePassword(credentialsId: 'remotetrigger', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        
+                        
+                        echo ${USERNAME}
+                        echo ${PASSWORD}
+                
+                    }
+
+                     
+                
+                
+                }
+            }
+
+
+
+
+/*
+
             stage("Run Script") {
                 steps{
                         script{
@@ -229,19 +251,6 @@ pipeline {
                                                 echo "EMPTY FILE release-$subpath-$version-$repository-$subpath-$component_path-$component"
 
                                             fi
-
-
-
-#                                            cat deb/$subpath-$version-$repository-apt | grep -i "$component" | sort > deb/release-$subpath-$version-$repository-$subpath-$component_path-$component
-#                                            rm -f deb/$subpath-$version-$repository-apt
-
-
-
-
-
-
-
-
 
                                     }
 
@@ -439,8 +448,16 @@ pipeline {
                                     '''
 
                         }
+
                         }
                     }
+*/ 
+
+
+        s
+
+
+
             }
 
 
