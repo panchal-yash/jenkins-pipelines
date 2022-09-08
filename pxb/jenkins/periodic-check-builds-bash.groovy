@@ -97,15 +97,16 @@ pipeline {
                 }
             }
 
+
+
+
+
             stage("Trigger test build on another jenkins server") {
                 steps {
 
-                    withCredentials([usernamePassword(credentialsId: 'remotetriggeryash', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                        
-                        
-                        echo "${USERNAME}"
-                        echo "${PASSWORD}"
-                
+                        echo "Building a jenkins job"
+                        build job: 'periodic-product-check-for-new-releases-build', parameters: [string(name: 'node_to_test', value: 'min-bullseye-x64')]
+
                     }
 
                      
