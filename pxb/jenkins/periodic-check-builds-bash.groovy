@@ -100,7 +100,7 @@ pipeline {
             stage("Trigger test build on another jenkins server") {
                 steps {
 
-                    withCredentials([usernamePassword(credentialsId: 'remotetrigger', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: 'remotetriggeryash', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                         
                         
                         echo "${USERNAME}"
