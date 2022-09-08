@@ -461,15 +461,15 @@ pipeline {
 
             }
 
-
-
-    }
-
     post {
         failure {
             slackSend channel: '#new-product-release-detection-jenkins', color: '#FF0000', message: "Build Failed due to errors ${BUILD_URL}"
         }
     }
+
+    }
+
+
 
 
 
