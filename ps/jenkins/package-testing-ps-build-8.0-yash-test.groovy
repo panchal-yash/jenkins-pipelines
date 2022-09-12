@@ -98,7 +98,7 @@ void runPlaybook(String action_to_test) {
     setup_package_tests()
 
     sh '''
-        git clone --depth 1 -b PS-8347-add-check-for-warnings-PS-test https://github.com/panchal-yash/package-testing
+        git clone --depth 1 -b PS-8392-install-mysql-shell-backwards-compatibility-fix-env-issue https://github.com/panchal-yash/package-testing
     '''
 
     sh """
