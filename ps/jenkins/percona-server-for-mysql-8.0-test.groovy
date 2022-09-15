@@ -230,7 +230,7 @@ parameters {
         skipDefaultCheckout()
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
-        timestamps ()
+        timestamps()
     }
     stages {
         stage('Create PS source tarball') {
