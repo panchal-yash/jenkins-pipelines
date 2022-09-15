@@ -144,7 +144,7 @@ void runPlaybook(String action_to_test String install_repo) {
     setup_package_tests()
 
     sh '''
-        git clone --depth 1 https://github.com/Percona-QA/package-testing
+        git clone -b PS-8400-add-package-tests-ps-80-jenkins --depth 1 https://github.com/Percona-QA/package-testing
     '''
 
     sh """
