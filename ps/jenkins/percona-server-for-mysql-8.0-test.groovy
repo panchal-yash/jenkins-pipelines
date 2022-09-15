@@ -137,7 +137,7 @@ if (params.action_to_test == "all") {
     actions_to_test = [params.action_to_test]
 }
 
-void runPlaybook(String action_to_test String install_repo) {
+void runPlaybook(String action_to_test) {
     def playbook = product_action_playbooks[params.product_to_test][action_to_test]
     def playbook_path = "package-testing/playbooks/${playbook}"
 
