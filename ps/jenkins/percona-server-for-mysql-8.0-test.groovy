@@ -256,7 +256,9 @@ parameters {
                 }
                 stash includes: 'uploadPath', name: 'uploadPath'
                 stash includes: 'test/percona-server-8.0.properties', name: 'properties'
+                echo "Pushing Artifacts"
                 pushArtifactFolder("source_tarball/", AWS_STASH_PATH)
+                echo "UPLOAD TARBALL FROM AWS"
                 uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
             }
         }
