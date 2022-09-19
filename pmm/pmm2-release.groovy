@@ -32,7 +32,7 @@ pipeline {
                     currentBuild.description = "VERSION: ${VERSION}<br>CLIENT: ${CLIENT_IMAGE}<br>SERVER: ${SERVER_IMAGE}<br>PATH_TO_CLIENT: ${PATH_TO_CLIENT}"
                 }
                 withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com << 'ENDSSH'
                                 set -x
@@ -94,7 +94,7 @@ ENDSSH
         stage('Push DEB client to public repository') {
             steps {
                 withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com << 'ENDSSH'
                                 set -e
@@ -168,7 +168,7 @@ ENDSSH
 
         stage('Sync repos to production') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com << 'ENDSSH'
                         set -x
@@ -192,7 +192,7 @@ ENDSSH
 
         stage('Upload client to percona.com') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com << 'ENDSSH'
                             set -e
@@ -296,7 +296,7 @@ ENDSSH
         stage('Get repo RPMs') {
             steps {
                 unstash 'rpms'
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com \
                             ls /srv/repo-copy/pmm2-components/yum/testing/7/RPMS/x86_64 \
@@ -317,7 +317,7 @@ ENDSSH
         stage('Copy RPMs to PMM repo') {
             steps {
                 unstash 'copy'
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh '''
                         cat copy.list | ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com \
                             "cat - | xargs -I{} cp -v /srv/repo-copy/pmm2-components/yum/testing/7/RPMS/x86_64/{} /srv/repo-copy/pmm2-components/yum/release/7/RPMS/x86_64/{}"
@@ -328,7 +328,7 @@ ENDSSH
         stage('Createrepo') {
             steps {
                 withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com " \
                             createrepo --update /srv/repo-copy/pmm2-components/yum/release/7/RPMS/x86_64/
@@ -346,7 +346,7 @@ ENDSSH
 // Publish RPMs to repo.percona.com
         stage('Publish RPMs') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com "
                             rsync -avt --bwlimit=50000 --delete --progress --exclude=rsync-* --exclude=*.bak \

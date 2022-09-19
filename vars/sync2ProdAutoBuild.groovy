@@ -4,7 +4,7 @@ def call(String REPO_NAME, String DESTINATION) {
         def path_to_build = sh(returnStdout: true, script: "cat uploadPath").trim()
 
         withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-            withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+            withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                 sh """
                     cat /etc/hosts > ./hosts
                     echo '10.30.6.9 repo.ci.percona.com' >> ./hosts

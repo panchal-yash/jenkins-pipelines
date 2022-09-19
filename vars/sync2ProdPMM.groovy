@@ -4,7 +4,7 @@ def call(String DESTINATION, String SYNC_PMM_CLIENT) {
         def path_to_build = sh(returnStdout: true, script: "cat uploadPath").trim()
 
         withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-            withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+            withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                 sh """
                     ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${USER}@repo.ci.percona.com << 'ENDSSH'
                         set -o errexit

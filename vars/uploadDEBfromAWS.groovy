@@ -4,7 +4,7 @@ def call(String FOLDER_NAME, String AWS_STASH_PATH) {
         popArtifactFolder(FOLDER_NAME, AWS_STASH_PATH)
         //unstash 'debs'
         unstash 'uploadPath'
-        withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
             sh """
                 export path_to_build=`cat uploadPath`
 

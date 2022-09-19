@@ -159,7 +159,7 @@ pipeline {
             steps {
                 // sync packages
                 sync2ProdPMM(DESTINATION, 'yes')
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', usernameVariable: 'USER')]) {
                     script {
                         unstash 'uploadPath'
                         def path_to_build = sh(returnStdout: true, script: "cat uploadPath").trim()

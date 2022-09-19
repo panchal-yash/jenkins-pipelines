@@ -114,7 +114,7 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD')]) {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                         sh """
                             for var in "\$(printenv | grep _PATH | sed 's/KEY_PATH.*//')"; do
                                 echo "\$var" >> args_pipeline
@@ -145,7 +145,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'SIGN_PASSWORD', variable: 'SIGN_PASSWORD'),
-                    sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')
+                    sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')
                     ]){
                         sh """
                             for var in "\$(printenv | grep _PATH | sed 's/KEY_PATH.*//')"; do
@@ -174,7 +174,7 @@ pipeline {
                 expression { params.SKIP_SYNC == false }
             }
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                     sh """
                             echo "REPOSITORY=\${REPOSITORY}" >> args_pipeline
                             echo "REPOSITORY_VERSION=\${REPOSITORY_VERSION}" >> args_pipeline
@@ -195,7 +195,7 @@ pipeline {
                 expression { params.SKIP_PRODUCTION_DOWNLOADS == false }
             }
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'repo.ci.percona.com', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', keyFileVariable: 'KEY_PATH', passphraseVariable: '', usernameVariable: 'USER')]) {
                     sh """
                         if [ "\${COMPONENT}" == "RELEASE" ]; then
                            for var in "\$(printenv | grep _PATH | sed 's/KEY_PATH.*//')"; do
