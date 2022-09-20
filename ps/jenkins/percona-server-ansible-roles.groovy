@@ -24,7 +24,7 @@ if (params.node_to_test == "all") {
 
 void runNodeBuild(String node_to_test) {
     build(
-        job: 'percona-server-ansible-roles-build',
+        job: 'ansible-galaxy-roles-build',
         propagate: true,
         wait: true
     )
