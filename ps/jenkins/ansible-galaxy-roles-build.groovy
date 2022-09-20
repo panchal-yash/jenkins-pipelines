@@ -63,10 +63,6 @@ void setup_package_tests() {
 List all_nodes = node_setups.keySet().collect()
 
 
-Map product_actions = product_action_playbooks.collectEntries { key, value ->
-    [key, value.keySet().collect()]
-}
-
 List actions_to_test = []
 if (params.action_to_test == "all") {
     actions_to_test = all_actions
