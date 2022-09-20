@@ -76,9 +76,6 @@ if (params.action_to_test == "all") {
 
 void runPlaybook(String percona_server_repository, String percona_server_version) {
     
-    def percona_server_repository = percona_server_repository
-    def percona_server_version = percona_server_version
-
     setup_package_tests()
 
     sh """
