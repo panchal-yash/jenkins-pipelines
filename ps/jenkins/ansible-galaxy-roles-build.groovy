@@ -74,7 +74,7 @@ if (params.action_to_test == "all") {
     actions_to_test = [params.action_to_test]
 }
 
-void runPlaybook(String percona_server_repository String percona_server_version) {
+void runPlaybook(String percona_server_repository, String percona_server_version) {
     
     def percona_server_repository = percona_server_repository
     def percona_server_version = percona_server_version
