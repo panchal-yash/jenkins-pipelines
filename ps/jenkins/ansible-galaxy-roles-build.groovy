@@ -116,6 +116,8 @@ pipeline {
             parallel {
 // main
                 stage("main and 8.0") {
+
+                    
                     agent {
                         label params.node_to_test
                     }

@@ -25,6 +25,9 @@ if (params.node_to_test == "all") {
 void runNodeBuild(String node_to_test) {
     build(
         job: 'ansible-galaxy-roles-build',
+        parameters: [
+                        string(name: "node_to_test", value: node_to_test),
+        ],
         propagate: true,
         wait: true
     )
