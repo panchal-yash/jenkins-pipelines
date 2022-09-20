@@ -42,7 +42,13 @@ pipeline {
 
     }
     stages {
-
+        stage("Prepare") {
+            steps {
+                script {
+                    currentBuild.displayName = "#${BUILD_NUMBER}-${params.node_to_test}"
+                }
+            }
+        }
         stage("Run parallel") {
             parallel {
                 stage("Debian Buster") {
