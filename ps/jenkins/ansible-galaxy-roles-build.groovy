@@ -126,7 +126,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("main" "8.0")
+                        runPlaybook("main" , "8.0")
                     }
                 }
                 
@@ -135,7 +135,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("main" "8.0")
+                        runPlaybook("main" , "8.0")
                     }
                 }
 // testing
@@ -144,7 +144,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("testing" "8.0")
+                        runPlaybook("testing" , "8.0")
                     }
                 }
                 
@@ -153,7 +153,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("testing" "8.0")
+                        runPlaybook("testing" , "8.0")
                     }
                 }
 
@@ -163,7 +163,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("experimental" "8.0")
+                        runPlaybook("experimental" , "8.0")
                     }
                 }
                 
@@ -172,7 +172,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("experimental" "8.0")
+                        runPlaybook("experimental" , "8.0")
                     }
                 }
 
