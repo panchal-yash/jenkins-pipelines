@@ -17,7 +17,7 @@
                     - 'ansible-galaxy-role'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: ps/jenkins/percona-server-ansible-roles.groovy
+        script-path: ps/jenkins/ansible-galaxy-roles-build.groovy
     parameters:
         - choice:
             name: node_to_test
