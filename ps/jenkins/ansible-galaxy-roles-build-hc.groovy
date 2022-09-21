@@ -62,9 +62,6 @@ void setup_package_tests() {
 
 List all_nodes = node_setups.keySet().collect()
 
-def percona_server_version = params.percona_server_version_c
-
-def percona_server_repository = params.percona_server_repository_c
 
 void runPlaybook(String percona_server_repository_var, String percona_server_version_var) {
     
@@ -82,6 +79,8 @@ void runPlaybook(String percona_server_repository_var, String percona_server_ver
     """
 }
 
+
+
 pipeline {
     agent none
 
@@ -92,13 +91,13 @@ pipeline {
     parameters{
 
         choice(
-            name: "percona_server_version_c",
+            name: "percona_server_version",
             choices: ["8.0" , "5.7"],
             description: "Percona Server Version"
         )
 
         choice(
-            name: "percona_server_repository_c",
+            name: "percona_server_repository",
             choices: ["main" , "testing" , "experimental"],
             description: "Percona Server Repository"
         )
@@ -115,12 +114,10 @@ pipeline {
         stage("Prepare") {
             steps {
                 script {
-                    currentBuild.displayName = "#${BUILD_NUMBER}-${percona_server_version}-${percona_server_repository}"
+                    currentBuild.displayName = "#${BUILD_NUMBER}-${params.percona_server_version}-${params.percona_server_repository}"
                 }
             }
         }
-
-        stage("Run parallel") {
 
 
 
@@ -130,11 +127,10 @@ pipeline {
                         label params.os
                     }
                     steps {
-                        runPlaybook("${percona_server_repository}" , "${percona_server_version}")
+                        runPlaybook("${params.percona_server_repository}" , "${params.percona_server_version}")
                     }
                 }
                 
 
-        }
     }
 }
