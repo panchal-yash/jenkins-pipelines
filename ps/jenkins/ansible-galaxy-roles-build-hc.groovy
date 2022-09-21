@@ -127,7 +127,7 @@ pipeline {
                         label params.os
                     }
                     steps {
-                        runPlaybook("${params.percona_server_repository}" , "${params.percona_server_version}")
+                        runPlaybook(params.percona_server_repository , params.percona_server_version)
                     }
                 }
                 
