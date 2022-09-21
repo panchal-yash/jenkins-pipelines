@@ -66,14 +66,14 @@ def percona_server_version = params.percona_server_version
 
 def percona_server_repository = params.percona_server_repository
 
-void runPlaybook() {
+void runPlaybook(String percona_server_repository_var, String percona_server_version_var) {
     
     setup_package_tests()
 
     sh """
         wget https://raw.githubusercontent.com/panchal-yash/percona-server/main/playbook.yml
         ansible-galaxy install panchal_yash.percona_server
-        sed -i -e 's/VERSION/${percona_server_version}/g' -e 's/REPOSITORY/${percona_server_repository}/g' playbook.yml
+        sed -i -e 's/VERSION/${percona_server_version_var}/g' -e 's/REPOSITORY/${percona_server_repository_var}/g' playbook.yml
         sudo ansible-playbook \
         --connection=local \
         --inventory 127.0.0.1, \
