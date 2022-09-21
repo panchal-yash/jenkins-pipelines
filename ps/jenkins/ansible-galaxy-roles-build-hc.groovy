@@ -124,7 +124,7 @@ pipeline {
 
             parallel {
 
-                stage("${params.os}-${percona_server_repository}-${percona_server_version}") {
+                stage("Run Percona Server Ansible Galaxy setup") {
 
                     agent {
                         label params.os
