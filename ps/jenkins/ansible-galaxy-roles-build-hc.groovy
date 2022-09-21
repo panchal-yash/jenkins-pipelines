@@ -66,7 +66,7 @@ def percona_server_version = params.percona_server_version
 
 def percona_server_repository = params.percona_server_repository
 
-void runPlaybook(String percona_server_repository, String percona_server_version) {
+void runPlaybook() {
     
     setup_package_tests()
 
