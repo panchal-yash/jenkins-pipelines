@@ -77,7 +77,7 @@ void runPlaybook(String percona_server_repository, String percona_server_version
     sh """
         wget https://raw.githubusercontent.com/panchal-yash/percona-server/main/playbook.yml
         ansible-galaxy install panchal_yash.percona_server
-        ansible-galaxy install -p /etc/ansible/roles/ panchal_yash.percona_server
+        ansible-galaxy install -p /mnt/jenkins/workspace/ansible-galaxy-roles-build/roles/ panchal_yash.percona_server
         sed -i -e 's/VERSION/${percona_server_version}/g' -e 's/REPOSITORY/${percona_server_repository}/g' playbook.yml
         sudo ansible-playbook \
         --connection=local \
