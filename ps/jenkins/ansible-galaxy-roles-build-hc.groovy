@@ -93,13 +93,13 @@ pipeline {
 
         choice(
             name: "percona_server_version",
-            choices: ["8.0" , "5.7"]
+            choices: ["8.0" , "5.7"],
             description: "Percona Server Version"
         )
 
         choice(
             name: "percona_server_repository",
-            choices: ["main" , "testing" , "experimental"]
+            choices: ["main" , "testing" , "experimental"],
             description: "Percona Server Repository"
         )
 
