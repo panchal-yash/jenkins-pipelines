@@ -122,7 +122,7 @@ pipeline {
 
         stage("Run parallel") {
 
-            parallel {
+
 
                 stage("Run Percona Server Ansible Galaxy setup") {
 
@@ -135,7 +135,6 @@ pipeline {
                 }
                 
 
-            }
         }
     }
 }
