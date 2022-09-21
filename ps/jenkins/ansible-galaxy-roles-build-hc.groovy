@@ -103,6 +103,11 @@ pipeline {
             description: "Percona Server Repository"
         )
 
+        choice(
+            name: "os",
+            choices: all_nodes,
+            description: "Node in which to test the product"
+        )
     }
 
 
@@ -119,69 +124,16 @@ pipeline {
 
             parallel {
 
-                stage("Buster") {
+                stage(params.os-percona_server_repository-percona_server_version) {
 
                     agent {
-                        label "min-buster-x64"
+                        label params.os
                     }
                     steps {
                         runPlaybook(percona_server_repository , percona_server_version)
                     }
                 }
                 
-                stage("Bullseye") {
-                    agent {
-                        label "min-bullseye-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
-
-                stage("OL-8") {
-                    agent {
-                        label "min-ol-8-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
-
-                stage("Centos 7") {
-                    agent {
-                        label "min-centos-7-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
-
-                stage("Bionic") {
-                    agent {
-                        label "min-bionic-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
-                
-                stage("Focal") {
-                    agent {
-                        label "min-focal-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
-
-                stage("Amazon Linux") {
-                    agent {
-                        label "min-amazon-2-x64"
-                    }
-                    steps {
-                        runPlaybook(percona_server_repository , percona_server_version)
-                    }
-                }
 
             }
         }
