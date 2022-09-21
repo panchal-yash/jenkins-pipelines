@@ -62,9 +62,9 @@ void setup_package_tests() {
 
 List all_nodes = node_setups.keySet().collect()
 
-def percona_server_version = params.percona_server_version
+def percona_server_version = params.percona_server_version_c
 
-def percona_server_repository = params.percona_server_repository
+def percona_server_repository = params.percona_server_repository_c
 
 void runPlaybook(String percona_server_repository_var, String percona_server_version_var) {
     
@@ -92,13 +92,13 @@ pipeline {
     parameters{
 
         choice(
-            name: "percona_server_version",
+            name: "percona_server_version_c",
             choices: ["8.0" , "5.7"],
             description: "Percona Server Version"
         )
 
         choice(
-            name: "percona_server_repository",
+            name: "percona_server_repository_c",
             choices: ["main" , "testing" , "experimental"],
             description: "Percona Server Repository"
         )
@@ -130,7 +130,7 @@ pipeline {
                         label params.os
                     }
                     steps {
-                        runPlaybook("${percona_server_repository}" "${percona_server_version}")
+                        runPlaybook("${percona_server_repository}" , "${percona_server_version}")
                     }
                 }
                 
