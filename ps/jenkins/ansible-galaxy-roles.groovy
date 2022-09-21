@@ -20,7 +20,7 @@ if (params.node_to_test == "all") {
     nodes_to_test = all_nodes
 } else {
     nodes_to_test = [params.node_to_test]
-}
+}   
 
 void runNodeBuild(String node_to_test) {
     build(
