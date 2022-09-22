@@ -84,6 +84,10 @@ void runPlaybook(String percona_server_repository, String percona_server_version
         --inventory 127.0.0.1, \
         --limit 127.0.0.1 \
         playbook.yml
+
+        echo "Checking for the Mysql Version"
+        
+        mysql --version
     """
 }
 
