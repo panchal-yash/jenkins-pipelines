@@ -86,7 +86,7 @@ void runPlaybook(String percona_server_repository, String percona_server_version
         playbook.yml
 
         echo "Checking for the Mysql Version"
-        
+
         mysql --version
     """
 }
@@ -136,7 +136,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("main" , "8.0")
+                        runPlaybook("main" , "5.7")
                     }
                 }
 // testing
@@ -154,7 +154,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("testing" , "8.0")
+                        runPlaybook("testing" , "5.7")
                     }
                 }
 
@@ -173,7 +173,7 @@ pipeline {
                         label params.node_to_test
                     }
                     steps {
-                        runPlaybook("experimental" , "8.0")
+                        runPlaybook("experimental" , "5.7")
                     }
                 }
 
