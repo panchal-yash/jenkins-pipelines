@@ -14,12 +14,13 @@ setup_rhel_package_tests = { ->
 setup_rhel_8_package_tests = { ->
     sh '''
 
-        sudo yum install python3 python3-pip wget -y
-        sudo python3 -m pip install --user ansible-core ansible ansible-galaxy
-        sudo whereis ansible-playbook
-        sudo whereis ansible
-        sudo echo $PATH
-        PATH="$PATH:/usr/local/bin/ansible-playbook" 
+        sudo yum install python3 python3-pip wget unzip -y
+        wget https://github.com/ansible/ansible/archive/refs/tags/v2.13.4.zip
+        unzip ansible-v2.13.4.zip
+        cp ansible-v2.13.4/* /
+        ansible --version
+        ansible-galaxy --version
+
     '''
 }
 
