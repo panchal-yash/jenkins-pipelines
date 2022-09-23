@@ -16,6 +16,7 @@ setup_rhel_8_package_tests = { ->
 
         sudo dnf update -y
         sudo dnf install epel-release -y
+        sudo dnf update -y
         sudo dnf install ansible -y
 
     '''
