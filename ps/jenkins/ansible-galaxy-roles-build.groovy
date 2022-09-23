@@ -14,10 +14,11 @@ setup_rhel_package_tests = { ->
 setup_rhel_8_package_tests = { ->
     sh '''
 
+        sh "rm -rf *"
         sudo yum install python3 python3-pip wget unzip -y
         wget https://github.com/ansible/ansible/archive/refs/tags/v2.13.4.zip
         unzip v2.13.4.zip
-        sudo cp -fr ansible-2.13.4/* /
+        sudo cp -fr ansible-2.13.4/bin/* /bin/
         ansible --version
         ansible-galaxy --version
 
@@ -89,7 +90,7 @@ void runPlaybook(String percona_server_repository, String percona_server_version
     setup_package_tests()
 
     sh """
-        sh "rm -rf *"
+
         wget https://raw.githubusercontent.com/panchal-yash/percona-server/main/playbook.yml
         ansible-galaxy install panchal_yash.percona_server
         ansible-galaxy install -p /mnt/jenkins/workspace/ansible-galaxy-roles-build/roles/ panchal_yash.percona_server
