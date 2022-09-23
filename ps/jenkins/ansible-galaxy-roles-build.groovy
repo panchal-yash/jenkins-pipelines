@@ -13,8 +13,7 @@ setup_rhel_package_tests = { ->
 
 setup_rhel_8_package_tests = { ->
     sh '''
-        sudo dnf makecache -y
-        sudo dnf check-update -y
+
         sudo dnf update -y
         sudo dnf install epel-release -y
         sudo dnf install ansible -y
