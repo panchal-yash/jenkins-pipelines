@@ -19,6 +19,7 @@ setup_rhel_8_package_tests = { ->
         sudo whereis ansible-playbook
         sudo whereis ansible
         sudo echo $PATH
+        sudo PATH="$PATH:/usr/local/bin/ansible-playbook" 
     '''
 }
 
