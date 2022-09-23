@@ -132,7 +132,9 @@ pipeline {
             }
         }
         stage("Clear Workspace") {
-            cleanWs()
+            steps {
+                cleanWs()
+            }
         }
         stage("Run parallel") {
             parallel {
