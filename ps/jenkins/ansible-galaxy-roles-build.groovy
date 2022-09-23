@@ -15,7 +15,7 @@ setup_rhel_8_package_tests = { ->
     sh '''
 
         sudo yum install python3 python3-pip wget -y
-        sudo python3 -m pip install --user ansible-core ansible
+        sudo python3 -m pip install --user ansible-core ansible ansible-galaxy
         sudo whereis ansible-playbook
         sudo whereis ansible
         sudo echo $PATH
