@@ -15,8 +15,8 @@ setup_rhel_8_package_tests = { ->
     sh '''
 
         sudo yum install python3 python3-pip wget -y
-        python3 -m pip install --user ansible-core==2.12.3
-        
+        python3 -m pip install --user ansible-core ansible
+
     '''
 }
 
