@@ -16,6 +16,7 @@ setup_rhel_8_package_tests = { ->
 
         sudo yum install python3 python3-pip wget -y
         sudo dnf install epel-release -y
+        sudo yum install epel-next-release -y
         sudo dnf makecache
         sudo dnf -y install ansible
 
