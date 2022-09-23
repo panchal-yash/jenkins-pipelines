@@ -133,7 +133,7 @@ pipeline {
         }
         stage("Clear Workspace") {
             steps {
-                cleanWs()
+               sh "rm -rf *"
             }
         }
         stage("Run parallel") {
