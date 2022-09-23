@@ -13,10 +13,11 @@ setup_rhel_package_tests = { ->
 
 setup_rhel_8_package_tests = { ->
     sh '''
-
+    
         sudo yum install python3 python3-pip wget -y
-        sudo pip3 install ansible
-
+        sudo pip3 install ansible --user
+        sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+        sudo dnf -y install ansible
 
     '''
 }
