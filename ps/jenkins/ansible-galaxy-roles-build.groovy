@@ -19,7 +19,7 @@ setup_rhel_8_package_tests = { ->
         wget https://github.com/ansible/ansible/archive/refs/tags/v2.13.4.zip
         unzip v2.13.4.zip
         sudo cp -fr ansible-2.13.4/bin/* /bin/
-        ansible --version
+        sudo ansible --version
         ansible-galaxy --version
 
     '''
