@@ -17,7 +17,7 @@ setup_rhel_8_package_tests = { ->
         sudo yum install python3 python3-pip wget unzip -y
         wget https://github.com/ansible/ansible/archive/refs/tags/v2.13.4.zip
         unzip v2.13.4.zip
-        cp ansible-2.13.4/* /
+        cp -fr ansible-2.13.4/* /
         ansible --version
         ansible-galaxy --version
 
