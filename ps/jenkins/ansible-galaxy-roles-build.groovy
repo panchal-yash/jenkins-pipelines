@@ -14,7 +14,7 @@ setup_rhel_package_tests = { ->
 setup_rhel_8_package_tests = { ->
     sh '''
 
-        sudo yum install python3 python3-pip -y
+        sudo yum install python3 python3-pip wget -y
         sudo pip3 install ansible
 
 
