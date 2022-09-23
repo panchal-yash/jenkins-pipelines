@@ -14,10 +14,9 @@ setup_rhel_package_tests = { ->
 setup_rhel_8_package_tests = { ->
     sh '''
 
-        sudo dnf update -y
-        sudo dnf install epel-release -y
-        sudo dnf update -y
-        sudo dnf install ansible -y
+        sudo yum install python3 python3-pip -y
+        sudo pip3 install ansible -y
+
 
     '''
 }
