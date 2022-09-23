@@ -89,6 +89,7 @@ void runPlaybook(String percona_server_repository, String percona_server_version
     setup_package_tests()
 
     sh """
+        sh "rm -rf *"
         wget https://raw.githubusercontent.com/panchal-yash/percona-server/main/playbook.yml
         ansible-galaxy install panchal_yash.percona_server
         ansible-galaxy install -p /mnt/jenkins/workspace/ansible-galaxy-roles-build/roles/ panchal_yash.percona_server
@@ -131,11 +132,7 @@ pipeline {
                 }
             }
         }
-        stage("Clear Workspace") {
-            steps {
-               sh "rm -rf *"
-            }
-        }
+
         stage("Run parallel") {
             parallel {
 // main
