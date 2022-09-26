@@ -15,9 +15,11 @@ setup_rhel_8_package_tests = { ->
     sh '''
 
         rm -rf *
-        sudo yum install -y epel-release
-        sudo yum -y update
-        sudo yum install -y ansible git wget tar
+
+        yum install python3-pip
+        pip3 install ansible
+        ln -s /usr/local/bin/ansible /sbin/ansible
+        ln -s /usr/local/bin/ansible-galaxy /sbin/ansible-galaxy
         sudo ansible --version
         ansible-galaxy --version
 
