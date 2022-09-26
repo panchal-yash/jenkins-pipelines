@@ -15,7 +15,7 @@ setup_rhel_8_package_tests = { ->
     sh '''
 
         rm -rf *
-        sudo yum install python3-pip wget tart git -y
+        sudo yum install python3-pip wget tar git -y
         sudo pip3 install ansible
         sudo ln -s /usr/local/bin/ansible /sbin/ansible
         sudo ln -s /usr/local/bin/ansible-galaxy /sbin/ansible-galaxy
