@@ -19,6 +19,7 @@ setup_rhel_8_package_tests = { ->
         sudo pip3 install ansible
         sudo ln -s /usr/local/bin/ansible /sbin/ansible
         sudo ln -s /usr/local/bin/ansible-galaxy /sbin/ansible-galaxy
+        sudo ln -s /usr/local/bin/ansible-playbook /sbin/ansible-playbook
         sudo ansible --version
         ansible-galaxy --version
 
