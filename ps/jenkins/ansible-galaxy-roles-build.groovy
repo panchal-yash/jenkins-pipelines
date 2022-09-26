@@ -16,10 +16,10 @@ setup_rhel_8_package_tests = { ->
 
         rm -rf *
 
-        yum install python3-pip
-        pip3 install ansible
-        ln -s /usr/local/bin/ansible /sbin/ansible
-        ln -s /usr/local/bin/ansible-galaxy /sbin/ansible-galaxy
+        sudo yum install python3-pip -y
+        sudo pip3 install ansible
+        sudo ln -s /usr/local/bin/ansible /sbin/ansible
+        sudo ln -s /usr/local/bin/ansible-galaxy /sbin/ansible-galaxy
         sudo ansible --version
         ansible-galaxy --version
 
