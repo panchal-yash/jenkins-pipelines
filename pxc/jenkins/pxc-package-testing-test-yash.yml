@@ -1,5 +1,5 @@
 - job:
-    name: wip-pxc-package-testing
+    name: wip-pxc-package-testing-test-yash
     project-type: pipeline
     description: |
         Work in progress, please ignore
@@ -8,18 +8,18 @@
     properties:
         - build-discarder:
             artifact-days-to-keep: -1
-            artifact-num-to-keep: 10
+            artifact-num-to-keep: 20
             days-to-keep: -1
-            num-to-keep: 10
+            num-to-keep: 20
     pipeline-scm:
         scm:
             - git:
-                url: https://github.com/Percona-Lab/jenkins-pipelines.git
+                url: https://github.com/panchal-yash/jenkins-pipelines.git
                 branches:
-                    - 'master'
+                    - 'wip-pxc-package-testing'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: pxc/jenkins/pxc-package-testing.groovy
+        script-path: pxc/jenkins/pxc-package-testing-test-yash.groovy
     parameters:
         - choice:
             name: VERSION
@@ -35,7 +35,7 @@
                 - 'debian-11'
                 - 'debian-10'
                 - 'centos-7'
-                - 'ol-8'                
+                - 'ol-8'
             description: "Distribution to run test"
         - choice:
             name: INSTALL_REPO

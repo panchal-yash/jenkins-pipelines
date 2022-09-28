@@ -1,6 +1,6 @@
 library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
+    remote: 'https://github.com/panchal-yash/jenkins-pipelines.git'
 ]) _
 
 void installDependencies() {
@@ -16,7 +16,7 @@ void installDependencies() {
     
     sh '''
         rm -rf package-testing
-        git clone https://github.com/Percona-QA/package-testing --branch master
+        git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing
     '''
 
 }
@@ -198,7 +198,7 @@ pipeline {
                 'debian-11',
                 'debian-10',
                 'centos-7',
-                'ol-8'               
+                'ol-8'
             ],
             description: 'Distribution to run test'
         )
