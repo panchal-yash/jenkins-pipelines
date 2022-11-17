@@ -30,6 +30,7 @@
         - choice:
             name: TEST_DIST
             choices:
+                - 'ubuntu-jammy'
                 - 'ubuntu-focal'
                 - 'ubuntu-bionic'
                 - 'debian-11'

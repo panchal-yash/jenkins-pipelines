@@ -64,7 +64,7 @@ void setInventories(){
 
             echo \"Setting up Key path based on the selection\"
 
-            if [[ (${params.TEST_DIST} == "ubuntu-focal")  ||  (${params.TEST_DIST} == "ubuntu-bionic") ]];
+            if [[ (${params.TEST_DIST} == "ubuntu-focal")  ||  (${params.TEST_DIST} == "ubuntu-bionic") || (${params.TEST_DIST} == "ubuntu-jammy") ]];
             then
                 SSH_USER="ubuntu"            
                 KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/pxc80-bootstrap/${params.TEST_DIST}/ssh_key-us-west-2"
@@ -193,6 +193,7 @@ pipeline {
         choice(
             name: 'TEST_DIST',
             choices: [
+                'ubuntu-jammy',
                 'ubuntu-focal',
                 'ubuntu-bionic',
                 'debian-11',
