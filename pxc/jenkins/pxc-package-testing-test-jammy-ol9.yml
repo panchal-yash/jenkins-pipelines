@@ -1,5 +1,5 @@
 - job:
-    name: wip-pxc-package-testing
+    name: wip-pxc-package-testing-jammy-ol9
     project-type: pipeline
     description: |
         Work in progress, please ignore
@@ -14,12 +14,12 @@
     pipeline-scm:
         scm:
             - git:
-                url: https://github.com/Percona-Lab/jenkins-pipelines.git
+                url: https://github.com/panchal-yash/jenkins-pipelines.git
                 branches:
-                    - 'master'
+                    - 'pxc-package-testing-jammy-ol9'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: pxc/jenkins/pxc-package-testing.groovy
+        script-path: pxc/jenkins/pxc-package-testing-test-jammy-ol9.groovy
     parameters:
         - choice:
             name: product_to_test
