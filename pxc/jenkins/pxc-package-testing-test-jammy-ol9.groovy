@@ -41,7 +41,8 @@ void runMoleculeAction(String action, String product_to_test, String scenario) {
             source venv/bin/activate
             export MOLECULE_DEBUG=0
             export install_repo=${params.install_repo}
-            
+            #export DESTROY_ENV="no"
+
             if [[ ${product_to_test} = "pxc57" ]];
             then
                 export pxc57repo=${params.pxc57_repo}
@@ -275,6 +276,7 @@ pipeline {
     post {
         always {
             script {
+               // echo "Destroy Disabled"
                 runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
             }
             archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
