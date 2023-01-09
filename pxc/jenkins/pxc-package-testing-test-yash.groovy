@@ -12,6 +12,7 @@ void installDependencies() {
         source venv/bin/activate
         python3 -m pip install setuptools wheel
         python3 -m pip install molecule==2.22 boto boto3 paramiko
+        ansible-galaxy collection install amazon.aws
     '''
     
     sh '''
