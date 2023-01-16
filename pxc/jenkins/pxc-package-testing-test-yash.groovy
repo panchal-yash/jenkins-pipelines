@@ -282,14 +282,14 @@ pipeline {
 
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test)
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install")
                 setInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test)
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install")
                     }
                 }
 
@@ -300,7 +300,7 @@ pipeline {
 
                 echo "4. Destroy the Molecule instances for the INSTALL Phase.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install")
 
             }
         }
@@ -310,14 +310,14 @@ pipeline {
                 
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test)
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade")
                 setInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test)
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade")
                     }
                 }
 
@@ -325,7 +325,7 @@ pipeline {
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test)
+                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade")
                     }
                 }
 
@@ -336,7 +336,7 @@ pipeline {
 
                 echo "5. Destroy the Molecule instances for the UPGRADE Phase.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade")
 
             }
         }
