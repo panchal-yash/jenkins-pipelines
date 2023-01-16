@@ -277,9 +277,13 @@ pipeline {
         }
 
         stage("INSTALL") {
+
+            when {
+                expression{params.test_type == "install" || params.test_type == "install_and_upgrade"}
+            }
+
             steps {
-
-
+                
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "install")
@@ -306,8 +310,13 @@ pipeline {
         }
 
         stage("UPGRADE") {
+
+            when {
+                expression{params.test_type == "upgrade" || params.test_type == "install_and_upgrade"}
+            }
+            
             steps {
-                
+
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade")
