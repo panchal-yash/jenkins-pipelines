@@ -21,7 +21,7 @@ void installDependencies() {
 
 }
 
-void runMoleculeAction(String action, String product_to_test, String scenario) {
+void runMoleculeAction(String action, String product_to_test, String scenario, String test_type) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -41,7 +41,7 @@ void runMoleculeAction(String action, String product_to_test, String scenario) {
             source venv/bin/activate
             export MOLECULE_DEBUG=0
             export test_repo=${params.test_repo}
-            export test_type=${params.test_type}
+            export test_type=${test_type}
             
             if [[ ${product_to_test} = "pxc57" ]];
             then
@@ -134,7 +134,7 @@ void setInventories(){
 
 }
 
-void runlogsbackup(String product_to_test) {
+void runlogsbackup(String product_to_test, String test_phase) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -152,6 +152,8 @@ void runlogsbackup(String product_to_test) {
     withCredentials(awsCredentials) {
         sh """
             source venv/bin/activate
+            export test_phase=${test_phase}
+            echo $test_phase
 
             echo "Running the logs backup task for pxc bootstrap node"
             ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/playbooks/inventory
@@ -239,7 +241,8 @@ pipeline {
             name: 'test_type',
             choices: [
                 'install',
-                'upgrade'
+                'upgrade',
+                'install_and_upgrade'
             ],
             description: 'Set test type for testing'
         )      
@@ -273,48 +276,77 @@ pipeline {
             }
         }
 
-        stage("Create") {
+        stage("INSTALL") {
             steps {
+
+
+                echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
+
                 runMoleculeAction("create", params.product_to_test, params.node_to_test)
                 setInstancePrivateIPEnvironment()
-            }
-        }
 
-        stage("Converge") {
-            steps {
+                echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
+
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         runMoleculeAction("converge", params.product_to_test, params.node_to_test)
                     }
                 }
+
+                 echo "3. Take Backups of the Logs.."
+
+                setInventories()
+                runlogsbackup(params.product_to_test, "INSTALL")
+
+                echo "4. Destroy the Molecule instances for the INSTALL Phase.."
+
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
+
             }
         }
 
-        stage("Upgrade") {
+        stage("UPGRADE") {
             steps {
+                
+                echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
+
+                runMoleculeAction("create", params.product_to_test, params.node_to_test)
+                setInstancePrivateIPEnvironment()
+
+                echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
+
+                script{
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test)
+                    }
+                }
+
+                echo "3. Run UPGRADE scripts and playbooks for PXC.. Molecule side-effect step"
+
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         runMoleculeAction("side-effect", params.product_to_test, params.node_to_test)
                     }
                 }
+
+                echo "4. Take Backups of the Logs.."
+
+                setInventories()
+                runlogsbackup(params.product_to_test, "UPGRADE")
+
+                echo "5. Destroy the Molecule instances for the UPGRADE Phase.."
+
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
+
             }
         }
 
-        stage("Logs Backup ansible playbook") {
-            steps {
-                setInventories()
-                runlogsbackup(params.product_to_test)
-            }
-        }
 
     }
 
     post {
 
         always {
-            script {
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test)
-            }
             archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
         }
 
