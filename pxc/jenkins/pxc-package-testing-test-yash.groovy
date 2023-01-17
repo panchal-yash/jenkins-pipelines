@@ -21,7 +21,7 @@ void installDependencies() {
 
 }
 
-void runMoleculeAction(String action, String product_to_test, String scenario, String test_type, String test_repo) {
+void runMoleculeAction(String action, String product_to_test, String scenario, String test_type, String test_repo, String version_check) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -53,11 +53,11 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
 	        if [[ ${test_type} = "install" ]];
             then
                 export install_repo=${test_repo}
-                export check_version="yes"
+                export check_version="${version_check}"
             elif [[ ${test_type} == "upgrade" ]]
             then
                 export install_repo="main"
-                export check_version="yes"
+                export check_version="${version_check}"
                 export upgrade_repo=${test_repo}
             else
                 echo "Unknown condition"
@@ -287,14 +287,14 @@ pipeline {
                 
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo)
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                 setInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo)
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                     }
                 }
 
@@ -305,7 +305,7 @@ pipeline {
 
                 echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo)
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
 
             }
         }
@@ -320,14 +320,14 @@ pipeline {
 
                 echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main")
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
                 setInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main")
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
                     }
                 }
 
@@ -335,7 +335,7 @@ pipeline {
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo)
+                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
                     }
                 }
 
@@ -346,7 +346,7 @@ pipeline {
 
                 echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo)
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
 
             }
         }
