@@ -21,7 +21,7 @@ void installDependencies() {
 
 }
 
-void runMoleculeAction(String action, String product_to_test, String scenario, String test_type) {
+void runMoleculeAction(String action, String product_to_test, String scenario, String test_type, String test_repo) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -40,7 +40,7 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
         sh """
             source venv/bin/activate
             export MOLECULE_DEBUG=0
-            export test_repo=${params.test_repo}
+            export test_repo=${test_repo}
             export test_type=${test_type}
             
             if [[ ${product_to_test} = "pxc57" ]];
@@ -52,13 +52,14 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
             
 	        if [[ ${test_type} = "install" ]];
             then
-                export install_repo=${params.test_repo}
+                export install_repo=${test_repo}
+                export check_version="yes"
             elif [[ ${test_type} == "upgrade" ]]
             then
                 export install_repo="main"
-                export check_version="no"
+                export check_version="yes"
                 export upgrade_repo=${test_repo}
-            else 
+            else
                 echo "Unknown condition"
             fi
 
@@ -286,25 +287,25 @@ pipeline {
                 
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install")
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo)
                 setInstancePrivateIPEnvironment()
 
-                echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
+                echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install")
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo)
                     }
                 }
 
-                 echo "3. Take Backups of the Logs.."
+                 echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
 
                 setInventories()
                 runlogsbackup(params.product_to_test, "INSTALL")
 
-                echo "4. Destroy the Molecule instances for the INSTALL Phase.."
+                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install")
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo)
 
             }
         }
@@ -317,35 +318,35 @@ pipeline {
             
             steps {
 
-                echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
+                echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade")
+                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main")
                 setInstancePrivateIPEnvironment()
 
-                echo "2. Run Install scripts and tests for PXC.. Molecule converge step"
+                echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade")
+                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main")
                     }
                 }
 
-                echo "3. Run UPGRADE scripts and playbooks for PXC.. Molecule side-effect step"
+                echo "3. Run UPGRADE scripts and playbooks for running PXC UPGRADE tests.. Molecule side-effect step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade")
+                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo)
                     }
                 }
 
-                echo "4. Take Backups of the Logs.."
+                echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
 
                 setInventories()
                 runlogsbackup(params.product_to_test, "UPGRADE")
 
-                echo "5. Destroy the Molecule instances for the UPGRADE Phase.."
+                echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
 
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade")
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo)
 
             }
         }
