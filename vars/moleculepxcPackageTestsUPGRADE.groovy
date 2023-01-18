@@ -2,14 +2,14 @@ def call(String operating_system){
 
                 echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
 
-                runMoleculeAction("create", params.product_to_test, operating_system, "upgrade", "main", "no")
+                moleculepxcRunMoleculeAction("create", params.product_to_test, operating_system, "upgrade", "main", "no")
                 setInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("converge", params.product_to_test, operating_system, "upgrade", "main", "no")
+                        moleculepxcRunMoleculeAction("converge", params.product_to_test, operating_system, "upgrade", "main", "no")
                     }
                 }
 
@@ -17,7 +17,7 @@ def call(String operating_system){
 
                 script{
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                        runMoleculeAction("side-effect", params.product_to_test, operating_system, "upgrade", params.test_repo, "yes")
+                        moleculepxcRunMoleculeAction("side-effect", params.product_to_test, operating_system, "upgrade", params.test_repo, "yes")
                     }
                 }
 
@@ -28,6 +28,6 @@ def call(String operating_system){
 
                 echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
 
-                runMoleculeAction("destroy", params.product_to_test, operating_system, "upgrade", params.test_repo, "yes")
+                moleculepxcRunMoleculeAction("destroy", params.product_to_test, operating_system, "upgrade", params.test_repo, "yes")
 
 }
