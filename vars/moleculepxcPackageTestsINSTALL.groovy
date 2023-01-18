@@ -2,7 +2,7 @@ def call(String operating_system){
                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
                 moleculepxcRunMoleculeAction("create", params.product_to_test, operating_system, "install", params.test_repo, "yes")
-                setInstancePrivateIPEnvironment()
+                moleculepxcSetInstancePrivateIPEnvironment()
 
                 echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
@@ -14,8 +14,8 @@ def call(String operating_system){
 
                  echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
 
-                setInventories()
-                runlogsbackup(params.product_to_test, "INSTALL")
+                moleculepxcSetInventories()
+                moleculepxcRunLogsBackup(params.product_to_test, "INSTALL")
 
                 echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
 
