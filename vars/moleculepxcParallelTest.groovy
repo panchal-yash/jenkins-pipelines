@@ -5,9 +5,9 @@ def call(operatingSystems) {
         stage("${os}") {
 
           echo "INSTALLING"
-          moleculepxcPackageTestsINSTALL(${os})
+          moleculepxcPackageTestsINSTALL("${os}")
           echo "UPGRADING"
-          moleculepxcPackageTestsUPGRADE(${os})
+          moleculepxcPackageTestsUPGRADE("${os}")
 
         }
       }
