@@ -70,7 +70,7 @@ void installDependencies() {
 
 pipeline {
     agent {
-        label 'docker'
+        label 'micro-amazon'
     }
 
     parameters {
