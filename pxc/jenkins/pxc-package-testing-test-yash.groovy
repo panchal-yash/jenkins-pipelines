@@ -286,7 +286,7 @@ pipeline {
 
             steps {
                 
-                pxcPackageTestsINSTALL(params.node_to_test)
+                moleculepxcPackageTestsINSTALL(params.node_to_test)
 
             }
         }
@@ -302,7 +302,7 @@ pipeline {
             
             steps {
 
-                pxcPackageTestsUPGRADE(params.node_to_test)
+                moleculepxcPackageTestsUPGRADE(params.node_to_test)
                 
             }
         }
