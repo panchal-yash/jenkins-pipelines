@@ -267,7 +267,8 @@ pipeline {
                     currentBuild.displayName = "${env.BUILD_NUMBER}-${params.product_to_test}-${params.node_to_test}-${params.test_repo}-${params.test_type}"                    
                     if (( params.test_type == "upgrade" ) && ( params.test_repo == "main" )) {
                          echo "Skipping as the upgrade and main are not supported together."
-                         error "Exiting the Stage as the inputs are invalid."
+                         echo "Exiting the Stage as the inputs are invalid."
+                         currentBuild.result = 'UNSTABLE'
                     } else {
                          echo "Continue with the package tests"
                     }                
