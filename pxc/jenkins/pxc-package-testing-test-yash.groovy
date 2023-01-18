@@ -361,7 +361,9 @@ pipeline {
     post {
 
         always {
-            archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+             }
         }
 
         unstable {
