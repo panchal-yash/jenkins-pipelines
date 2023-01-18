@@ -40,13 +40,6 @@ void runNodeBuild(String node_to_test) {
 }
 
 
-void runNodeBuildTest(String operating_system){
-
-    moleculepxcPackageTestsALL(operating_system)
-
-}
-
-
 void installDependencies() {
 
     sh '''
@@ -164,7 +157,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuildTest("debian-10")
+                        moleculepxcPackageTestsALL("debian-10")
                     }
                 }
 
@@ -176,7 +169,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuildTest("debian-11")
+                        moleculepxcPackageTestsALL("debian-11")
                     }
                 }
 
