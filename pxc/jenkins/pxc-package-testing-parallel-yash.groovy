@@ -153,7 +153,6 @@ pipeline {
                     }                
                 }   
                 echo "${JENWORKSPACE}"
-                installMolecule()
                 installDependencies()
             }
         }
