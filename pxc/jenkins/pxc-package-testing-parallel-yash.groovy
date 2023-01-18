@@ -39,6 +39,13 @@ void runNodeBuild(String node_to_test) {
     )
 }
 
+
+void runNodeBuildTest(String operating_system){
+
+    moleculepxcPackageTestsALL(operating_system)
+
+}
+
 pipeline {
     agent {
         label 'docker'
@@ -107,7 +114,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("debian-10")
+                        runNodeBuildTest("debian-10")
                     }
                 }
 
@@ -119,7 +126,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("debian-11")
+                        runNodeBuildTest("debian-11")
                     }
                 }
 
@@ -131,7 +138,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("centos-7")
+                        runNodeBuildTest("centos-7")
                     }
                 }
 
@@ -143,7 +150,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ol-8")
+                        runNodeBuildTest("ol-8")
                     }
                 }
 
@@ -155,7 +162,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ol-9")
+                        runNodeBuildTest("ol-9")
                     }
                 }
 
@@ -168,7 +175,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-jammy")
+                        runNodeBuildTest("ubuntu-jammy")
                     }
                 }
 
@@ -180,7 +187,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-bionic")
+                        runNodeBuildTest("ubuntu-bionic")
                     }
                 }
 
@@ -192,7 +199,7 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-focal")
+                        runNodeBuildTest("ubuntu-focal")
                     }
                 }
 
@@ -203,7 +210,7 @@ pipeline {
                         }	
                     }	
                     steps {	
-                        runNodeBuild("min-amazon-2")	
+                        runNodeBuildTest("min-amazon-2")	
                     }	
                 }
 
