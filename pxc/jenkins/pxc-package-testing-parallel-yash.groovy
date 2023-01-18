@@ -48,16 +48,7 @@ void runNodeBuildTest(String operating_system){
 
 
 void installDependencies() {
-    sh '''
-        export PATH=${PATH}:~/.local/bin
-        sudo yum install -y git python3-pip jq
-        sudo amazon-linux-extras install ansible2
-        python3 -m venv venv
-        source venv/bin/activate
-        python3 -m pip install setuptools wheel
-        python3 -m pip install molecule==2.22 boto boto3 paramiko
-    '''
-    
+
     sh '''
         rm -rf package-testing
         git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing-upgrade-test
@@ -158,6 +149,7 @@ pipeline {
                     }                
                 }   
                 echo "${JENWORKSPACE}"
+                installMolecule()
                 installDependencies()
             }
         }
