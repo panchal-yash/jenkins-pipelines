@@ -164,8 +164,16 @@ pipeline {
                     moleculepxcParallelTest(all_nodes)
                 }
             }
-         }        
-
-        
+        }        
     }
+
+    post {
+        always {
+          script {
+              moleculepxcParallelDestroy(all_nodes, params.product_to_test)
+         }
+      }
+   }
+
+
 }
