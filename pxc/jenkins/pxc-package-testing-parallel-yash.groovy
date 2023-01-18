@@ -72,6 +72,17 @@ pipeline {
     agent {
         label 'micro-amazon'
     }
+    environment {
+
+        BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/bootstrap_instance_private_ip.json"
+        COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/common_instance_private_ip.json"
+
+        BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/bootstrap_instance_public_ip.json"
+        COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/common_instance_public_ip.json"
+
+        JENWORKSPACE = "${env.WORKSPACE}"
+
+    }
 
     parameters {
         choice(
