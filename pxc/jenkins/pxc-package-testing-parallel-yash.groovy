@@ -158,35 +158,14 @@ pipeline {
             }
         }
 
-        stage("Run parallel") {
-            parallel {
-                stage("Debian-10") {
-                    when {
-                        expression {
-                            nodes_to_test.contains("debian-10")
-                        }
-                    }
-
-                    steps {
-                        moleculepxcPackageTestsINSTALL("debian-10")
-                    }
+        stage('Test') {
+          steps {
+                script {
+                    moleculepxcParallelTest(all_nodes)
                 }
-
-                stage("Debian-11") {
-                    when {
-                        expression {
-                            nodes_to_test.contains("debian-11")
-                        }
-                    }
-
-                    steps {
-                        moleculepxcPackageTestsINSTALL("debian-11")
-                    }
-                }
-
-
-
             }
-        }
+         }        
+
+        
     }
 }
