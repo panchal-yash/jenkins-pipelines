@@ -314,7 +314,10 @@ pipeline {
         stage("UPGRADE") {
 
             when {
-                expression{params.test_type == "upgrade" || params.test_type == "install_and_upgrade"}
+                allOf{
+                    expression{params.test_type == "upgrade" || params.test_type == "install_and_upgrade"}
+                    expression{params.test_repo != "main"}                
+                }
             }
             
             steps {
