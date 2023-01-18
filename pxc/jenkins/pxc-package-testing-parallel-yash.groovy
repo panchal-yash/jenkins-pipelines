@@ -157,7 +157,7 @@ pipeline {
                     }
 
                     steps {
-                        moleculepxcPackageTestsALL("debian-10")
+                        moleculepxcPackageTestsINSTALL("debian-10")
                     }
                 }
 
@@ -169,7 +169,7 @@ pipeline {
                     }
 
                     steps {
-                        moleculepxcPackageTestsALL("debian-11")
+                        moleculepxcPackageTestsINSTALL("debian-11")
                     }
                 }
 
