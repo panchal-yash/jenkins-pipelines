@@ -46,6 +46,28 @@ void runNodeBuildTest(String operating_system){
 
 }
 
+
+void installDependencies() {
+    sh '''
+        export PATH=${PATH}:~/.local/bin
+        sudo yum install -y git python3-pip jq
+        sudo amazon-linux-extras install ansible2
+        python3 -m venv venv
+        source venv/bin/activate
+        python3 -m pip install setuptools wheel
+        python3 -m pip install molecule==2.22 boto boto3 paramiko
+    '''
+    
+    sh '''
+        rm -rf package-testing
+        git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing-upgrade-test
+    '''
+
+}
+
+
+
+
 pipeline {
     agent {
         label 'docker'
@@ -81,7 +103,8 @@ pipeline {
             name: 'test_type',
             choices: [
                 'install',
-                'upgrade'
+                'upgrade',
+                'install_and_upgrade'
             ],
             description: 'Set test type for testing'
         )
@@ -101,6 +124,30 @@ pipeline {
                     currentBuild.displayName = "#${BUILD_NUMBER}-${product_to_test}-${params.install_repo}-${params.node_to_test}"
                     currentBuild.description = "action: ${params.action_to_test} node: ${params.node_to_test}"
                 }
+            }
+        }
+
+
+        stage("Cleanup Workspace") {
+            steps {                
+                sh "sudo rm -rf ${WORKSPACE}/*"
+            }
+        }
+
+        stage("Set up") {
+            steps {             
+                script{
+                    currentBuild.displayName = "${env.BUILD_NUMBER}-${params.product_to_test}-${params.node_to_test}-${params.test_repo}-${params.test_type}"                    
+                    if (( params.test_type == "upgrade" ) && ( params.test_repo == "main" )) {
+                         echo "Skipping as the upgrade and main are not supported together."
+                         echo "Exiting the Stage as the inputs are invalid."
+                         currentBuild.result = 'UNSTABLE'
+                    } else {
+                         echo "Continue with the package tests"
+                    }                
+                }   
+                echo "${JENWORKSPACE}"
+                installDependencies()
             }
         }
 
