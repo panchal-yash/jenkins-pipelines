@@ -70,7 +70,7 @@ void installDependencies() {
 
 pipeline {
     agent {
-        label 'micro-amazon'
+        label 'min-centos-7-x64'
     }
     environment {
 
