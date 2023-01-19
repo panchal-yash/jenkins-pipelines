@@ -69,11 +69,11 @@ pipeline {
     }
     environment {
 
-        BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/bootstrap_instance_private_ip.json"
-        COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/common_instance_private_ip.json"
+        BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}-${params.install_repo}-${params.node_to_test}/bootstrap_instance_private_ip.json"
+        COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}-${params.install_repo}-${params.node_to_test}/common_instance_private_ip.json"
 
-        BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/bootstrap_instance_public_ip.json"
-        COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/common_instance_public_ip.json"
+        BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}-${params.install_repo}-${params.node_to_test}/bootstrap_instance_public_ip.json"
+        COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}-${params.install_repo}-${params.node_to_test}/common_instance_public_ip.json"
 
         JENWORKSPACE = "${env.WORKSPACE}"
 
@@ -153,6 +153,11 @@ pipeline {
                     }                
                 }   
                 echo "${JENWORKSPACE}"
+                script{
+                sh """
+                    mkdir -p ${WORKSPACE}/${product_to_test}-${params.install_repo}-${params.node_to_test}
+                """
+                }
                 installDependencies()
             }
         }
