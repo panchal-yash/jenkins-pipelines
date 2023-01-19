@@ -157,6 +157,9 @@ pipeline {
         always {
           script {
               moleculepxcParallelDestroy(all_nodes, params.product_to_test)
+              catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+             }
          }
       }
    }
