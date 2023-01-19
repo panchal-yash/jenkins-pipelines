@@ -15,7 +15,7 @@ def call(String operating_system){
                  echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
 
                 moleculepxcSetInventories()
-                moleculepxcRunLogsBackup(params.product_to_test, "INSTALL")
+                moleculepxcRunLogsBackup(params.product_to_test, "INSTALL", operating_system)
 
                 echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
 
