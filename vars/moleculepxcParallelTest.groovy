@@ -12,7 +12,9 @@ def call(operatingSystems) {
           env.BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${os}/bootstrap_instance_public_ip.json"
           env.COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${os}/common_instance_public_ip.json"
 
-          mkdir -p "${WORKSPACE}/${product_to_test}/${os}"
+          sh """
+            mkdir -p ${WORKSPACE}/${product_to_test}/${os}
+          """
           moleculepxcPackageTestsINSTALL("${os}")
 
           echo "UPGRADING"
@@ -23,7 +25,9 @@ def call(operatingSystems) {
           env.BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${os}/bootstrap_instance_public_ip.json"
           env.COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${os}/common_instance_public_ip.json"
 
-          mkdir -p "${WORKSPACE}/${product_to_test}/${os}"
+          sh """
+            mkdir -p ${WORKSPACE}/${product_to_test}/${os}
+          """
           moleculepxcPackageTestsUPGRADE("${os}")
 
         }
