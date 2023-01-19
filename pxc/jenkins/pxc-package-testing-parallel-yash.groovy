@@ -5,14 +5,7 @@ library changelog: false, identifier: 'lib@wip-pxc-package-testing-upgrade-test'
 
 List all_nodes = [
                 'ubuntu-jammy',
-                'ubuntu-focal',
-                'ubuntu-bionic',
-                'debian-11',
-                'debian-10',
-                'centos-7',
-                'ol-8',
-                'ol-9',
-                'min-amazon-2'
+                'ubuntu-focal'
 ]
 
 product_to_test = params.product_to_test
