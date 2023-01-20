@@ -37,21 +37,21 @@ def call(String product_to_test, String node_to_test, String test_type){
             
             export ip_env=\$Bootstrap_Instance
             
-            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-bootstrap/${test_type}/playbooks/
+            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-bootstrap/${test_type}/${operating_system}/playbooks/
             echo "\n \$Bootstrap_Instance ansible_host=\$Bootstrap_Instance_Public_IP  ansible_ssh_user=\$SSH_USER ansible_ssh_private_key_file=\$KEYPATH_BOOTSTRAP ansible_ssh_common_args='-o StrictHostKeyChecking=no' ip_env=\$Bootstrap_Instance" > ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-bootstrap/${test_type}/${operating_system}/playbooks/inventory
 
             export ip_env=\$Common_Instance_PXC2
             Common_Instance_PXC2=\$(cat \${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[])
             Common_Instance_PXC2_Public_IP=\$(cat \${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[])
 
-            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/playbooks/
+            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/
             echo "\n \$Common_Instance_PXC2 ansible_host=\$Common_Instance_PXC2_Public_IP   ansible_ssh_user=\$SSH_USER ansible_ssh_private_key_file=\$KEYPATH_COMMON ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=\$Common_Instance_PXC2" > ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/inventory
 
             export ip_env=\$Common_Instance_PXC3
             Common_Instance_PXC3=\$(cat \${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.instance] | jq -r .[])
             Common_Instance_PXC3_Public_IP=\$(cat \${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[])
 
-            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/playbooks/
+            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/
             echo "\n \$Common_Instance_PXC3 ansible_host=\$Common_Instance_PXC3_Public_IP   ansible_ssh_user=\$SSH_USER ansible_ssh_private_key_file=\$KEYPATH_COMMON ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=\$Common_Instance_PXC3" >> ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/inventory
             """
 
