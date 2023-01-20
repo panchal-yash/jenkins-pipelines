@@ -13,12 +13,15 @@ void call(String action, String product_to_test, String scenario, String test_ty
         )
     ]
 
+        sh """
+            mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/
+        """
+
         BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
         COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_private_ip.json"
 
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
-
 
     withCredentials(awsCredentials) {
         sh """
