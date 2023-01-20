@@ -59,8 +59,8 @@ void call(String action, String product_to_test, String scenario, String test_ty
             cd -
 
             cd ${product_to_test}-common
-            echo "INSTANCE_PRIVATE_IP: '${COMMON_INSTANCE_PRIVATE_IP}'" > envfile_common
-            echo "INSTANCE_PUBLIC_IP: '${COMMON_INSTANCE_PUBLIC_IP}'" >> envfile_common
+            echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > envfile_common
+            echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> envfile_common
             molecule -e envfile_common ${action} -s ${scenario}
             cd -
         """
