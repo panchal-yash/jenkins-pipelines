@@ -55,13 +55,13 @@ void call(String action, String product_to_test, String scenario, String test_ty
             cd ${product_to_test}-bootstrap
             echo "INSTANCE_PRIVATE_IP: ${BOOTSTRAP_INSTANCE_PRIVATE_IP}" > envfile
             echo "INSTANCE_PUBLIC_IP: ${BOOTSTRAP_INSTANCE_PUBLIC_IP}" >> envfile
-            molecule -e envfile ${action} -s ${scenario}
+            molecule -e envfile ${action} -s ${scenario} -vvv
             cd -
 
             cd ${product_to_test}-common
             echo "INSTANCE_PRIVATE_IP: ${COMMON_INSTANCE_PRIVATE_IP}" > envfile_common
             echo "INSTANCE_PUBLIC_IP: ${COMMON_INSTANCE_PUBLIC_IP} >> envfile_common
-            molecule -e envfile_common ${action} -s ${scenario}
+            molecule -e envfile_common ${action} -s ${scenario} -vvv
             cd -
         """
 
