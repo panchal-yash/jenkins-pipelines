@@ -51,6 +51,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
             fi
 
             cd package-testing/molecule/pxc
+            export MOLECULE_NO_LOG="false"
 
             cd ${product_to_test}-bootstrap
             echo "INSTANCE_PRIVATE_IP: ${BOOTSTRAP_INSTANCE_PRIVATE_IP}" > envfile
