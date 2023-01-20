@@ -53,15 +53,15 @@ void call(String action, String product_to_test, String scenario, String test_ty
             cd package-testing/molecule/pxc
 
             cd ${product_to_test}-bootstrap
-            export INSTANCE_PRIVATE_IP=${BOOTSTRAP_INSTANCE_PRIVATE_IP}
-            export INSTANCE_PUBLIC_IP=${BOOTSTRAP_INSTANCE_PUBLIC_IP}            
-            molecule ${action} -s ${scenario}
+            echo INSTANCE_PRIVATE_IP=${BOOTSTRAP_INSTANCE_PRIVATE_IP} > envfile
+            echo INSTANCE_PUBLIC_IP=${BOOTSTRAP_INSTANCE_PUBLIC_IP} >> envfile
+            molecule ${action} -s ${scenario} -e envfile
             cd -
 
             cd ${product_to_test}-common
-            export INSTANCE_PRIVATE_IP=${COMMON_INSTANCE_PRIVATE_IP}
-            export INSTANCE_PUBLIC_IP=${COMMON_INSTANCE_PUBLIC_IP}        
-            molecule ${action} -s ${scenario}
+            echo INSTANCE_PRIVATE_IP=${COMMON_INSTANCE_PRIVATE_IP} > envfile_common
+            echo INSTANCE_PUBLIC_IP=${COMMON_INSTANCE_PUBLIC_IP} >> envfile_common
+            molecule ${action} -s ${scenario} -e envfile_common
             cd -
         """
 
@@ -72,9 +72,6 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
-
-
-
 
         PXC1_IP = sh(
             script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
