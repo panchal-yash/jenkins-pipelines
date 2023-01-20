@@ -13,8 +13,49 @@ void call(String action, String product_to_test, String scenario, String test_ty
         )
     ]
 
+    withCredentials(awsCredentials) {
+        sh """
+            source venv/bin/activate
+            export MOLECULE_DEBUG=0
+            export test_repo=${test_repo}
+            export test_type=${test_type}
+            
+            if [[ ${product_to_test} = "pxc57" ]];
+            then
+                export pxc57repo=${params.pxc57_repo}
+            else
+                echo "Product is not pxc57 so skipping value assignment to it"
+            fi
+            
+	        if [[ ${test_type} = "install" ]];
+            then
+                export install_repo=${test_repo}
+                export check_version="${version_check}"
+            elif [[ ${test_type} == "upgrade" ]]
+            then
+                export install_repo="main"
+                export check_version="${version_check}"
+                export upgrade_repo=${test_repo}
+            else
+                echo "Unknown condition"
+            fi
 
-        sh """mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/"""
+            cd package-testing/molecule/pxc
+
+            cd ${product_to_test}-bootstrap
+            export INSTANCE_PRIVATE_IP=${BOOTSTRAP_INSTANCE_PRIVATE_IP}
+            export INSTANCE_PUBLIC_IP=${BOOTSTRAP_INSTANCE_PUBLIC_IP}            
+            molecule ${action} -s ${scenario}
+            cd -
+
+            cd ${product_to_test}-common
+            export INSTANCE_PRIVATE_IP=${COMMON_INSTANCE_PRIVATE_IP}
+            export INSTANCE_PUBLIC_IP=${COMMON_INSTANCE_PUBLIC_IP}        
+            molecule ${action} -s ${scenario}
+            cd -
+        """
+
+       sh """mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/"""
 
         BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
         COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_private_ip.json"
@@ -131,46 +172,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
             """
 
 //----- SET INVENTORIES ----
-    withCredentials(awsCredentials) {
-        sh """
-            source venv/bin/activate
-            export MOLECULE_DEBUG=0
-            export test_repo=${test_repo}
-            export test_type=${test_type}
-            
-            if [[ ${product_to_test} = "pxc57" ]];
-            then
-                export pxc57repo=${params.pxc57_repo}
-            else
-                echo "Product is not pxc57 so skipping value assignment to it"
-            fi
-            
-	        if [[ ${test_type} = "install" ]];
-            then
-                export install_repo=${test_repo}
-                export check_version="${version_check}"
-            elif [[ ${test_type} == "upgrade" ]]
-            then
-                export install_repo="main"
-                export check_version="${version_check}"
-                export upgrade_repo=${test_repo}
-            else
-                echo "Unknown condition"
-            fi
 
-            cd package-testing/molecule/pxc
 
-            cd ${product_to_test}-bootstrap
-            export INSTANCE_PRIVATE_IP=${BOOTSTRAP_INSTANCE_PRIVATE_IP}
-            export INSTANCE_PUBLIC_IP=${BOOTSTRAP_INSTANCE_PUBLIC_IP}            
-            molecule ${action} -s ${scenario}
-            cd -
-
-            cd ${product_to_test}-common
-            export INSTANCE_PRIVATE_IP=${COMMON_INSTANCE_PRIVATE_IP}
-            export INSTANCE_PUBLIC_IP=${COMMON_INSTANCE_PUBLIC_IP}        
-            molecule ${action} -s ${scenario}
-            cd -
-        """
     }
 }
