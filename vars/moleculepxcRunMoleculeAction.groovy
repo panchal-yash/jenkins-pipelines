@@ -53,8 +53,8 @@ void call(String action, String product_to_test, String scenario, String test_ty
             cd package-testing/molecule/pxc
 
             cd ${product_to_test}-bootstrap
-            echo "INSTANCE_PRIVATE_IP: '${BOOTSTRAP_INSTANCE_PRIVATE_IP}'" > envfile
-            echo "INSTANCE_PUBLIC_IP: '${BOOTSTRAP_INSTANCE_PUBLIC_IP}'" >> envfile
+            echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > envfile
+            echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> envfile
             molecule -e envfile ${action} -s ${scenario}
             cd -
 
