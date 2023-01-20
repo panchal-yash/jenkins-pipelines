@@ -55,7 +55,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
             cd ${product_to_test}-bootstrap
             echo "INSTANCE_PRIVATE_IP: ${BOOTSTRAP_INSTANCE_PRIVATE_IP}" > envfile
             echo "INSTANCE_PUBLIC_IP: ${BOOTSTRAP_INSTANCE_PUBLIC_IP}" >> envfile
-            molecule -vvv -e envfile ${action} -s ${scenario}
+            molecule -e envfile ${action} -vvv -s ${scenario}
             cd -
 
             cd ${product_to_test}-common
