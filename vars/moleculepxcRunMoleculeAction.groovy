@@ -23,68 +23,75 @@ void call(String action, String product_to_test, String scenario, String test_ty
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
-    withCredentials(awsCredentials) {
-        sh """
-            source venv/bin/activate
-            export MOLECULE_DEBUG=1
-            export test_repo=${test_repo}
-            export test_type=${test_type}
-            
-            if [[ ${product_to_test} = "pxc57" ]];
-            then
-                export pxc57repo=${params.pxc57_repo}
-            else
-                echo "Product is not pxc57 so skipping value assignment to it"
-            fi
-            
-	        if [[ ${test_type} = "install" ]];
-            then
-                export install_repo=${test_repo}
-                export check_version="${version_check}"
-            elif [[ ${test_type} == "upgrade" ]]
-            then
-                export install_repo="main"
-                export check_version="${version_check}"
-                export upgrade_repo=${test_repo}
-            else
-                echo "Unknown condition"
-            fi
+        withCredentials(awsCredentials) {
+            sh """
+                source venv/bin/activate
+                export MOLECULE_DEBUG=1
+                export test_repo=${test_repo}
+                export test_type=${test_type}
+                
+                if [[ ${product_to_test} = "pxc57" ]];
+                then
+                    export pxc57repo=${params.pxc57_repo}
+                else
+                    echo "Product is not pxc57 so skipping value assignment to it"
+                fi
+                
+                if [[ ${test_type} = "install" ]];
+                then
+                    export install_repo=${test_repo}
+                    export check_version="${version_check}"
+                elif [[ ${test_type} == "upgrade" ]]
+                then
+                    export install_repo="main"
+                    export check_version="${version_check}"
+                    export upgrade_repo=${test_repo}
+                else
+                    echo "Unknown condition"
+                fi
 
-            cd package-testing/molecule/pxc
+                cd package-testing/molecule/pxc
 
-            cd ${product_to_test}-bootstrap
-            echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > envfile
-            echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> envfile
-            molecule -e envfile ${action} -s ${scenario}
-            cd -
+                cd ${product_to_test}-bootstrap
+                echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
+                cd -
 
-            cd ${product_to_test}-common
-            echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > envfile_common
-            echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> envfile_common
-            molecule -e envfile_common ${action} -s ${scenario}
-            cd -
-        """
+                cd ${product_to_test}-common
+                echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
+                cd -
+            """
 
-       sh """mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/"""
+                sh """mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/"""
 
-        PXC1_IP = sh(
-            script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
-            returnStdout: true
-        ).trim()
-        PXC2_IP = sh(
-            script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-            returnStdout: true
-        ).trim()
-        PXC3_IP = sh(
-            script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-            returnStdout: true
-        ).trim()
+                if(action == "create"){
+                    PXC1_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
+                    PXC2_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
+                    PXC3_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
 
-        sh """
-            echo ${PXC1_IP} > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/pxc1
-            echo ${PXC2_IP} > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/pxc2
-            echo ${PXC3_IP} > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/pxc3
-        """
+                    sh """
+                        echo "PXC1: ${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo "PXC2: ${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo "PXC3: ${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    """
+                }
+                else{
+                    
+                    echo "IPs alread there so no need"
+                    
+                }
 
  
 //--- Move the PXC1_IP values to a file
@@ -176,6 +183,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 //----- SET INVENTORIES ----
 
+            echo "Completing the Molecule Action"
 
     }
 }
