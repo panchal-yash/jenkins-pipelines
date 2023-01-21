@@ -102,7 +102,8 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 
             echo "Setting up Key path based on the selection"
-
+        script{
+            
             if ( ("${product_to_test}" == "ubuntu-focal")  ||  ("${product_to_test}" == "ubuntu-bionic") || ("${product_to_test}" == "ubuntu-jammy")){
                 SSH_USER="ubuntu"            
                 KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/"${product_to_test}"-bootstrap/"${product_to_test}"/ssh_key-us-west-2"
@@ -127,7 +128,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
             {
                 echo "OS Not yet in list of Keypath setup"
             }
-
+        }
 
 
             Bootstrap_Instance = sh(
