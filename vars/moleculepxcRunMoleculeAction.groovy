@@ -128,7 +128,9 @@ void call(String action, String product_to_test, String scenario, String test_ty
                 echo "OS Not yet in list of Keypath setup"
             }
 
-
+            echo "${SSH_USER}"
+            echo "${KEYPATH_BOOTSTRAP}"
+            echo "${KEYPATH_COMMON}"            
 
             Bootstrap_Instance = sh(
                 script: """echo ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
