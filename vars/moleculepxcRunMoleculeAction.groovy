@@ -16,6 +16,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
         sh """
             mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/
             mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/
+            mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/
         """
 
         BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
