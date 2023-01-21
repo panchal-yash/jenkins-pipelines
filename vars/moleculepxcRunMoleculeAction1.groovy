@@ -26,6 +26,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
     withCredentials(awsCredentials) {
 
             echo "Setting up Key path based on the selection"
+            echo "${product_to_test}"
 
             if ( product_to_test == "ubuntu-focal"  ||  product_to_test == "ubuntu-bionic" || product_to_test == "ubuntu-jammy"){
                 SSH_USER="ubuntu"            
