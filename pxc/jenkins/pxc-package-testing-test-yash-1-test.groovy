@@ -23,7 +23,7 @@ void installDependencies() {
 
 pipeline {
     agent {
-        label 'micro-amazon'
+        label 'any'
     }
 
     options {
@@ -111,7 +111,7 @@ pipeline {
                     }                
                 }   
                 echo "${JENWORKSPACE}"
-                installDependencies()
+                //installDependencies()
             }
         }
 
