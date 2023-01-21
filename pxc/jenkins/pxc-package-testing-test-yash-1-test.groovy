@@ -23,7 +23,7 @@ void installDependencies() {
 
 pipeline {
     agent {
-        label 'any'
+        label 'master'
     }
 
     options {
