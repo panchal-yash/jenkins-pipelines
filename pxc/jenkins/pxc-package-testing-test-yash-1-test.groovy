@@ -123,9 +123,7 @@ pipeline {
 
             steps {
                 
-
-                moleculepxcRunMoleculeAction-1("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-
+                moleculepxcRunMoleculeAction1("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
 
             }
         }
