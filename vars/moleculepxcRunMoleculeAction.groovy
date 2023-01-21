@@ -67,14 +67,6 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
        sh """mkdir -p ${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/"""
 
-
-
-        BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
-        COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_private_ip.json"
-
-        BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
-        COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
-
         PXC1_IP = sh(
             script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
             returnStdout: true
@@ -133,32 +125,32 @@ void call(String action, String product_to_test, String scenario, String test_ty
             echo "${KEYPATH_COMMON}"            
 
             Bootstrap_Instance = sh(
-                script: """echo ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
+                script: """cat ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
             Bootstrap_Instance_Public_IP = sh(
-                script: """echo ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                script: """cat ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
             Common_Instance_PXC2 = sh(
-                script: """echo ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
+                script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
             Common_Instance_PXC2_Public_IP = sh(
-                script: """echo ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
             Common_Instance_PXC3 = sh(
-                script: """echo ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.instance] | jq -r .[]""",
+                script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
             Common_Instance_PXC3_Public_IP = sh(
-                script: """echo ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
+                script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
