@@ -122,28 +122,28 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 //--- Setting up Keypath based on selection
 
-
+                                                           
             echo "Setting up Key path based on the selection"
 
             if ( scenario == "ubuntu-focal"  ||  scenario == "ubuntu-bionic" || scenario == "ubuntu-jammy"){
                 SSH_USER="ubuntu"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${product_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${product_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "debian-11" || scenario == "debian-10"){
                 SSH_USER="admin"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${product_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${product_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "ol-8" || scenario == "ol-9" || scenario == "min-amazon-2"){
                 SSH_USER="ec2-user"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${product_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${product_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "centos-7"){
                 SSH_USER="centos"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${product_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${product_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else
             {
