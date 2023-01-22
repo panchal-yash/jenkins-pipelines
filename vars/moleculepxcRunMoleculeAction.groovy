@@ -82,14 +82,29 @@ void call(String action, String product_to_test, String scenario, String test_ty
                 ).trim()
 
                 sh """
-                    echo "PXC1: \"${PXC1_IP}\"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
-                    echo "PXC2: \"${PXC2_IP}\"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
-                    echo "PXC3: \"${PXC3_IP}\"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    echo "PXC1: "${PXC1_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                    echo "PXC2: "${PXC2_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    echo "PXC3: "${PXC3_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     echo "${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/PXC1
                     echo "${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC2
                     echo "${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC3
                 """
  
+
+            sh """
+            
+            echo 'CATING THE ENV FILE After ${action}'
+            
+            echo 'BOOTSTRAP FILE'
+            cat ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+
+            echo 'COMMON FILE'
+            cat ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+
+            """
+
+
+
 //--- Move the PXC1_IP values to a file
 
 
