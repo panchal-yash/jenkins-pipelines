@@ -25,21 +25,6 @@ void call(String action, String product_to_test, String scenario, String test_ty
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
-        if(action == "converge"){
-            PXC1_IP = sh(
-                script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
-                returnStdout: true
-            ).trim()
-            PXC2_IP = sh(
-                script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                returnStdout: true
-            ).trim()
-            PXC3_IP = sh(
-                script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                returnStdout: true
-            ).trim()
-        }
-
         withCredentials(awsCredentials) {
             sh """
                 source venv/bin/activate
@@ -71,6 +56,15 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
                 cd ${product_to_test}-bootstrap
 
+                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
+                cd -
+
+                cd ${product_to_test}-common
+
+                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
+                cd -
+
+
                 if [[ ${action} = "converge" ]];
                 then
                     echo "setting vars as in converge"
@@ -86,16 +80,24 @@ void call(String action, String product_to_test, String scenario, String test_ty
                 else
                     echo "Vars are not yet created.."
                 fi
-                
-                
-                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
-                cd -
-
-                cd ${product_to_test}-common
-
-                molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
-                cd -
             """
+
+
+
+        if(action == "create"){
+            PXC1_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+            PXC2_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+            PXC3_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+        }
 
  
 //--- Move the PXC1_IP values to a file
