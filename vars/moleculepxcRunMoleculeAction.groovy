@@ -25,29 +25,20 @@ void call(String action, String product_to_test, String scenario, String test_ty
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
-                if(action == "converge"){
-                    PXC1_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-                    PXC2_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-                    PXC3_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-                }
-                else{
-                    
-                    echo "IPs already there so no need"
-                    
-                }
-
-
-
-
+        if(action == "converge"){
+            PXC1_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+            PXC2_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+            PXC3_IP = sh(
+                script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                returnStdout: true
+            ).trim()
+        }
 
         withCredentials(awsCredentials) {
             sh """
