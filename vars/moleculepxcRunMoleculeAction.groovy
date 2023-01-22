@@ -25,6 +25,27 @@ void call(String action, String product_to_test, String scenario, String test_ty
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
+                if(action == "create"){
+                    PXC1_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
+                    PXC2_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
+                    PXC3_IP = sh(
+                        script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
+                        returnStdout: true
+                    ).trim()
+                }
+                else{
+                    
+                    echo "IPs already there so no need"
+                    
+                }
+
+
         withCredentials(awsCredentials) {
             sh """
                 source venv/bin/activate
@@ -54,50 +75,29 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
                 cd package-testing/molecule/pxc
 
+
+
+
+                                                
+                echo "${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/PXC1
+                echo "${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC2
+                echo "${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC3
+
                 cd ${product_to_test}-bootstrap
                 echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                 echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                echo "PXC1: ${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile                
                 molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
                 cd -
 
                 cd ${product_to_test}-common
                 echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                 echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                echo "PXC2: ${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                echo "PXC3: ${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                 molecule -e ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile ${action} -s ${scenario}
                 cd -
             """
-
-
-
-                if(action == "create"){
-                    PXC1_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-                    PXC2_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-                    PXC3_IP = sh(
-                        script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
-                        returnStdout: true
-                    ).trim()
-
-                    sh """
-                        echo "PXC1: ${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
-                        echo "PXC2: ${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
-                        echo "PXC3: ${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
-                                                
-                        echo "${PXC1_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/PXC1
-                        echo "${PXC2_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC2
-                        echo "${PXC3_IP}" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/PXC3
-                    """
-                }
-                else{
-                    
-                    echo "IPs alread there so no need"
-                    
-                }
 
  
 //--- Move the PXC1_IP values to a file
