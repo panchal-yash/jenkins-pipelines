@@ -1,4 +1,4 @@
-void call(String product_to_test, String test_type, String operating_system) {
+void call(String product_to_test, String test_type, String scenario) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -20,10 +20,10 @@ void call(String product_to_test, String test_type, String operating_system) {
             echo $test_type
 
             echo "Running the logs backup task for pxc bootstrap node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/inventory
-
+            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}/${product_to_test}-bootstrap/${test_type}/${scenario}/playbooks/inventory
+                                                                                                   
             echo "Running the logs backup task for pxc common node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${node_to_test}/${product_to_test}-common/${test_type}/${operating_system}/playbooks/inventory
+            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}/${product_to_test}-common/${test_type}/${scenario}/playbooks/inventory
         """
     }
 }
