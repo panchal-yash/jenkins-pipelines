@@ -39,7 +39,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
         }else if( test_type == "upgrade"){
             install_repo = "main"
             check_version = "${version_check}"
-            UPGRADE_REPO = "${test_repo}"
+           // UPGRADE_REPO = "${test_repo}"
         }
         else{
             echo "Unknown condition"
@@ -63,7 +63,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     
                     if [[ ${test_type} = "upgrade"]];
                     then
-                        echo 'upgrade_repo: "${UPGRADE_REPO}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo 'upgrade_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
