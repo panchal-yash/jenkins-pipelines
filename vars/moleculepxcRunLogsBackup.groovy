@@ -13,11 +13,11 @@ void call(String product_to_test, String test_type, String scenario) {
         )
     ]
 
+
+
     withCredentials(awsCredentials) {
         sh """
             source venv/bin/activate
-            export test_phase=${test_type}
-            echo $test_type
 
             echo "Running the logs backup task for pxc bootstrap node"
             ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}/${product_to_test}-bootstrap/${test_type}/${scenario}/playbooks/inventory
