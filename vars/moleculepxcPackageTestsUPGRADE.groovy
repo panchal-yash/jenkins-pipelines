@@ -22,7 +22,7 @@ def call(String operating_system){
 
                 echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
 
-                moleculepxcRunLogsBackup(params.product_to_test, "UPGRADE", operating_system)
+                moleculepxcRunLogsBackup(params.product_to_test, "upgrade", operating_system)
 
                 echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
 
