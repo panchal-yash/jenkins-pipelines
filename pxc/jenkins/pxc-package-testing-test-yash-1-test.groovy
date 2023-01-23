@@ -23,7 +23,7 @@ void installDependencies() {
 
 pipeline {
     agent {
-        label 'master'
+        label 'docker'
     }
 
     options {
@@ -112,11 +112,15 @@ pipeline {
                 }   
                 echo "${JENWORKSPACE}"
                 //installDependencies()
+                installDocker()
             }
         }
 
         stage("INSTALL") {
-
+            agent{
+                image 'centos:centos7' 
+                label 'docker'
+            }
             when {
                 expression{params.test_type == "install" || params.test_type == "install_and_upgrade"}
             }

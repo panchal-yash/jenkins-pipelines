@@ -19,11 +19,11 @@ void call(String action, String product_to_test, String scenario, String test_ty
             mkdir -p ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/
         """
 
-        BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
-        COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_private_ip.json"
+        def BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_private_ip.json"
+        def COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_private_ip.json"
 
-        BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
-        COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
+        def BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
+        def COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
 
         withCredentials(awsCredentials) {
@@ -91,15 +91,15 @@ void call(String action, String product_to_test, String scenario, String test_ty
                 cd -
             """
 
-                PXC1_IP = sh(
+                def PXC1_IP = sh(
                     script: """jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${BOOTSTRAP_INSTANCE_PRIVATE_IP}""",
                     returnStdout: true
                 ).trim()
-                PXC2_IP = sh(
+                def PXC2_IP = sh(
                     script: """jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
                     returnStdout: true
                 ).trim()
-                PXC3_IP = sh(
+                def PXC3_IP = sh(
                     script: """jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${COMMON_INSTANCE_PRIVATE_IP}""",
                     returnStdout: true
                 ).trim()
@@ -143,24 +143,24 @@ void call(String action, String product_to_test, String scenario, String test_ty
             echo "Setting up Key path based on the selection"
 
             if ( scenario == "ubuntu-focal"  ||  scenario == "ubuntu-bionic" || scenario == "ubuntu-jammy"){
-                SSH_USER="ubuntu"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
+                def SSH_USER="ubuntu"            
+                def KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                def KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "debian-11" || scenario == "debian-10"){
-                SSH_USER="admin"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
+                def SSH_USER="admin"            
+                def KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                def KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "ol-8" || scenario == "ol-9" || scenario == "min-amazon-2"){
-                SSH_USER="ec2-user"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
+                def SSH_USER="ec2-user"
+                def KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                def KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else if( scenario == "centos-7"){
-                SSH_USER="centos"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
+                def SSH_USER="centos"
+                def KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${scenario}/ssh_key-us-west-2"
+                def KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${scenario}/ssh_key-us-west-2"
             }
             else
             {
@@ -171,32 +171,32 @@ void call(String action, String product_to_test, String scenario, String test_ty
             echo "${KEYPATH_BOOTSTRAP}"
             echo "${KEYPATH_COMMON}"            
 
-            Bootstrap_Instance = sh(
+            def Bootstrap_Instance = sh(
                 script: """cat ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
-            Bootstrap_Instance_Public_IP = sh(
+            def Bootstrap_Instance_Public_IP = sh(
                 script: """cat ${BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
-            Common_Instance_PXC2 = sh(
+            def Common_Instance_PXC2 = sh(
                 script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
-            Common_Instance_PXC2_Public_IP = sh(
+            def Common_Instance_PXC2_Public_IP = sh(
                 script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
-            Common_Instance_PXC3 = sh(
+            def Common_Instance_PXC3 = sh(
                 script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.instance] | jq -r .[]""",
                 returnStdout: true
             ).trim()
 
-            Common_Instance_PXC3_Public_IP = sh(
+            def Common_Instance_PXC3_Public_IP = sh(
                 script: """cat ${COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
                 returnStdout: true
             ).trim()
