@@ -28,7 +28,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 
         if( product_to_test == "pxc57" ){
-            export pxc57repo=${params.pxc57_repo}
+            pxc57repo=${params.pxc57_repo}
         }else{
             echo "Product is not pxc57 so skipping value assignment to it"
         }
@@ -65,7 +65,13 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     then
                         echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
- 
+
+                    if [[ ${product_to_test} = "pxc57"]];
+                    then                    
+                        echo 'pxc57repo: "${pxc57repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    fi
+
+
                     echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
  
@@ -76,7 +82,13 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     then                    
                         echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     fi
- 
+
+                    if [[ ${product_to_test} = "pxc57"]];
+                    then                    
+                        echo 'pxc57repo: "${pxc57repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    fi
+
+
                 else
                     echo "Already set the vars"
                 fi
