@@ -26,25 +26,6 @@ void call(String action, String product_to_test, String scenario, String test_ty
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
 
-
-        if( product_to_test == "pxc57" ){
-           def pxc57repo = "${params.pxc57_repo}"
-        }else{
-            echo "Product is not pxc57 so skipping value assignment to it"
-        }
-
-        if (test_type == "install"){
-            def install_repo = "${test_repo}"
-            def check_version = "${version_check}"
-        }else if( test_type == "upgrade"){
-            def install_repo = "main"
-            def check_version = "${version_check}"
-            def upgrade_repo = "${test_repo}"
-        }
-        else{
-            echo "Unknown condition"
-        }
-
         withCredentials(awsCredentials) {
             sh """
                 source venv/bin/activate
@@ -58,17 +39,21 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
  
-                    echo 'install_repo: "${install_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
-                    echo 'check_version: "${check_version}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     
-                    if [[ ${test_type} = "upgrade"]];
+                    if [[ ${test_type} = "install"]];
                     then
+                        echo 'install_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                    elif [[ ${test_type} = "upgrade"]]
+                    then
+                        echo 'install_repo: "main"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                         echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
                     then                    
-                        echo 'pxc57repo: "${pxc57repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'pxc57repo: "${params.pxc57_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
 
 
@@ -78,14 +63,20 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     echo 'install_repo: "${install_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     echo 'check_version: "${check_version}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     
-                    if [[ ${test_type} = "upgrade"]];
-                    then                    
+                    if [[ ${test_type} = "install"]];
+                    then
+                        echo 'install_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    elif [[ ${test_type} = "upgrade"]]
+                    then
+                        echo 'install_repo: "main"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                         echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
                     then                    
-                        echo 'pxc57repo: "${pxc57repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'pxc57repo: "${params.pxc57_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     fi
 
 
