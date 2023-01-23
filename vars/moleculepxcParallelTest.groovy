@@ -1,19 +1,24 @@
-def call(operatingSystems) {
+def call(operatingSystems, String test_type) {
   tests = [:]
   operatingSystems.each { os ->
    tests["${os}"] =  {
         stage("${os}") {
 
-          echo "INSTALLING"
+          if (test_type == "install" || test_type === "install_and_upgrade"){
 
-          moleculepxcPackageTestsINSTALL("${os}")
+            echo "INSTALLING"
+            moleculepxcPackageTestsINSTALL("${os}")
 
-          echo "UPGRADING"
+          }
+          else if (test_type == "upgrade" || test_type === "install_and_upgrade"){
 
-          moleculepxcPackageTestsUPGRADE("${os}")
+            echo "UPGRADING"
+            moleculepxcPackageTestsUPGRADE("${os}")
+
+          }
 
         }
       }
     }
   parallel tests
-}
+} 
