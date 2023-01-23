@@ -25,31 +25,31 @@ void call(String action, String product_to_test, String scenario, String test_ty
         BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/bootstrap_instance_public_ip.json"
         COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/${product_to_test}/${scenario}/${test_type}/common_instance_public_ip.json"
 
+
+
+        if( product_to_test == "pxc57" ){
+            export pxc57repo=${params.pxc57_repo}
+        }else{
+            echo "Product is not pxc57 so skipping value assignment to it"
+        }
+
+        if (test_type == "install"){
+            install_repo=${test_repo}
+            check_version="${version_check}"
+        }else if( test_type == "upgrade"){
+            install_repo="main"
+            check_version="${version_check}"
+            upgrade_repo=${test_repo}
+        }
+        else{
+            echo "Unknown condition"
+        }
+
         withCredentials(awsCredentials) {
             sh """
                 source venv/bin/activate
-                export test_repo=${test_repo}
-                export test_type=${test_type}
                 
-                if [[ ${product_to_test} = "pxc57" ]];
-                then
-                    export pxc57repo=${params.pxc57_repo}
-                else
-                    echo "Product is not pxc57 so skipping value assignment to it"
-                fi
-                
-                if [[ ${test_type} = "install" ]];
-                then
-                    export install_repo=${test_repo}
-                    export check_version="${version_check}"
-                elif [[ ${test_type} == "upgrade" ]]
-                then
-                    export install_repo="main"
-                    export check_version="${version_check}"
-                    export upgrade_repo=${test_repo}
-                else
-                    echo "Unknown condition"
-                fi
+
 
                 cd package-testing/molecule/pxc
                 
@@ -57,8 +57,26 @@ void call(String action, String product_to_test, String scenario, String test_ty
                 then
                     echo 'INSTANCE_PRIVATE_IP: "${BOOTSTRAP_INSTANCE_PRIVATE_IP}"' > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+ 
+                    echo 'install_repo: "${install_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                    echo 'check_version: "${check_version}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                    
+                    if [[ ${test_type} = "upgrade"]];
+                    then
+                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                    fi
+ 
                     echo "INSTANCE_PRIVATE_IP: "${COMMON_INSTANCE_PRIVATE_IP}"" > ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     echo "INSTANCE_PUBLIC_IP: "${COMMON_INSTANCE_PUBLIC_IP}"" >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+ 
+                    echo 'install_repo: "${install_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    echo 'check_version: "${check_version}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    
+                    if [[ ${test_type} = "upgrade"]];
+                    then                    
+                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                    fi
+ 
                 else
                     echo "Already set the vars"
                 fi

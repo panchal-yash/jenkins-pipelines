@@ -146,9 +146,9 @@ pipeline {
 
         stage('Test') {
           steps {
-                script {
+
                     moleculepxcParallelTest(all_nodes, test_type)
-                }
+
             }
         }        
     }
