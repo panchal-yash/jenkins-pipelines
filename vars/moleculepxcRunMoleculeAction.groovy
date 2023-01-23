@@ -37,7 +37,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     echo 'INSTANCE_PUBLIC_IP: "${BOOTSTRAP_INSTANCE_PUBLIC_IP}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
  
                     
-                    if [[ ${test_type} == "install"]]
+                    if [[ ${test_type} == "install"]];
                     then
                         echo 'install_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                         echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
