@@ -28,7 +28,6 @@ void call(String action, String product_to_test, String scenario, String test_ty
         withCredentials(awsCredentials) {
             sh """
                 source venv/bin/activate
-                export MOLECULE_DEBUG=1
                 export test_repo=${test_repo}
                 export test_type=${test_type}
                 
