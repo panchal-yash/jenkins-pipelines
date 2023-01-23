@@ -48,7 +48,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     then
                         echo 'install_repo: "main"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                         echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
-                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo 'upgrade_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
@@ -71,7 +71,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     then
                         echo 'install_repo: "main"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                         echo 'check_version: "${version_check}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
-                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'upgrade_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
