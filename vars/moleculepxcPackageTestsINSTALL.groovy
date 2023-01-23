@@ -10,12 +10,7 @@ def call(String operating_system){
                         moleculepxcRunMoleculeAction("converge", params.product_to_test, operating_system, "install", params.test_repo, "yes")
                     }
                 }
-
-                echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-
-                echo "3.1 Set Inventories for INSTALL"
-                moleculepxcSetInventories(params.product_to_test, operating_system, "install")
-
+                
                 echo "3.2 Run Molecule Log Backups INSTALL"
                 moleculepxcRunLogsBackup(params.product_to_test, "install", operating_system)
 
