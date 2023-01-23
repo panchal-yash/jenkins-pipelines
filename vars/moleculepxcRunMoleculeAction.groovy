@@ -28,18 +28,18 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 
         if( product_to_test == "pxc57" ){
-            pxc57repo=${params.pxc57_repo}
+            pxc57repo = "${params.pxc57_repo}"
         }else{
             echo "Product is not pxc57 so skipping value assignment to it"
         }
 
         if (test_type == "install"){
-            install_repo=${test_repo}
-            check_version="${version_check}"
+            install_repo = "${test_repo}"
+            check_version = "${version_check}"
         }else if( test_type == "upgrade"){
-            install_repo="main"
-            check_version="${version_check}"
-            upgrade_repo=${test_repo}
+            install_repo = "main"
+            check_version = "${version_check}"
+            upgrade_repo = "${test_repo}"
         }
         else{
             echo "Unknown condition"
