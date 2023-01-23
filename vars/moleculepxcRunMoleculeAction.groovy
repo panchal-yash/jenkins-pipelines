@@ -28,18 +28,18 @@ void call(String action, String product_to_test, String scenario, String test_ty
 
 
         if( product_to_test == "pxc57" ){
-            pxc57repo = "${params.pxc57_repo}"
+           def pxc57repo = "${params.pxc57_repo}"
         }else{
             echo "Product is not pxc57 so skipping value assignment to it"
         }
 
         if (test_type == "install"){
-            install_repo = "${test_repo}"
-            check_version = "${version_check}"
+            def install_repo = "${test_repo}"
+            def check_version = "${version_check}"
         }else if( test_type == "upgrade"){
-            install_repo = "main"
-            check_version = "${version_check}"
-           // UPGRADE_REPO = "${test_repo}"
+            def install_repo = "main"
+            def check_version = "${version_check}"
+            def upgrade_repo = "${test_repo}"
         }
         else{
             echo "Unknown condition"
@@ -63,7 +63,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     
                     if [[ ${test_type} = "upgrade"]];
                     then
-                        echo 'upgrade_repo: "${test_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
+                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
@@ -80,7 +80,7 @@ void call(String action, String product_to_test, String scenario, String test_ty
                     
                     if [[ ${test_type} = "upgrade"]];
                     then                    
-                        echo 'upgrade_repo: "${UPGRADE_REPO}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
+                        echo 'upgrade_repo: "${upgrade_repo}"' >> ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common/molecule/${scenario}/${test_type}/envfile
                     fi
 
                     if [[ ${product_to_test} = "pxc57"]];
