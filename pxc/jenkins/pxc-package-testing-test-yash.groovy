@@ -38,7 +38,8 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
 
     withCredentials(awsCredentials) {
         sh """
-            source venv/bin/activate
+            #source venv/bin/activate
+            . virtenv/bin/activate
             export MOLECULE_DEBUG=0
             export test_repo=${test_repo}
             export test_type=${test_type}
@@ -152,7 +153,7 @@ void runlogsbackup(String product_to_test, String test_phase) {
 
     withCredentials(awsCredentials) {
         sh """
-            source venv/bin/activate
+            #source venv/bin/activate
             export test_phase=${test_phase}
             echo $test_phase
 
@@ -186,7 +187,7 @@ void setInstancePrivateIPEnvironment() {
 
 pipeline {
     agent {
-        label 'micro-amazon'
+        label 'min-centos-7-x64'
     }
 
     options {
@@ -274,7 +275,12 @@ pipeline {
                     }                
                 }   
                 echo "${JENWORKSPACE}"
-                installDependencies()
+                //installDependencies()
+                installMolecule()
+                    sh '''
+                        rm -rf package-testing
+                        git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing-upgrade-test
+                    '''
             }
         }
 
