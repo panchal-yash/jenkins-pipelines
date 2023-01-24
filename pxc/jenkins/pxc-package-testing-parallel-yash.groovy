@@ -7,11 +7,7 @@ List all_nodes = [
                 'ubuntu-jammy',
                 'ubuntu-focal',
                 'debian-11',
-                'debian-10',
-                'centos-7',
-                'ol-8',
-                'ol-9',
-                'min-amazon-2'
+                'debian-10'
 ]
 
 product_to_test = params.product_to_test
