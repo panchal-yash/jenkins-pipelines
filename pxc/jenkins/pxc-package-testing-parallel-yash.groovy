@@ -261,6 +261,171 @@ pipeline {
                     }	
                 }
 
+
+                // UPGRADE STEPS
+
+
+                stage("Debian-10 UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("debian-10")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("debian-10","upgrade")
+                    }
+                }
+
+                stage("Debian-11 UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("debian-11")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("debian-11","upgrade")
+                    }
+                }
+
+                stage("Centos 7 UPGRADE") {
+                    when {
+                        expression {
+                            allOf{                            
+                                nodes_to_test.contains("centos-7")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("centos-7","upgrade")
+                    }
+                }
+
+                stage("ol-8 UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ol-8")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+                    steps {
+                        runNodeBuild("ol-8","upgrade")
+                    }
+                }
+
+                stage("ol-9 UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ol-9")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }                            
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ol-9","upgrade")
+                    }
+                }
+
+
+                stage("ubuntu-jammy UPGRADE") {
+                    when {
+                        expression {
+                            allOf{                            
+                                nodes_to_test.contains("ubuntu-jammy")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ubuntu-jammy","upgrade")
+                    }
+                }
+
+                stage("ubuntu-bionic UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ubuntu-bionic")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }                            
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ubuntu-bionic","upgrade")
+                    }
+                }
+
+                stage("ubuntu-focal UPGRADE") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ubuntu-focal")
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ubuntu-focal","upgrade")
+                    }
+                }
+
+	            stage("min-amazon-2 UPGRADE") {	
+                    when {	
+                        expression {	
+                            allOf{
+                                nodes_to_test.contains("min-amazon-2")	
+                                anyOf{
+                                    nodes_to_test.contains("upgrade")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
+                        }	
+                    }	
+                    steps {	
+                        runNodeBuild("min-amazon-2","upgrade")	
+                    }	
+                }
+
             }
         }
     }
