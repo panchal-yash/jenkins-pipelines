@@ -278,6 +278,8 @@ pipeline {
                 //installDependencies()
                 installMolecule()
                     sh '''
+                        sudo yum install -y epel-release 
+                        sudo yum install -y git jq
                         rm -rf package-testing
                         git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing-upgrade-test
                     '''
