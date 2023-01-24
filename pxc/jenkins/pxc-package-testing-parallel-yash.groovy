@@ -24,14 +24,14 @@ if (params.node_to_test == "all") {
     nodes_to_test = [params.node_to_test]
 }
 
-void runNodeBuild(String node_to_test) {
+void runNodeBuild(String node_to_test, String test_type_value) {
     build(
         job: 'wip-pxc-package-testing-test-1',
         parameters: [
             string(name: "product_to_test", value: product_to_test),
             string(name: "node_to_test", value: node_to_test),
             string(name: "test_repo", value: params.test_repo),
-            string(name: "test_type", value: test_type),
+            string(name: "test_type", value: test_type_value),
             string(name: "pxc57_repo", value: pxc57_repo)            
         ],
         propagate: true,
@@ -74,7 +74,8 @@ pipeline {
             name: 'test_type',
             choices: [
                 'install',
-                'upgrade'
+                'upgrade',
+                'install_and_upgrade'
             ],
             description: 'Set test type for testing'
         )
@@ -99,111 +100,164 @@ pipeline {
 
         stage("Run parallel") {
             parallel {
-                stage("Debian-10") {
+                stage("Debian-10 INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("debian-10")
+                            allOf{
+                                nodes_to_test.contains("debian-10")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("debian-10")
+                        runNodeBuild("debian-10","install")
                     }
                 }
 
-                stage("Debian-11") {
+                stage("Debian-11 INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("debian-11")
+                            allOf{
+                                nodes_to_test.contains("debian-11")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("debian-11")
+                        runNodeBuild("debian-11","install")
                     }
                 }
 
-                stage("Centos 7") {
+                stage("Centos 7 INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("centos-7")
+                            allOf{                            
+                                nodes_to_test.contains("centos-7")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("centos-7")
+                        runNodeBuild("centos-7","install")
                     }
                 }
 
-                stage("ol-8") {
+                stage("ol-8 INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("ol-8")
+                            allOf{
+                                nodes_to_test.contains("ol-8")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
                         }
                     }
 
                     steps {
-                        runNodeBuild("ol-8")
+                        runNodeBuild("ol-8","install")
                     }
                 }
 
-                stage("ol-9") {
+                stage("ol-9 INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("ol-9")
+                            allOf{
+                                nodes_to_test.contains("ol-9")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }                            
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("ol-9")
+                        runNodeBuild("ol-9","install")
                     }
                 }
 
 
-                stage("ubuntu-jammy") {
+                stage("ubuntu-jammy INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("ubuntu-jammy")
+                            allOf{                            
+                                nodes_to_test.contains("ubuntu-jammy")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-jammy")
+                        runNodeBuild("ubuntu-jammy","install")
                     }
                 }
 
-                stage("ubuntu-bionic") {
+                stage("ubuntu-bionic INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("ubuntu-bionic")
+                            allOf{
+                                nodes_to_test.contains("ubuntu-bionic")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }                            
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-bionic")
+                        runNodeBuild("ubuntu-bionic","install")
                     }
                 }
 
-                stage("ubuntu-focal") {
+                stage("ubuntu-focal INSTALL") {
                     when {
                         expression {
-                            nodes_to_test.contains("ubuntu-focal")
+                            allOf{
+                                nodes_to_test.contains("ubuntu-focal")
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-focal")
+                        runNodeBuild("ubuntu-focal","install")
                     }
                 }
 
-	            stage("min-amazon-2") {	
+	            stage("min-amazon-2 INSTALL") {	
                     when {	
                         expression {	
-                            nodes_to_test.contains("min-amazon-2")	
+                            allOf{
+                                nodes_to_test.contains("min-amazon-2")	
+                                anyOf{
+                                    nodes_to_test.contains("install")
+                                    nodes_to_test.contains("install_and_upgrade")
+                                }
+                            }
                         }	
                     }	
                     steps {	
-                        runNodeBuild("min-amazon-2")	
+                        runNodeBuild("min-amazon-2","install")	
                     }	
                 }
 
