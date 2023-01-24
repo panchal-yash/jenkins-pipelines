@@ -367,9 +367,20 @@ pipeline {
     post {
 
         always {
+            
              catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                 archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
              }
+            
+            script {
+                if(params.test_type == "install" || params.test_type == "install_and_upgrade"){
+                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                }
+                
+                if(params.test_type == "upgrade" || params.test_type == "install_and_upgrade"){
+                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                }
+            }
         }
 
         unstable {
