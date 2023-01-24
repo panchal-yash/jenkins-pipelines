@@ -163,9 +163,9 @@ pipeline {
                                     nodes_to_test.contains("install")
                                     nodes_to_test.contains("install_and_upgrade")
                                 }
+                            }
                         }
                     }
-
                     steps {
                         runNodeBuild("ol-8","install")
                     }
