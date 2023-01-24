@@ -1,7 +1,7 @@
 def call(String operating_system){
 
                 echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
-
+                sh "rm -rf /home/ec2-user/.cache/molecule/pxc80-bootstrap/${operating_system}/"
                 moleculepxcRunMoleculeAction("create", params.product_to_test, operating_system, "upgrade", "main", "no")
 
                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
@@ -27,5 +27,5 @@ def call(String operating_system){
                 echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
 
                 moleculepxcRunMoleculeAction("destroy", params.product_to_test, operating_system, "upgrade", params.test_repo, "yes")
-
+                sh "rm -rf /home/ec2-user/.cache/molecule/pxc80-bootstrap/${operating_system}/"
 }
