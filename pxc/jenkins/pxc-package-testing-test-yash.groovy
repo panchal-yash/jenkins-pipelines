@@ -308,14 +308,7 @@ pipeline {
                     }
                 }
 
-                 echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
 
-                setInventories()
-                runlogsbackup(params.product_to_test, "INSTALL")
-
-                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
 
             }
         }
@@ -352,14 +345,6 @@ pipeline {
                     }
                 }
 
-                echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
-
-                setInventories()
-                runlogsbackup(params.product_to_test, "UPGRADE")
-
-                echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
-
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
 
             }
         }
@@ -369,22 +354,33 @@ pipeline {
 
     post {
 
-        always {
-            
-             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
-             }
-            
+        always {            
             script {
                 if(params.test_type == "install" || params.test_type == "install_and_upgrade"){
 
-                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
+                setInventories()
+                runlogsbackup(params.product_to_test, "INSTALL")
+                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+
                 }
                 
                 if(params.test_type == "upgrade" || params.test_type == "install_and_upgrade"){
-                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+
+                echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
+                setInventories()
+                runlogsbackup(params.product_to_test, "UPGRADE")
+                echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
+                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+
                 }
             }
+
+             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+             }
+
         }
 
         unstable {
