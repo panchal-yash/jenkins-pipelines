@@ -90,23 +90,23 @@ void setInventories(){
             if [[ (${params.node_to_test} == "ubuntu-focal")  ||  (${params.node_to_test} == "ubuntu-bionic") || (${params.node_to_test} == "ubuntu-jammy") ]];
             then
                 SSH_USER="ubuntu"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
             elif [[ (${params.node_to_test} == "debian-11") ||  (${params.node_to_test} == "debian-10") ]];
             then
                 SSH_USER="admin"            
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
             elif [[ (${params.node_to_test} == "ol-8") || (${params.node_to_test} == "ol-9") || (${params.node_to_test} == "min-amazon-2") ]];
             then
                 SSH_USER="ec2-user"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
             elif [[ (${params.node_to_test} == "centos-7") ]];
             then
                 SSH_USER="centos"
-                KEYPATH_BOOTSTRAP="/home/ec2-user/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
-                KEYPATH_COMMON="/home/ec2-user/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
+                KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
             else
                 echo "OS Not yet in list of Keypath setup"
             fi
@@ -377,6 +377,7 @@ pipeline {
             
             script {
                 if(params.test_type == "install" || params.test_type == "install_and_upgrade"){
+
                     runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                 }
                 
