@@ -154,6 +154,7 @@ void runlogsbackup(String product_to_test, String test_phase) {
     withCredentials(awsCredentials) {
         sh """
             #source venv/bin/activate
+            . virtenv/bin/activate
             export test_phase=${test_phase}
             echo $test_phase
 
