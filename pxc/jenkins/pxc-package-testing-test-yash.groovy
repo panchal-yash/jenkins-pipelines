@@ -46,24 +46,25 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
         )
     ]
 
-    withCredentials(awsCredentials) {
 
-            if("${product_to_test}" == "pxc57")
-            {
+            if("${product_to_test}" == "pxc57"){
                 def pxc57repo="${params.pxc57_repo}"
             }else{
                 echo "Product is not pxc57 so skipping value assignment to it"
             }
             
-	        if("${test_type}" == "install"){
-                def install_repo=${test_repo}
+            echo "asdasdasdas"
+
+	        if( "${test_type}" == "install" )
+            {
+                def install_repo="${test_repo}"
                 def check_version="${version_check}"
                 echo 'install_repo: "${install_repo}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
                 echo 'check_version: "${check_version}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-            }else if(${test_type} == "upgrade"){
+            }else if( "${test_type}" == "upgrade" ){
                 def install_repo="main"
                 def check_version="${version_check}"
-                def upgrade_repo=${test_repo}
+                def upgrade_repo="${test_repo}"
                 echo 'install_repo: "${install_repo}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
                 echo 'check_version: "${check_version}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
                 echo 'upgrade_repo: "${upgrade_repo}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
@@ -71,6 +72,9 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
                 echo "Unknown condition"
             }
 
+
+            echo "after"
+    withCredentials(awsCredentials) {
 
 
             if(action == "create"){
@@ -92,11 +96,11 @@ void runMoleculeAction(String action, String product_to_test, String scenario, S
                     cd package-testing/molecule/pxc
                     
                     cd ${product_to_test}-bootstrap
-                    molecule ${action} -e ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/envfile -s ${scenario}
+                    molecule ${action} -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common
-                    molecule ${action} -e ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/envfile -s ${scenario}
+                    molecule ${action} -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile -s ${scenario}
                     cd -
                 """
             }
@@ -133,7 +137,7 @@ void setInventories(){
                     echo "${KEYPATH_COMMON}"
 
 
-                if(params.test_type == "install"){
+                if(test_type == "install"){
 
                     def INSTALL_Bootstrap_Instance = sh(
                         script: """cat ${INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
@@ -251,54 +255,56 @@ void runlogsbackup(String product_to_test, String test_type) {
 }
 
 
-void setInstancePrivateIPEnvironment(String test_type, String install_repository, String check_version_option, String initial) {
+def setInstancePrivateIPEnvironment() {
     
-    def PXC1
-    def PXC2
-    def PXC3
 
-    if((test_type == "install") && (initial == "no")){
+            def PXC1_I = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()
+            def PXC2_I = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()
+            def PXC3_I = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()
 
-        PXC1 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()
-        PXC2 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()
-        PXC3 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()
+            
+            def PXC1_U = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()
+            def PXC2_U = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()
+            def PXC3_U = sh(
+                script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
+                returnStdout: true
+            ).trim()        
+            
+}
 
-    }else if((test_type == "upgrade") && (initial == "no")){
+def setENVS(){
 
-        PXC1 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()
-        PXC2 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()
-        PXC3 = sh(
-            script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
-            returnStdout: true
-        ).trim()        
-
-    }
-
-    if(initial == "yes"){
-        echo 'install_repo: "${install_repository}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-        echo 'check_version: "${check_version_option}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-    }else{
-        echo 'PXC1: "${PXC1}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-        echo 'PXC2: "${PXC2}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-        echo 'PXC3: "${PXC3}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-        echo 'test_type: "${test_phase}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-        echo 'JENWORKSPACE: "${WORKSPACE}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
-    }
+    sh """    
+        if [[ ${test_type} == "install" ]];
+        then
+            echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+        elif [[ ${test_type} == "upgrade"]]
+        then
+            echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+        else
+        then
+            echo "invalid selection"
+        fi
+    """
 
 }
 
@@ -415,11 +421,11 @@ pipeline {
                             }
 
                             steps {
-                                setInstancePrivateIPEnvironment("install", params.test_repo, "yes", "yes")                                
-                                echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
 
+                                echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                setInstancePrivateIPEnvironment("install", params.test_repo,, "yes", "no")
+                                setInstancePrivateIPEnvironment()                                
+                                setENVS()                                
 
                                 echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
@@ -428,62 +434,68 @@ pipeline {
                                         runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
                                 }
+                                
                             }
                     
-                    post{
-                        always{
-                            echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                            setInventories()
-                            runlogsbackup(params.product_to_test, "install")
-                            echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                            runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                        }
-                    }
+                            post{
+                                always{
+                                    echo "Always INSTALL"
+                                    
+                                    echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
+                                    setInventories()
+                                    runlogsbackup(params.product_to_test, "install")
+                                    echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                    
+                                }
+                            }
                 }
 
                 stage("UPGRADE") {
-                        when {
-                            allOf{
-                                expression{params.test_type == "upgrade" || params.test_type == "install_and_upgrade"}
-                                expression{params.test_repo != "main"}                
-                            }
-                        }
-                        
-                        steps {
-                            setInstancePrivateIPEnvironment("upgrade", "main", "no", "yes")
-                            echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
-
-                            runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
-                            setInstancePrivateIPEnvironment("upgrade", "main", "no", "no")
-
-                            echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
-
-                            script{
-                                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                    runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
+                            when {
+                                allOf{
+                                    expression{params.test_type == "upgrade" || params.test_type == "install_and_upgrade"}
+                                    expression{params.test_repo != "main"}                
                                 }
                             }
-
-                            echo "3. Run UPGRADE scripts and playbooks for running PXC UPGRADE tests.. Molecule side-effect step"
                             
-                            setInstancePrivateIPEnvironment("upgrade", params.test_repo, "yes", "no")
+                            steps {
+                                echo "UPGRADE STAGE INSIDE"
+                                echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
+                                runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
+                                setInstancePrivateIPEnvironment()                                
+                                setENVS()
 
-                            script{
-                                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                    runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                                echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
+
+                                script{
+                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
+                                    }
+                                }
+
+                                echo "3. Run UPGRADE scripts and playbooks for running PXC UPGRADE tests.. Molecule side-effect step"
+
+                                script{
+                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                                        runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                                    }
+                                }
+
+                            }
+
+                            post{
+                                always{
+                                    echo "POST YPGRADE STAGE"
+                                    
+                                    echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
+                                    setInventories()
+                                    runlogsbackup(params.product_to_test, "upgrade")
+                                    echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
+                                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                                    
                                 }
                             }
-                        }
-
-                    post{
-                        always{
-                            echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
-                            setInventories()
-                            runlogsbackup(params.product_to_test, "upgrade")
-                            echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
-                            runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
-                        }
-                    }
                 }
             }
         }
