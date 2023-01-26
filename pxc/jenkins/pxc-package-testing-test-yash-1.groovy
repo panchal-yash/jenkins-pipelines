@@ -304,23 +304,24 @@ def setInstancePrivateIPEnvironment() {
             ).trim()        
             
 
-    sh """    
-        if [[ ${test_type} == "install" ]];
-        then
-            echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-            echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-            echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-        elif [[ ${test_type} == "upgrade"]]
-        then
-            echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-            echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-            echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-        else
-        then
-            echo "invalid selection"
-        fi
-    """
 
+        if("${test_type}" == "install"){
+            sh """
+                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/
+                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            """
+        }else if("${test_type}" == "upgrade"){
+            sh """
+                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/
+                echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            """
+        }else{
+            echo "invalid selection"
+        }
 }
 
 pipeline {
