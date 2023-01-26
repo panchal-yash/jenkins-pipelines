@@ -19,7 +19,7 @@
                     - 'wip-pxc-package-testing-upgrade-test'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: pxc/jenkins/pxc-package-testing-test-yash.groovy
+        script-path: pxc/jenkins/pxc-package-testing-test-yash-1.groovy
     parameters:
         - choice:
             name: product_to_test
