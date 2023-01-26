@@ -274,14 +274,6 @@ void runlogsbackup(String product_to_test, String test_type) {
 
 
 def setInstancePrivateIPEnvironment() {
-    
-
-
-            
-    
-            
-
-
         if("${test_type}" == "install"){
             def PXC1_I = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
@@ -295,7 +287,7 @@ def setInstancePrivateIPEnvironment() {
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
             ).trim()
-            
+
             sh """
                 mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
                 
