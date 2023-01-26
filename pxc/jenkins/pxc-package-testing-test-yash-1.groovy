@@ -85,7 +85,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
     withCredentials(awsCredentials) {
 
 
-            if(action == "create"){
+            if(action == "create" || action == "destroy"){
                 sh"""
                     . virtenv/bin/activate
                     
