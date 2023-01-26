@@ -276,6 +276,13 @@ void runlogsbackup(String product_to_test, String test_type) {
 def setInstancePrivateIPEnvironment() {
     
 
+
+            
+    
+            
+
+
+        if("${test_type}" == "install"){
             def PXC1_I = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
@@ -288,8 +295,15 @@ def setInstancePrivateIPEnvironment() {
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
             ).trim()
-
             
+            sh """
+                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
+                
+                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            """
+        }else if("${test_type}" == "upgrade"){
             def PXC1_U = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
@@ -301,19 +315,8 @@ def setInstancePrivateIPEnvironment() {
             def PXC3_U = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
-            ).trim()        
-            
+            ).trim()                
 
-
-        if("${test_type}" == "install"){
-            sh """
-                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
-                
-                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-            """
-        }else if("${test_type}" == "upgrade"){
             sh """
                 mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/
                 echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
@@ -343,6 +346,8 @@ pipeline {
 
         INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/install/bootstrap_instance_public_ip.json"
         INSTALL_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/install/common_instance_public_ip.json"
+
+
 
         UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/upgrade/bootstrap_instance_private_ip.json"
         UPGRADE_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/upgrade/common_instance_private_ip.json"
