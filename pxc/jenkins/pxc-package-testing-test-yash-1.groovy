@@ -110,11 +110,11 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     cd package-testing/molecule/pxc
                     export MOLECULE_DEBUG=1
                     cd ${product_to_test}-bootstrap
-                    molecule ${action} -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile -s ${scenario}
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile ${action} -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common
-                    molecule ${action} -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile -s ${scenario}
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile  ${action} -s ${scenario}
                     cd -
                 """
             }
@@ -307,7 +307,8 @@ def setInstancePrivateIPEnvironment() {
 
         if("${test_type}" == "install"){
             sh """
-                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/
+                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
+                
                 echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
                 echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
                 echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
@@ -322,6 +323,8 @@ def setInstancePrivateIPEnvironment() {
         }else{
             echo "invalid selection"
         }
+        echo "CATING THE FILE ENV"
+        echo "cat ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
 }
 
 pipeline {
@@ -337,11 +340,13 @@ pipeline {
 
         INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/bootstrap_instance_private_ip.json"
         INSTALL_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/common_instance_private_ip.json"
+
         INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/install/bootstrap_instance_public_ip.json"
         INSTALL_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/install/common_instance_public_ip.json"
 
         UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/upgrade/bootstrap_instance_private_ip.json"
         UPGRADE_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/upgrade/common_instance_private_ip.json"
+        
         UPGRADE_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/upgrade/bootstrap_instance_public_ip.json"
         UPGRADE_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/upgrade/common_instance_public_ip.json"
 
