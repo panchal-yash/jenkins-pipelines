@@ -184,6 +184,8 @@ void setInventories(){
                     ).trim()
 
                     sh """
+                        mkdir -p "${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/"
+                        mkdir -p "${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/"
                         echo \"printing path of bootstrap ${KEYPATH_BOOTSTRAP}"
                         echo \"printing path of common  ${KEYPATH_COMMON}"
                         echo \"printing user ${SSH_USER}"
@@ -227,6 +229,8 @@ void setInventories(){
                         echo \"printing path of bootstrap ${KEYPATH_BOOTSTRAP}"
                         echo \"printing path of common  ${KEYPATH_COMMON}"
                         echo \"printing user ${SSH_USER}"
+                        mkdir -p "${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/"
+                        mkdir -p "${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/"
                         echo "\n ${UPGRADE_Bootstrap_Instance} ansible_host=${UPGRADE_Bootstrap_Instance_Public_IP}  ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_BOOTSTRAP} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ip_env=${UPGRADE_Bootstrap_Instance}" > ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/inventory            
                         echo "\n ${UPGRADE_Common_Instance_PXC2} ansible_host=${UPGRADE_Common_Instance_PXC2_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${UPGRADE_Common_Instance_PXC2}" > ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/inventory
                         echo "\n ${UPGRADE_Common_Instance_PXC3} ansible_host=${UPGRADE_Common_Instance_PXC3_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${UPGRADE_Common_Instance_PXC3}" >> ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/inventory
@@ -419,6 +423,9 @@ pipeline {
                 //installDependencies()
                 installMolecule()
                     sh '''
+                        sudo yum install -y epel-release 
+                        sudo yum install -y git jq
+                        rm -rf package-testing                    
                         git clone https://github.com/panchal-yash/package-testing --branch wip-pxc-package-testing-upgrade-test
                     '''
             }
@@ -476,7 +483,7 @@ pipeline {
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
                                 setInstancePrivateIPEnvironment()                                
                                 setENVS()
-
+                                setInventories()
                                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
                                 script{
