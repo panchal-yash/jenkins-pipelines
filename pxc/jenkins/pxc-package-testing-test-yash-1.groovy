@@ -303,9 +303,6 @@ def setInstancePrivateIPEnvironment() {
                 returnStdout: true
             ).trim()        
             
-}
-
-def setENVS(){
 
     sh """    
         if [[ ${test_type} == "install" ]];
@@ -443,7 +440,6 @@ pipeline {
                                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                 setInstancePrivateIPEnvironment()                                
-                                setENVS()                                
 
                                 echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
@@ -482,7 +478,7 @@ pipeline {
                                 echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
                                 setInstancePrivateIPEnvironment()                                
-                                setENVS()
+
                                 setInventories()
                                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
