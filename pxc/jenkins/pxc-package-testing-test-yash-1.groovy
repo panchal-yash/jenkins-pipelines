@@ -21,15 +21,6 @@ void installDependencies() {
 
 }
 
-void moveSSHKEYS(){
-        sh """
-                    echo \"Setting up Key path based on the selection\"
-                    mkdir -p ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/
-                    mkdir -p ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/
-                    cp -a /home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2 ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/
-                    cp -a /home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2 ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/
-         """
-}
 
 def runMoleculeAction(String action, String product_to_test, String scenario, String param_test_type, String test_repo, String version_check) {
     def awsCredentials = [
@@ -95,11 +86,11 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     
                     echo "param_test_type is ${param_test_type}"
 
-                    cd ${product_to_test}-bootstrap
+                    cd ${product_to_test}-bootstrap-${param_test_type}
                     molecule ${action} -s ${scenario}
                     cd -
 
-                    cd ${product_to_test}-common
+                    cd ${product_to_test}-common-${param_test_type}
                     molecule ${action} -s ${scenario}
                     cd -
                 """
@@ -111,11 +102,11 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
 
                     echo "param_test_type is ${param_test_type}"
 
-                    cd ${product_to_test}-bootstrap
+                    cd ${product_to_test}-bootstrap-${param_test_type}
                     molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile ${action} -s ${scenario}
                     cd -
 
-                    cd ${product_to_test}-common
+                    cd ${product_to_test}-common-${param_test_type}
                     molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile  ${action} -s ${scenario}
                     cd -
                 """
@@ -129,8 +120,8 @@ void setInventories(String param_test_type){
                     def KEYPATH_COMMON
                     def SSH_USER
 
-                    KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap/${params.node_to_test}/ssh_key-us-west-2"
-                    KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common/${params.node_to_test}/ssh_key-us-west-2"
+                    KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap-${param_test_type}/${params.node_to_test}/ssh_key-us-west-2"
+                    KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common-${param_test_type}/${params.node_to_test}/ssh_key-us-west-2"
 
 
 //                    KEYPATH_BOOTSTRAP="${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/ssh_key-us-west-2"
