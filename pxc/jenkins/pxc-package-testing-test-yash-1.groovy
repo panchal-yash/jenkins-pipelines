@@ -44,7 +44,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                 echo "Product is not pxc57 so skipping value assignment to it"
             }
             
-            echo "asdasdasdas"
             echo "check var param_test_type ${param_test_type}"
 
             sh """
@@ -124,9 +123,6 @@ void setInventories(String param_test_type){
                     KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common-${param_test_type}/${params.node_to_test}/ssh_key-us-west-2"
 
 
-//                    KEYPATH_BOOTSTRAP="${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/ssh_key-us-west-2"
-//                    KEYPATH_COMMON="${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/ssh_key-us-west-2"
-
                     if(("${params.node_to_test}" == "ubuntu-focal")  ||  ("${params.node_to_test}" == "ubuntu-bionic") || ("${params.node_to_test}" == "ubuntu-jammy")){
                         SSH_USER="ubuntu"            
                     }else if(("${params.node_to_test}" == "debian-11") ||  ("${params.node_to_test}" == "debian-10")){
@@ -145,8 +141,6 @@ void setInventories(String param_test_type){
 
 
                 if(param_test_type == "install"){
-
-                    echo "${param_test_type} is th param_test_type"
 
                     def INSTALL_Bootstrap_Instance = sh(
                         script: """cat ${INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
@@ -190,8 +184,6 @@ void setInventories(String param_test_type){
                     """
 
                 }else if(param_test_type == "upgrade"){
-
-                    echo "${param_test_type} is th param_test_type"
 
                     def UPGRADE_Bootstrap_Instance = sh(
                         script: """cat ${UPGRADE_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
@@ -391,7 +383,6 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-
                                     echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
                                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                         runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
@@ -420,40 +411,27 @@ pipeline {
                                     expression{params.test_repo != "main"}                
                                 }
                             }
-                            
                             steps {
-                                
-
                                 script{
                                     echo "UPGRADE STAGE INSIDE"
                                     def param_test_type = "upgrade"   
-
                                     echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
-
                                     setInventories("upgrade")
                                     echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
-
-                                    
                                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                             runMoleculeAction("converge", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
                                         }
-                                    
-
                                     echo "3. Run UPGRADE scripts and playbooks for running PXC UPGRADE tests.. Molecule side-effect step"
-
                                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                             runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
                                         }
                                 }
-
                             }
-
                             post{
                                 always{
                                     script{
-                                        def param_test_type = "upgrade"   
-                                        echo "POST YPGRADE STAGE"
+                                        def param_test_type = "upgrade"
                                         echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
                                         setInventories("upgrade")
                                         runlogsbackup(params.product_to_test, "upgrade")
