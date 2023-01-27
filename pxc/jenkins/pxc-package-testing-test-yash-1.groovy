@@ -270,55 +270,6 @@ void runlogsbackup(String product_to_test, String param_test_type) {
 }
 
 
-def setInstancePrivateIPEnvironment(String param_test_type) {
-        if("${param_test_type}" == "install"){
-            def PXC1_I = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()
-            def PXC2_I = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()
-            def PXC3_I = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${INSTALL_COMMON_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()
-
-            sh """
-                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/"
-                
-                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-            """
-        }else if("${param_test_type}" == "upgrade"){
-            def PXC1_U = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()
-            def PXC2_U = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc2")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()
-            def PXC3_U = sh(
-                script: 'jq -r \'.[] | select(.instance | startswith("pxc3")).private_ip\' ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP}',
-                returnStdout: true
-            ).trim()                
-
-            sh """
-                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/
-                echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-                echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-                echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-            """
-        }else{
-            echo "invalid selection"
-        }
-        echo "CATING THE FILE ENV"
-        echo "cat ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
-}
-
 pipeline {
     agent {
         label 'min-centos-7-x64'
@@ -440,7 +391,6 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    setInstancePrivateIPEnvironment("install")                                
 
                                     echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
                                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
@@ -480,7 +430,6 @@ pipeline {
 
                                     echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
-                                    setInstancePrivateIPEnvironment("upgrade")                                
 
                                     setInventories("upgrade")
                                     echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
