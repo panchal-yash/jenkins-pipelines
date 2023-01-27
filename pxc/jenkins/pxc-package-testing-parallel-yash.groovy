@@ -24,15 +24,15 @@ if (params.node_to_test == "all") {
     nodes_to_test = [params.node_to_test]
 }
 
-void runNodeBuild(String node_to_test, String test_type_value) {
+void runNodeBuild(String node_to_test) {
     build(
         job: 'wip-pxc-package-testing-test-1',
         parameters: [
-            string(name: "product_to_test", value: product_to_test),
+            string(name: "product_to_test", value: params.product_to_test),
             string(name: "node_to_test", value: node_to_test),
             string(name: "test_repo", value: params.test_repo),
-            string(name: "test_type", value: test_type_value),
-            string(name: "pxc57_repo", value: pxc57_repo)            
+            string(name: "test_type", value: "install_and_upgrade"),
+            string(name: "pxc57_repo", value: params.pxc57_repo)            
         ],
         propagate: true,
         wait: true
@@ -90,7 +90,7 @@ pipeline {
 
         stage("Run parallel") {
             parallel {
-                stage("Debian-10 INSTALL") {
+                stage("Debian-10 INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -101,11 +101,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("debian-10","install")
+                        runNodeBuild("debian-10")
                     }
                 }
 
-                stage("Debian-11 INSTALL") {
+                stage("Debian-11 INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -116,11 +116,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("debian-11","install")
+                        runNodeBuild("debian-11")
                     }
                 }
 
-                stage("Centos 7 INSTALL") {
+                stage("Centos 7 INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{                            
@@ -131,11 +131,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("centos-7","install")
+                        runNodeBuild("centos-7")
                     }
                 }
 
-                stage("ol-8 INSTALL") {
+                stage("ol-8 INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -145,11 +145,11 @@ pipeline {
                         }
                     }
                     steps {
-                        runNodeBuild("ol-8","install")
+                        runNodeBuild("ol-8")
                     }
                 }
 
-                stage("ol-9 INSTALL") {
+                stage("ol-9 INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -160,12 +160,12 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ol-9","install")
+                        runNodeBuild("ol-9")
                     }
                 }
 
 
-                stage("ubuntu-jammy INSTALL") {
+                stage("ubuntu-jammy INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{                            
@@ -176,11 +176,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-jammy","install")
+                        runNodeBuild("ubuntu-jammy")
                     }
                 }
 
-                stage("ubuntu-bionic INSTALL") {
+                stage("ubuntu-bionic INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -191,11 +191,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-bionic","install")
+                        runNodeBuild("ubuntu-bionic")
                     }
                 }
 
-                stage("ubuntu-focal INSTALL") {
+                stage("ubuntu-focal INSTALL & UPGRADE") {
                     when {
                         expression {
                             allOf{
@@ -206,11 +206,11 @@ pipeline {
                     }
 
                     steps {
-                        runNodeBuild("ubuntu-focal","install")
+                        runNodeBuild("ubuntu-focal")
                     }
                 }
 
-	            stage("min-amazon-2 INSTALL") {	
+	            stage("min-amazon-2 INSTALL & UPGRADE") {	
                     when {	
                         expression {	
                             allOf{
@@ -220,148 +220,9 @@ pipeline {
                         }	
                     }	
                     steps {	
-                        runNodeBuild("min-amazon-2","install")	
+                        runNodeBuild("min-amazon-2")	
                     }	
                 }
-
-
-                // UPGRADE STEPS
-
-
-                stage("Debian-10 UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("debian-10")
-
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("debian-10","upgrade")
-                    }
-                }
-
-                stage("Debian-11 UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("debian-11")
-
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("debian-11","upgrade")
-                    }
-                }
-
-                stage("Centos 7 UPGRADE") {
-                    when {
-                        expression {
-                            allOf{                            
-                                nodes_to_test.contains("centos-7")
-
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("centos-7","upgrade")
-                    }
-                }
-
-                stage("ol-8 UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ol-8")
-
-                            }
-                        }
-                    }
-                    steps {
-                        runNodeBuild("ol-8","upgrade")
-                    }
-                }
-
-                stage("ol-9 UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ol-9")
-                            
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("ol-9","upgrade")
-                    }
-                }
-
-
-                stage("ubuntu-jammy UPGRADE") {
-                    when {
-                        expression {
-                            allOf{                            
-                                nodes_to_test.contains("ubuntu-jammy")
-
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("ubuntu-jammy","upgrade")
-                    }
-                }
-
-                stage("ubuntu-bionic UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ubuntu-bionic")
-                            
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("ubuntu-bionic","upgrade")
-                    }
-                }
-
-                stage("ubuntu-focal UPGRADE") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ubuntu-focal")
-
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("ubuntu-focal","upgrade")
-                    }
-                }
-
-	            stage("min-amazon-2 UPGRADE") {	
-                    when {	
-                        expression {	
-                            allOf{
-                                nodes_to_test.contains("min-amazon-2")	
-
-                            }
-                        }	
-                    }	
-                    steps {	
-                        runNodeBuild("min-amazon-2","upgrade")	
-                    }	
-                }
-
             }
         }
     }
