@@ -31,7 +31,7 @@ void moveSSHKEYS(){
          """
 }
 
-def runMoleculeAction(String action, String product_to_test, String scenario, String test_type, String test_repo, String version_check) {
+def runMoleculeAction(String action, String product_to_test, String scenario, String param_test_type, String test_repo, String version_check) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -54,20 +54,20 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
             }
             
             echo "asdasdasdas"
-            echo "check var ${test_type}"
+            echo "check var param_test_type ${param_test_type}"
 
             sh """
-            mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
+            mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/"
             """
 
-	        if(test_type == "install"){   
+	        if(param_test_type == "install"){   
                 def install_repo="${test_repo}"
                 def check_version="${version_check}"
             sh """
                 echo 'install_repo: "${install_repo}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
                 echo 'check_version: "${check_version}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
             """
-            }else if(test_type == "upgrade"){
+            }else if(param_test_type == "upgrade"){
                 def install_repo="main"
                 def check_version="${version_check}"
                 def upgrade_repo="${test_repo}"
@@ -80,10 +80,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                 echo "Unknown condition"
             }
 
-
-            echo "after"
     withCredentials(awsCredentials) {
-
 
             if(action == "create" || action == "destroy"){
                 sh"""
@@ -96,6 +93,8 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     cd package-testing/molecule/pxc
                     export MOLECULE_DEBUG=1
                     
+                    echo "param_test_type is ${param_test_type}"
+
                     cd ${product_to_test}-bootstrap
                     molecule ${action} -s ${scenario}
                     cd -
@@ -109,6 +108,9 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     . virtenv/bin/activate
                     cd package-testing/molecule/pxc
                     export MOLECULE_DEBUG=1
+
+                    echo "param_test_type is ${param_test_type}"
+
                     cd ${product_to_test}-bootstrap
                     molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile ${action} -s ${scenario}
                     cd -
@@ -121,7 +123,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
     }
 }
 
-void setInventories(String test_type){
+void setInventories(String param_test_type){
 
                     def KEYPATH_BOOTSTRAP
                     def KEYPATH_COMMON
@@ -151,7 +153,9 @@ void setInventories(String test_type){
                     echo "${KEYPATH_COMMON}"
 
 
-                if(test_type == "install"){
+                if(param_test_type == "install"){
+
+                    echo "${param_test_type} is th param_test_type"
 
                     def INSTALL_Bootstrap_Instance = sh(
                         script: """cat ${INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
@@ -194,7 +198,9 @@ void setInventories(String test_type){
                         echo "\n ${INSTALL_Common_Instance_PXC3} ansible_host=${INSTALL_Common_Instance_PXC3_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC3}" >> ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory
                     """
 
-                }else if(test_type == "upgrade"){
+                }else if(param_test_type == "upgrade"){
+
+                    echo "${param_test_type} is th param_test_type"
 
                     def UPGRADE_Bootstrap_Instance = sh(
                         script: """cat ${UPGRADE_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.instance] | jq -r .[]""",
@@ -241,7 +247,7 @@ void setInventories(String test_type){
 
 }
 
-void runlogsbackup(String product_to_test, String test_type) {
+void runlogsbackup(String product_to_test, String param_test_type) {
     def awsCredentials = [
         sshUserPrivateKey(
             credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
@@ -261,10 +267,10 @@ void runlogsbackup(String product_to_test, String test_type) {
             . virtenv/bin/activate
 
             echo "Running the logs backup task for pxc bootstrap node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
 
             echo "Running the logs backup task for pxc common node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
         """
     }
     
@@ -273,8 +279,8 @@ void runlogsbackup(String product_to_test, String test_type) {
 }
 
 
-def setInstancePrivateIPEnvironment() {
-        if("${test_type}" == "install"){
+def setInstancePrivateIPEnvironment(String param_test_type) {
+        if("${param_test_type}" == "install"){
             def PXC1_I = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
@@ -289,13 +295,13 @@ def setInstancePrivateIPEnvironment() {
             ).trim()
 
             sh """
-                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/"
+                mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/"
                 
-                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                echo 'PXC1: "${PXC1_I}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                echo 'PXC2: "${PXC2_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                echo 'PXC3: "${PXC3_I}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
             """
-        }else if("${test_type}" == "upgrade"){
+        }else if("${param_test_type}" == "upgrade"){
             def PXC1_U = sh(
                 script: 'jq -r \'.[] | select(.instance | startswith("pxc1")).private_ip\' ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP}',
                 returnStdout: true
@@ -310,16 +316,16 @@ def setInstancePrivateIPEnvironment() {
             ).trim()                
 
             sh """
-                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/
-                echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
-                echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile
+                mkdir -p ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/
+                echo 'PXC1: "${PXC1_U}"' > ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                echo 'PXC2: "${PXC2_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                echo 'PXC3: "${PXC3_U}"' >> ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
             """
         }else{
             echo "invalid selection"
         }
         echo "CATING THE FILE ENV"
-        echo "cat ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${test_type}/envfile"
+        echo "cat ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
 }
 
 pipeline {
@@ -442,7 +448,7 @@ pipeline {
 
                                 echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                setInstancePrivateIPEnvironment()                                
+                                setInstancePrivateIPEnvironment("install")                                
 
                                 echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
 
@@ -459,7 +465,7 @@ pipeline {
                                     echo "Always INSTALL"
                                     
                                     echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                                    setInventories()
+                                    setInventories("install")
                                     runlogsbackup(params.product_to_test, "install")
                                     echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
                                     runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
@@ -480,9 +486,9 @@ pipeline {
                                 echo "UPGRADE STAGE INSIDE"
                                 echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
                                 runMoleculeAction("create", params.product_to_test, params.node_to_test, "upgrade", "main", "no")
-                                setInstancePrivateIPEnvironment()                                
+                                setInstancePrivateIPEnvironment("upgrade")                                
 
-                                setInventories()
+                                setInventories("upgrade")
                                 echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
 
                                 script{
@@ -506,7 +512,7 @@ pipeline {
                                     echo "POST YPGRADE STAGE"
                                     
                                     echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
-                                    setInventories()
+                                    setInventories("upgrade")
                                     runlogsbackup(params.product_to_test, "upgrade")
                                     echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
                                     runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
