@@ -71,16 +71,6 @@ pipeline {
         )
 
         choice(
-            name: 'test_type',
-            choices: [
-                'install',
-                'upgrade',
-                'install_and_upgrade'
-            ],
-            description: 'Set test type for testing'
-        )
-
-        choice(
             name: "pxc57_repo",
             choices: ["original","pxc57" ],
             description: "PXC-5.7 packages are located in 2 repos: pxc-57 and original and both should be tested. Choose which repo to use for test."
@@ -105,10 +95,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("debian-10")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -123,10 +110,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("debian-11")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -141,10 +125,7 @@ pipeline {
                         expression {
                             allOf{                            
                                 nodes_to_test.contains("centos-7")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -159,10 +140,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ol-8")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -176,10 +154,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ol-9")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }                            
+                            
                             }
                         }
                     }
@@ -195,10 +170,7 @@ pipeline {
                         expression {
                             allOf{                            
                                 nodes_to_test.contains("ubuntu-jammy")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -213,10 +185,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ubuntu-bionic")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }                            
+                            
                             }
                         }
                     }
@@ -231,10 +200,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ubuntu-focal")
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -249,10 +215,7 @@ pipeline {
                         expression {	
                             allOf{
                                 nodes_to_test.contains("min-amazon-2")	
-                                anyOf{
-                                    nodes_to_test.contains("install")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }	
                     }	
@@ -270,10 +233,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("debian-10")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -288,10 +248,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("debian-11")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -306,10 +263,7 @@ pipeline {
                         expression {
                             allOf{                            
                                 nodes_to_test.contains("centos-7")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -324,10 +278,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ol-8")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -341,10 +292,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ol-9")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }                            
+                            
                             }
                         }
                     }
@@ -360,10 +308,7 @@ pipeline {
                         expression {
                             allOf{                            
                                 nodes_to_test.contains("ubuntu-jammy")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -378,10 +323,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ubuntu-bionic")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }                            
+                            
                             }
                         }
                     }
@@ -396,10 +338,7 @@ pipeline {
                         expression {
                             allOf{
                                 nodes_to_test.contains("ubuntu-focal")
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }
                     }
@@ -414,10 +353,7 @@ pipeline {
                         expression {	
                             allOf{
                                 nodes_to_test.contains("min-amazon-2")	
-                                anyOf{
-                                    nodes_to_test.contains("upgrade")
-                                    nodes_to_test.contains("install_and_upgrade")
-                                }
+
                             }
                         }	
                     }	
