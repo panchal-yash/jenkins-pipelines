@@ -82,7 +82,7 @@ pipeline {
         stage("Prepare") {
             steps {
                 script {
-                    currentBuild.displayName = "#${BUILD_NUMBER}-${product_to_test}-${params.install_repo}-${params.node_to_test}"
+                    currentBuild.displayName = "#${BUILD_NUMBER}-${product_to_test}-${params.test_repo}-install-upgrade-all"
                     currentBuild.description = "action: ${params.action_to_test} node: ${params.node_to_test}"
                 }
             }
