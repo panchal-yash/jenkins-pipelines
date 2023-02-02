@@ -54,11 +54,7 @@ pipeline {
             description: 'PXC product_to_test to test'
         )
 
-        choice(
-            name: "node_to_test",
-            choices: ["all"] + all_nodes,
-            description: "Node in which to test the product"
-        )
+        string(name: 'node_to_test', value: all_nodes )
 
         choice(
 	        name: 'test_repo',
