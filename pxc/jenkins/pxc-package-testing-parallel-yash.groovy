@@ -54,7 +54,7 @@ pipeline {
             description: 'PXC product_to_test to test'
         )
 
-        string(name: 'node_to_test', value: all_nodes )
+        text(name: 'node_to_test', defaultValue: "${all_nodes}", description: '')
 
         choice(
 	        name: 'test_repo',
