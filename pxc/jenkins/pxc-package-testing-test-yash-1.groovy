@@ -327,9 +327,10 @@ pipeline {
         choice(
             name: 'test_type',
             choices: [
+                'install_and_upgrade',
                 'install',
-                'upgrade',
-                'install_and_upgrade'
+                'upgrade'
+
             ],
             description: 'Set test type for testing'
         )      

@@ -18,11 +18,8 @@ List all_nodes = [
 product_to_test = params.product_to_test
 
 List nodes_to_test = []
-if (params.node_to_test == "all") {
-    nodes_to_test = all_nodes
-} else {
-    nodes_to_test = [params.node_to_test]
-}
+
+nodes_to_test = all_nodes
 
 void runNodeBuild(String node_to_test) {
     build(
@@ -53,8 +50,6 @@ pipeline {
             ],
             description: 'PXC product_to_test to test'
         )
-
-        text(name: 'node_to_test', defaultValue: "${all_nodes}", description: '')
 
         choice(
 	        name: 'test_repo',
