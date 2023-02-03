@@ -21,14 +21,29 @@ List nodes_to_test = []
 
 nodes_to_test = all_nodes
 
+if("${params.test_repo}" == "main"){
+
+    test_type = "install"
+    echo "${test_type}"
+
+}
+else{
+
+    test_type = "install_and_upgrade"
+    echo "${test_type}"
+
+}
+
+
 void runNodeBuild(String node_to_test) {
+
     build(
         job: 'wip-pxc-package-testing-test-1',
         parameters: [
             string(name: "product_to_test", value: params.product_to_test),
             string(name: "node_to_test", value: node_to_test),
             string(name: "test_repo", value: params.test_repo),
-            string(name: "test_type", value: "install_and_upgrade"),
+            string(name: "test_type", value: "${test_type}"),
             string(name: "pxc57_repo", value: params.pxc57_repo)            
         ],
         propagate: true,
