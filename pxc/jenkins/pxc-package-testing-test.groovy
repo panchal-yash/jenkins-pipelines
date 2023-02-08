@@ -162,11 +162,11 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     echo "param_test_type is ${param_test_type}"
 
                     cd ${product_to_test}-bootstrap-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+                    molecule -vvv -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile  ${action} -s ${scenario}
+                    molecule -vvv -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile  ${action} -s ${scenario}
                     cd -
                 """
             }
