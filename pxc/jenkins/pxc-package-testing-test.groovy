@@ -36,17 +36,17 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                 def check_version="${version_check}"
                 if(action != "create" && action != "destroy"){
                     def IN_PXC1_IP = sh(
-                        script: """cat ${INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
 
                     def IN_PXC2_IP = sh(
-                        script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
 
                     def IN_PXC3_IP = sh(
-                        script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
 
@@ -75,17 +75,17 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
 
                 if(action != "create" && action != "destroy"){
                     def UP_PXC1_IP = sh(
-                        script: """cat ${UPGRADE_BOOTSTRAP_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
 
                     def UP_PXC2_IP = sh(
-                        script: """cat ${UPGRADE_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
 
                     def UP_PXC3_IP = sh(
-                        script: """cat ${UPGRADE_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
+                        script: """cat ${UPGRADE_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
                         returnStdout: true
                     ).trim()
                     sh """
