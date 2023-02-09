@@ -450,8 +450,8 @@ pipeline {
                                         echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
                                         setInventories("install")
                                         runlogsbackup(params.product_to_test, "install")
-                                        //echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                        //runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                        echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
                                 }
                             }
