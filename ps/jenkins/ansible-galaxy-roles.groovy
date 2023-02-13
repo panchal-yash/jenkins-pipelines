@@ -7,10 +7,13 @@ List all_nodes = [
     "min-buster-x64",
     "min-bullseye-x64",
     "min-centos-7-x64",
+    "min-centos-8-x64",
     "min-ol-8-x64",
     "min-bionic-x64",
     "min-focal-x64",
     "min-amazon-2-x64",
+    "min-ol-9-x64",
+    "min-jammy-x64",
 ]
 
 product_to_test = params.product_to_test
