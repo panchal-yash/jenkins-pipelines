@@ -64,10 +64,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                         echo 'check_version: "${check_version}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
                     """
                 }
-                sh """
-                    echo "cat the envfile"
-                    cat "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
-                """
             }else if(param_test_type == "upgrade"){
                 def install_repo="main"
                 def check_version="${version_check}"
@@ -104,18 +100,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     echo 'upgrade_repo: "${upgrade_repo}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/upgrade/envfile"
                     """
                 }
-
-
-
-            sh """
-
-                echo "cat the envfile"
-                cat "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
-
-
-            """
-
-
             }else{
                 echo "Unknown condition"
             }
@@ -131,7 +115,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     mkdir -p ${WORKSPACE}/upgrade
                     
                     cd package-testing/molecule/pxc
-                    export MOLECULE_DEBUG=1
                     
                     echo "param_test_type is ${param_test_type}"
 
@@ -148,7 +131,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                 sh"""
                     . virtenv/bin/activate
                     cd package-testing/molecule/pxc
-                    export MOLECULE_DEBUG=1
 
                     echo "param_test_type is ${param_test_type}"
 
@@ -340,8 +322,6 @@ pipeline {
         UPGRADE_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/upgrade/common_instance_public_ip.json"
 
         JENWORKSPACE = "${env.WORKSPACE}"
-
-        DESTROY_ENV="no"
     }
 
     parameters {
@@ -449,10 +429,7 @@ pipeline {
                                         echo "Always INSTALL"
                                         echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
                                         setInventories("install")
-                                        catchError{
-                                            error "Failed INtentionally"
-                                            runlogsbackup(params.product_to_test, "install")
-                                        }
+                                        runlogsbackup(params.product_to_test, "install")
                                         echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
                                         runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
@@ -490,10 +467,7 @@ pipeline {
                                         def param_test_type = "upgrade"
                                         echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
                                         setInventories("upgrade")
-                                        catchError{
-                                            error "Failed INtentionally"
-                                            runlogsbackup(params.product_to_test, "upgrade")
-                                        }
+                                        runlogsbackup(params.product_to_test, "upgrade")
                                         echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
                                         runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
                                     }
@@ -506,18 +480,10 @@ pipeline {
     }
 
     post {
+
         always {
              catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                 archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
-             }
-        }
-
-        aborted {
-             catchError{
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-             }
-             catchError{
-                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
              }
         }
 
