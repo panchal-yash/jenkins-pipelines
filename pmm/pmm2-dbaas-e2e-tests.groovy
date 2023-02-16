@@ -13,16 +13,15 @@ void runStagingServer(String DOCKER_VERSION, CLIENT_VERSION, CLIENT_INSTANCE, SE
         string(name: 'NOTIFY', value: 'false'),
         string(name: 'DAYS', value: '1')
     ]
+
     env.VM_IP = stagingJob.buildVariables.IP
     env.VM_NAME = stagingJob.buildVariables.VM_NAME
     env.ADMIN_PASSWORD = "admin"
-    def clientInstance = "yes";
-    if ( CLIENT_INSTANCE == clientInstance ) {
+
+    if ( CLIENT_INSTANCE == "yes" ) {
         env.PMM_URL = "http://admin:${ADMIN_PASSWORD}@${SERVER_IP}"
         env.PMM_UI_URL = "http://${SERVER_IP}/"
-    }
-    else
-    {
+    } else {
         env.PMM_URL = "http://admin:${ADMIN_PASSWORD}@${VM_IP}"
         env.PMM_UI_URL = "http://${VM_IP}/"
     }
@@ -66,9 +65,9 @@ pipeline {
             description: 'PMM Client version',
             name: 'CLIENT_VERSION')
         string(
-            defaultValue: '-e PMM_DEBUG=1 -e ENABLE_DBAAS=1 -e PERCONA_TEST_VERSION_SERVICE_URL=https://check-dev.percona.com/versions/v1 -e PERCONA_TEST_DBAAS_PMM_CLIENT=perconalab/pmm-client:dev-latest',
+            defaultValue: '-e PMM_DEBUG=1 -e ENABLE_DBAAS=1 -e PERCONA_TEST_VERSION_SERVICE_URL=https://check-dev.percona.com/versions/v1 -e PERCONA_TEST_DBAAS_PMM_CLIENT=perconalab/pmm-client:dev-latest -e PERCONA_TEST_PLATFORM_ADDRESS=https://check-dev.percona.com:443 -e PERCONA_TEST_PLATFORM_PUBLIC_KEY=RWTg+ZmCCjt7O8eWeAmTLAqW+1ozUbpRSKSwNTmO+exlS5KEIPYWuYdX',
             description: 'Envirnomental variables',
-            name: 'DOCKER_ENV_VARIABLE')    
+            name: 'DOCKER_ENV_VARIABLE')
         string(
             defaultValue: "'@dbaas'",
             description: 'Pass test tags ex. @dbaas',
@@ -272,11 +271,6 @@ pipeline {
                 reportBuildPolicy: 'ALWAYS',
                 results: [[path: 'tests/output/allure']]
             ])
-            sh '''
-                sudo rm -r node_modules/
-                sudo rm -r tests/output
-            '''
-            deleteDir()
         }
     }
 }

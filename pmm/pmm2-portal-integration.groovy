@@ -11,7 +11,7 @@ def getMinorVersion(VERSION) {
 
 pipeline {
     agent {
-        label 'docker-farm'
+        label 'agent-amd64'
     }
     environment {
         PORTAL_USER_EMAIL=credentials('PORTAL_USER_EMAIL')
@@ -57,7 +57,7 @@ pipeline {
                 // fetch pmm-ui-tests repository
                 git poll: false, branch: GIT_BRANCH, url: 'https://github.com/percona/pmm-ui-tests.git'
 
-                slackSend channel: '#pmm-ci', color: '#FFFF00', message: "[${JOB_NAME}]: build started - ${BUILD_URL}"
+                slackSend channel: '#pmm-ci', color: '#0000FF', message: "[${JOB_NAME}]: build started - ${BUILD_URL}"
             }
         }
         stage('Start Server Instance') {

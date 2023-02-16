@@ -74,7 +74,7 @@ pipeline {
     stages {
         stage('Create PXC source tarball') {
             steps {
-                slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: starting build for ${GIT_BRANCH}")
+                slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: starting build for ${GIT_BRANCH} - [${BUILD_URL}]")
                 cleanUpWS()
                 buildStage("centos:7", "--get_sources=1")
                 sh '''
@@ -161,6 +161,21 @@ pipeline {
                         uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
                     }
                 }
+                stage('Oracle Linux 9') {
+                    agent {
+                        label 'docker-32gb'
+                    }
+                    steps {
+                        cleanUpWS()
+                        unstash 'pxc-80.properties'
+                        popArtifactFolder("srpm/", AWS_STASH_PATH)
+                        buildStage("oraclelinux:9", "--build_rpm=1")
+
+                        stash includes: 'test/pxc-80.properties', name: 'pxc-80.properties'
+                        pushArtifactFolder("rpm/", AWS_STASH_PATH)
+                        uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
+                    }
+                }
                 stage('Ubuntu Bionic(18.04)') {
                     agent {
                         label 'docker-32gb'
@@ -185,6 +200,21 @@ pipeline {
                         unstash 'pxc-80.properties'
                         popArtifactFolder("source_deb/", AWS_STASH_PATH)
                         buildStage("ubuntu:focal", "--build_deb=1")
+
+                        stash includes: 'test/pxc-80.properties', name: 'pxc-80.properties'
+                        pushArtifactFolder("deb/", AWS_STASH_PATH)
+                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
+                    }
+                }
+                stage('Ubuntu Jammy(22.04)') {
+                    agent {
+                        label 'docker-32gb'
+                    }
+                    steps {
+                        cleanUpWS()
+                        unstash 'pxc-80.properties'
+                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
+                        buildStage("ubuntu:jammy", "--build_deb=1")
 
                         stash includes: 'test/pxc-80.properties', name: 'pxc-80.properties'
                         pushArtifactFolder("deb/", AWS_STASH_PATH)
@@ -250,6 +280,36 @@ pipeline {
                         pushArtifactFolder("debug/", AWS_STASH_PATH)
                     }
                 }
+                stage('Centos 9 tarball') {
+                    agent {
+                        label 'docker-32gb'
+                    }
+                    steps {
+                        cleanUpWS()
+                        unstash 'pxc-80.properties'
+                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
+                        buildStage("oraclelinux:9", "--build_tarball=1")
+
+                        stash includes: 'test/pxc-80.properties', name: 'pxc-80.properties'
+                        pushArtifactFolder("test/tarball/", AWS_STASH_PATH)
+                        uploadTarballfromAWS("test/tarball/", AWS_STASH_PATH, 'binary')
+                    }
+                }
+                stage('Ubuntu Jammy(22.04) tarball') {
+                    agent {
+                        label 'docker-32gb'
+                    }
+                    steps {
+                        cleanUpWS()
+                        unstash 'pxc-80.properties'
+                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
+                        buildStage("ubuntu:jammy", "--build_tarball=1")
+
+                        stash includes: 'test/pxc-80.properties', name: 'pxc-80.properties'
+                        pushArtifactFolder("test/tarball/", AWS_STASH_PATH)
+                        uploadTarballfromAWS("test/tarball/", AWS_STASH_PATH, 'binary')
+                    }
+                }
             }
         }
 
@@ -269,11 +329,11 @@ pipeline {
     }
     post {
         success {
-            slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${GIT_BRANCH}")
+            slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${GIT_BRANCH} - [${BUILD_URL}]")
             deleteDir()
         }
         failure {
-            slackNotify("${SLACKNOTIFY}", "#FF0000", "[${JOB_NAME}]: build failed for ${GIT_BRANCH}")
+            slackNotify("${SLACKNOTIFY}", "#FF0000", "[${JOB_NAME}]: build failed for ${GIT_BRANCH} - [${BUILD_URL}]")
             deleteDir()
         }
         always {

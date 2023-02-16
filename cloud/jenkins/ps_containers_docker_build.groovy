@@ -17,6 +17,14 @@ void build(String IMAGE_POSTFIX){
             docker build --no-cache --squash --progress plain \
                 -t perconalab/percona-server-mysql-operator:${GIT_PD_BRANCH}-${IMAGE_POSTFIX} \
                 -f ./percona-server-8.0/Dockerfile ./percona-server-8.0
+        elif [ "${IMAGE_POSTFIX}" == "toolkit" ]; then
+            docker build --no-cache --squash --progress plain \
+                -t perconalab/percona-server-mysql-operator:${GIT_PD_BRANCH}-${IMAGE_POSTFIX} \
+                -f ./percona-toolkit/Dockerfile ./percona-toolkit
+        elif [ "${IMAGE_POSTFIX}" == "haproxy" ]; then
+            docker build --no-cache --squash --progress plain \
+                -t perconalab/percona-server-mysql-operator:${GIT_PD_BRANCH}-${IMAGE_POSTFIX} \
+                -f ./haproxy/Dockerfile ./haproxy
         fi
     """
 }
@@ -116,6 +124,12 @@ pipeline {
                 retry(3) {
                     build('psmysql')
                 }
+                retry(3) {
+                    build('toolkit')
+                }
+                retry(3) {
+                    build('haproxy')
+                }
             }
         }
         stage('Push Images to Docker registry') {
@@ -124,6 +138,8 @@ pipeline {
                 pushImageToDocker('backup')
                 pushImageToDocker('router')
                 pushImageToDocker('psmysql')
+                pushImageToDocker('toolkit')
+                pushImageToDocker('haproxy')
             }
         }
         stage('Trivy Checks') {
@@ -134,10 +150,12 @@ pipeline {
                         checkImageForDocker('backup')
                         checkImageForDocker('router')
                         checkImageForDocker('psmysql')
+                        checkImageForDocker('toolkit')
+                        checkImageForDocker('haproxy')
                     }
                     post {
                         always {
-                            junit allowEmptyResults: true, skipPublishingChecks: true, testResults: "*-orchestrator.xml"
+                            junit allowEmptyResults: true, skipPublishingChecks: true, testResults: "trivy-*.xml"
                         }
                     }
                 }

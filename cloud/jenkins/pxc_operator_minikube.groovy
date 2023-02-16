@@ -44,7 +44,7 @@ void runTest(String TEST_NAME) {
             GIT_SHORT_COMMIT = sh(script: 'git -C source rev-parse --short HEAD', , returnStdout: true).trim()
             PXC_TAG = sh(script: "if [ -n \"\${IMAGE_PXC}\" ] ; then echo ${IMAGE_PXC} | awk -F':' '{print \$2}'; else echo 'main'; fi", , returnStdout: true).trim()
             VERSION = "${env.GIT_BRANCH}-$GIT_SHORT_COMMIT"
-            def FILE_NAME = "$VERSION-$TEST_NAME-minikube-${env.PLATFORM_VER}-$PXC_TAG-CW_${params.CLUSTER_WIDE}"
+            FILE_NAME = "$VERSION-$TEST_NAME-minikube-${env.PLATFORM_VER}-$PXC_TAG-CW_${params.CLUSTER_WIDE}"
             testsReportMap[TEST_NAME] = 'failure'
 
             popArtifactFile("$FILE_NAME", "$GIT_SHORT_COMMIT")
@@ -188,7 +188,7 @@ pipeline {
             description: 'PXC logcollector image: perconalab/percona-xtradb-cluster-operator:main-logcollector',
             name: 'IMAGE_LOGCOLLECTOR')
         string(
-            defaultValue: 'v1.14.8',
+            defaultValue: 'v1.24.3',
             description: 'Kubernetes Version',
             name: 'PLATFORM_VER',
             trim: true)
@@ -294,11 +294,8 @@ pipeline {
                     runTest('auto-tuning')
                     runTest('limits')
                     runTest('one-pod')
-                    runTest('operator-self-healing')
                     runTest('operator-self-healing-chaos')
                     runTest('scaling')
-                    runTest('self-healing')
-                    runTest('self-healing-advanced')
                     runTest('self-healing-advanced-chaos')
                     runTest('validation-hook')
             }

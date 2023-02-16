@@ -69,6 +69,10 @@ void runTest(String TEST_NAME) {
                             export IMAGE_BACKUP=${IMAGE_BACKUP}
                         fi
 
+                        if [ -n "${IMAGE_TOOLKIT}" ]; then
+                            export IMAGE_TOOLKIT=${IMAGE_TOOLKIT}
+                        fi
+
                         if [ -n "${IMAGE_PMM}" ]; then
                             export IMAGE_PMM=${IMAGE_PMM}
                         fi
@@ -158,6 +162,14 @@ pipeline {
             defaultValue: '',
             description: 'XtraBackup image: perconalab/percona-server-mysql-operator:main-backup',
             name: 'IMAGE_BACKUP')
+        string(
+            defaultValue: '',
+            description: 'Toolkit image: perconalab/percona-server-mysql-operator:main-toolkit',
+            name: 'IMAGE_TOOLKIT')
+        string(
+            defaultValue: '',
+            description: 'HAProxy image: perconalab/percona-server-mysql-operator:main-haproxy',
+            name: 'IMAGE_HAPROXY')
         string(
             defaultValue: '',
             description: 'PMM image: perconalab/pmm-client:dev-latest',
@@ -286,15 +298,20 @@ pipeline {
                 runTest('auto-config')
                 runTest('config')
                 runTest('demand-backup')
+                runTest('gr-demand-backup')
                 runTest('gr-init-deploy')
+                runTest('haproxy')
                 runTest('init-deploy')
                 runTest('limits')
                 runTest('monitoring')
+                runTest('one-pod')
                 runTest('scaling')
                 runTest('semi-sync')
                 runTest('service-per-pod')
                 runTest('sidecars')
+                runTest('tls-cert-manager')
                 runTest('users')
+                runTest('version-service')
             }
         }
         stage('Make report') {

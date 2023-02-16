@@ -10,7 +10,7 @@ pipeline {
   }
   environment {
       PATH = '/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin';
-      MOLECULE_DIR = "molecule/pdmysql/pdps-minor-upgrade";
+      MOLECULE_DIR = "molecule/pdmysql/pdps_minor_upgrade";
   }
   parameters {
         choice(
@@ -69,10 +69,11 @@ pipeline {
           withCredentials(moleculePdpsJenkinsCreds())
           disableConcurrentBuilds()
   }
-    stages {
-        stage('Checkout') {
+      stages {
+        stage('Check version param and checkout') {
             steps {
                 deleteDir()
+                checkOrchVersionParam()
                 git poll: false, branch: TESTING_BRANCH, url: 'https://github.com/Percona-QA/package-testing.git'
             }
         }
@@ -86,7 +87,7 @@ pipeline {
         stage('Test') {
           steps {
                 script {
-                    moleculeParallelTest(pdmysqlOperatingSystems(), env.MOLECULE_DIR)
+                    moleculeParallelTest(pdpsOperatingSystems(), env.MOLECULE_DIR)
                 }
             }
          }
@@ -94,7 +95,7 @@ pipeline {
     post {
         always {
           script {
-              moleculeParallelPostDestroy(pdmysqlOperatingSystems(), env.MOLECULE_DIR)
+              moleculeParallelPostDestroy(pdpsOperatingSystems(), env.MOLECULE_DIR)
          }
       }
    }

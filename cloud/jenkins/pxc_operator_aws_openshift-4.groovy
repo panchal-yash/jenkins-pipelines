@@ -139,7 +139,7 @@ void installRpms() {
 pipeline {
     parameters {
         string(
-            defaultValue: '4.7.22',
+            defaultValue: '4.10.30',
             description: 'OpenShift version to use',
             name: 'PLATFORM_VER')
         string(
@@ -291,7 +291,8 @@ pipeline {
             steps {
                 runTest('upgrade-haproxy')
                 runTest('upgrade-proxysql')
-                runTest('smart-update')
+                runTest('smart-update1')
+                runTest('smart-update2')
                 runTest('upgrade-consistency')
             }
         }
@@ -345,6 +346,7 @@ pipeline {
                 runTest('recreate')
                 runTest('restore-to-encrypted-cluster')
                 runTest('demand-backup')
+                runTest('demand-backup-cloud')
                 runTest('demand-backup-encrypted-with-tls')
                 runTest('pitr')
                 runTest('scheduled-backup')

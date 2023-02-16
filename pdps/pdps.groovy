@@ -16,7 +16,7 @@ pipeline {
         choice(
             name: 'PLATFORM',
             description: 'For what platform (OS) need to test',
-            choices: pdmysqlOperatingSystems()
+            choices: pdpsOperatingSystems()
         )
         choice(
             name: 'REPO',
@@ -92,9 +92,10 @@ pipeline {
                 }
             }
         }
-        stage('Checkout') {
+        stage('Check version param and checkout') {
             steps {
                 deleteDir()
+                checkOrchVersionParam()
                 git poll: false, branch: TESTING_BRANCH, url: 'https://github.com/Percona-QA/package-testing.git'
             }
         }

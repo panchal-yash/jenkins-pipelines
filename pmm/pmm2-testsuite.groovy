@@ -152,7 +152,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 slackSend channel: '#pmm-ci',
-                          color: '#FFFF00',
+                          color: '#0000FF',
                           message: "[${JOB_NAME}]: build started - ${BUILD_URL}"
                 sh '''
                     npm install tap-junit
@@ -165,7 +165,7 @@ pipeline {
                 script {
 
                     SSHLauncher ssh_connection = new SSHLauncher(env.VM_IP, 22, 'aws-jenkins')
-                    DumbSlave node = new DumbSlave(env.VM_NAME, "spot instance job", "/home/ec2-user/", "1", Mode.EXCLUSIVE, "", ssh_connection, RetentionStrategy.INSTANCE)
+                    DumbSlave node = new DumbSlave(env.VM_NAME, "PMM test suite instance: ${VM_NAME}", "/home/ec2-user/", "1", Mode.EXCLUSIVE, "", ssh_connection, RetentionStrategy.INSTANCE)
 
                     Jenkins.instance.addNode(node)
                 }
@@ -269,6 +269,9 @@ pipeline {
                 curl --insecure ${PMM_URL}/logs.zip --output logs.zip || true
             '''
             fetchAgentLog(CLIENT_VERSION)
+            script {
+                junit allowEmptyResults: true, testResults: '**/*.xml'
+            }
             script {
                 if(env.VM_NAME) {
                     destroyStaging(VM_NAME)

@@ -38,7 +38,6 @@ void runMoleculeAction(String action, String scenario) {
     withCredentials(awsCredentials) {
         sh """
             source venv/bin/activate
-            export MOLECULE_DEBUG=1
             cd package-testing/molecule/ps-innodb-cluster
             cd server
             export INSTANCE_PRIVATE_IP=\${SERVER_INSTANCE_PRIVATE_IP}
@@ -106,11 +105,12 @@ pipeline {
             choices: [
                 'ubuntu-focal',
                 'ubuntu-bionic',
+                'ubuntu-jammy',
                 'debian-11',
                 'debian-10',
-                'debian-9',
                 'centos-7',
-                'oracle-linux-8'
+                'oracle-8',
+                'oracle-9'
             ],
             description: 'Distribution to run test'
         )

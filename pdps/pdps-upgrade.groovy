@@ -9,13 +9,13 @@ pipeline {
     }
     environment {
         PATH = '/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin';
-        MOLECULE_DIR = "molecule/pdmysql/pdps-minor-upgrade";
+        MOLECULE_DIR = "molecule/pdmysql/pdps_minor_upgrade";
     }
     parameters {
         choice(
             name: 'PLATFORM',
             description: 'For what platform (OS) need to test',
-            choices: pdmysqlOperatingSystems()
+            choices: pdpsOperatingSystems()
         )
         choice(
             name: 'FROM_REPO',
@@ -91,9 +91,10 @@ pipeline {
                 }
             }
         }
-        stage('Checkout') {
+        stage('Check version param and checkout') {
             steps {
                 deleteDir()
+                checkOrchVersionParam()
                 git poll: false, branch: TESTING_BRANCH, url: 'https://github.com/Percona-QA/package-testing.git'
             }
         }

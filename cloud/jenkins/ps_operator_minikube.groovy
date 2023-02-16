@@ -38,7 +38,7 @@ void runTest(String TEST_NAME) {
             GIT_SHORT_COMMIT = sh(script: 'git -C source rev-parse --short HEAD', , returnStdout: true).trim()
             PS_TAG = sh(script: "if [ -n \"\${IMAGE_MYSQL}\" ] ; then echo ${IMAGE_MYSQL} | awk -F':' '{print \$2}'; else echo 'main'; fi", , returnStdout: true).trim()
             VERSION = "${env.GIT_BRANCH}-$GIT_SHORT_COMMIT"
-            def FILE_NAME = "$VERSION-$TEST_NAME-minikube-${env.PLATFORM_VER}-$PS_TAG"
+            FILE_NAME = "$VERSION-$TEST_NAME-minikube-${env.PLATFORM_VER}-$PS_TAG"
             testsReportMap[TEST_NAME] = 'failure'
 
             popArtifactFile("$FILE_NAME", "$GIT_SHORT_COMMIT")
@@ -67,6 +67,10 @@ void runTest(String TEST_NAME) {
 
                     if [ -n "${IMAGE_BACKUP}" ]; then
                         export IMAGE_BACKUP=${IMAGE_BACKUP}
+                    fi
+
+                    if [ -n "${IMAGE_TOOLKIT}" ]; then
+                        export IMAGE_TOOLKIT=${IMAGE_TOOLKIT}
                     fi
 
                     if [ -n "${IMAGE_PMM}" ]; then
@@ -161,6 +165,14 @@ pipeline {
             name: 'IMAGE_BACKUP')
         string(
             defaultValue: '',
+            description: 'Toolkit image: perconalab/percona-server-mysql-operator:main-toolkit',
+            name: 'IMAGE_TOOLKIT')
+        string(
+            defaultValue: '',
+            description: 'HAProxy image: perconalab/percona-server-mysql-operator:main-haproxy',
+            name: 'IMAGE_HAPROXY')
+        string(
+            defaultValue: '',
             description: 'PMM image: perconalab/pmm-client:dev-latest',
             name: 'IMAGE_PMM')
         string(
@@ -249,7 +261,7 @@ pipeline {
 
                         curl -s https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz \
                             | sudo tar -C /usr/local/bin --strip-components 1 -zvxpf -
-                        sudo sh -c "curl -s -L https://github.com/mikefarah/yq/releases/download/3.3.2/yq_linux_amd64 > /usr/local/bin/yq"
+                        sudo sh -c "curl -s -L https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_amd64 > /usr/local/bin/yq"
                         sudo chmod +x /usr/local/bin/yq
 
 						cd "$(mktemp -d)"
@@ -275,17 +287,27 @@ pipeline {
                     }
 
                     installRpms()
-                    runTest('affinity')
-                    runTest('auto-tuning')
-                    runTest('limits')
+                    // runTest('auto-config') - memory config resources
+                    // runTest('async-ignore-annotations') - LoadBalancer
+                    runTest('config')
+                    runTest('demand-backup')
+                    runTest('gr-demand-backup')
+                    // runTest('gr-ignore-annotations') - LoadBalancer
+                    runTest('gr-init-deploy')
+                    runTest('gr-scaling')
+                    runTest('gr-tls-cert-manager')
+                    runTest('haproxy')
+                    runTest('init-deploy')
+                    // runTest('limits') - affinity
+                    // runTest('monitoring') - LoadBalancer, pmm image pull context deadline
                     runTest('one-pod')
-                    runTest('operator-self-healing')
-                    runTest('operator-self-healing-chaos')
-                    runTest('scaling')
-                    runTest('self-healing')
-                    runTest('self-healing-advanced')
-                    runTest('self-healing-advanced-chaos')
-                    runTest('validation-hook')
+                    // runTest('scaling') - 7-assert - storage: 2Gi vs storage: 2G
+                    runTest('semi-sync')
+                    // runTest('service-per-pod') - LoadBalancer
+                    runTest('sidecars')
+                    runTest('tls-cert-manager')
+                    runTest('users')
+                    runTest('version-service')
             }
             post {
                 always {

@@ -29,7 +29,7 @@ def AWS_STASH_PATH
 
 pipeline {
     agent {
-        label 'docker-32gb'
+        label 'docker-64gb'
     }
     parameters {
         string(
@@ -70,7 +70,7 @@ pipeline {
     stages {
         stage('Create PSMDB source tarball') {
             steps {
-                slackNotify("#releases-ci", "#00FF00", "[${JOB_NAME}]: starting build for ${GIT_BRANCH}")
+                slackNotify("#releases-ci", "#00FF00", "[${JOB_NAME}]: starting build for ${GIT_BRANCH} - [${BUILD_URL}]")
                 cleanUpWS()
                 buildStage("centos:7", "--get_sources=1")
                 sh '''
@@ -94,7 +94,7 @@ pipeline {
             parallel {
                 stage('Build PSMDB generic source rpm') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -107,7 +107,7 @@ pipeline {
                 }
                 stage('Build PSMDB generic source deb') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -124,7 +124,7 @@ pipeline {
             parallel {
                 stage('Centos 7') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -135,14 +135,27 @@ pipeline {
                         uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
                     }
                 }
-                stage('Centos 8') {
+                stage('Oracle Linux 8') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
                         popArtifactFolder("srpm/", AWS_STASH_PATH)
-                        buildStage("centos:8", "--build_rpm=1")
+                        buildStage("oraclelinux:8", "--build_rpm=1")
+
+                        pushArtifactFolder("rpm/", AWS_STASH_PATH)
+                        uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
+                    }
+                }
+                stage('Oracle Linux 9') {
+                    agent {
+                        label 'docker-64gb'
+                    }
+                    steps {
+                        cleanUpWS()
+                        popArtifactFolder("srpm/", AWS_STASH_PATH)
+                        buildStage("oraclelinux:9", "--build_rpm=1")
 
                         pushArtifactFolder("rpm/", AWS_STASH_PATH)
                         uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
@@ -150,7 +163,7 @@ pipeline {
                 }
                 stage('Ubuntu Bionic(18.04)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -163,7 +176,7 @@ pipeline {
                 }
                 stage('Ubuntu Focal(20.04)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -176,7 +189,7 @@ pipeline {
                 }
                 stage('Ubuntu Jammy(22.04)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -189,7 +202,7 @@ pipeline {
                 }
                 stage('Debian Buster(10)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -202,7 +215,7 @@ pipeline {
                 }
                 stage('Debian Bullseye(11)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -215,7 +228,7 @@ pipeline {
                 }
                 stage('Centos 7 binary tarball(glibc2.17)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -228,7 +241,7 @@ pipeline {
                 }
                 stage('Centos 7 debug binary tarball(glibc2.17)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -240,7 +253,7 @@ pipeline {
                 }
                 stage('Ubuntu Jammy(22.04) binary tarball(glibc2.35)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -253,7 +266,7 @@ pipeline {
                 }
                 stage('Ubuntu Jammy(22.04) debug binary tarball(glibc2.35)') {
                     agent {
-                        label 'docker-32gb'
+                        label 'docker-64gb'
                     }
                     steps {
                         cleanUpWS()
@@ -278,18 +291,31 @@ pipeline {
                 sync2ProdAutoBuild(PSMDB_REPO, COMPONENT)
             }
         }
+        stage('Push Tarballs to TESTING download area') {
+            steps {
+                script {
+                    try {
+                        uploadTarballToDownloadsTesting("psmdb", "${PSMDB_VERSION}")
+                    }
+                    catch (err) {
+                        echo "Caught: ${err}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
 
     }
     post {
         success {
-            slackNotify("#releases", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${GIT_BRANCH}")
+            slackNotify("#releases", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${GIT_BRANCH} - [${BUILD_URL}]")
             script {
-                currentBuild.description = "Built on ${GIT_BRANCH}"
+                currentBuild.description = "Built on ${GIT_BRANCH}. Path to packages: experimental/${AWS_STASH_PATH}"
             }
             deleteDir()
         }
         failure {
-            slackNotify("#releases-ci", "#FF0000", "[${JOB_NAME}]: build failed for ${GIT_BRANCH}")
+            slackNotify("#releases-ci", "#FF0000", "[${JOB_NAME}]: build failed for ${GIT_BRANCH} - [${BUILD_URL}]")
             deleteDir()
         }
         always {
