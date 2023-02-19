@@ -1,5 +1,5 @@
 - job:
-    name: ansible-galaxy-roles-build
+    name: ansible-galaxy-roles-build-pxc
     project-type: pipeline
     description: |
         Use package-testing-ps to run in all nodes
@@ -19,7 +19,7 @@
                     - 'ansible-galaxy-role'
                 wipe-workspace: true
         lightweight-checkout: true
-        script-path: ps/jenkins/ansible-galaxy-roles-build.groovy
+        script-path: ps/jenkins/ansible-galaxy-roles-build-pxc.groovy
     parameters:
         - choice:
             name: node_to_test
