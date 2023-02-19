@@ -95,8 +95,8 @@ void runPlaybook(String percona_server_repository, String percona_server_version
     sh """
 
         wget https://raw.githubusercontent.com/panchal-yash/percona-xtradb-cluster-role/main/playbook.yml
-        ansible-galaxy install panchal_yash.percona_server
-        ansible-galaxy install -p /mnt/jenkins/workspace/ansible-galaxy-roles-build/roles/ panchal_yash.percona_xtradb_cluster_role
+        ansible-galaxy install panchal_yash.percona_xtradb_cluster_role
+        ansible-galaxy install -p /mnt/jenkins/workspace/ansible-galaxy-roles-build-pxc/roles/ panchal_yash.percona_xtradb_cluster_role
         sed -i -e 's/VERSION/${percona_server_version}/g' -e 's/REPOSITORY/${percona_server_repository}/g' playbook.yml
         sudo ansible-playbook \
         --connection=local \
