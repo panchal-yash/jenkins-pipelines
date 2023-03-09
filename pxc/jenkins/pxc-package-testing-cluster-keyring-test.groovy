@@ -18,10 +18,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
         )
     ]
 
-
-
-            
-
             sh """
             mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/"
             """
@@ -246,7 +242,7 @@ pipeline {
                 installMolecule()
                     sh '''
                         sudo yum install -y epel-release 
-                        sudo yum install -y git jq
+                        sudo yum install -y git unzip jq
                         rm -rf package-testing                    
                         git clone https://github.com/panchal-yash/package-testing --branch PXC-package-testing-keyring-script
                     '''
@@ -264,14 +260,13 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
                                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                         runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
                                 }
                             }
                             post{
-                                always{
+                                always{     
                                     script{
                                         def param_test_type = "install" 
                                         echo "Always INSTALL"
