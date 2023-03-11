@@ -40,9 +40,9 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     ).trim()
 
                     sh """
-                        echo 'PXC1_IP: "${IN_PXC1_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
-                        echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
-                        echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
+                        echo 'PXC1_IP: "${IN_PXC1_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                        echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                        echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                     """
                 }
 
@@ -91,10 +91,7 @@ void setInventories(String param_test_type){
                     def KEYPATH_COMMON
                     def SSH_USER
 
-                    KEYPATH_BOOTSTRAP="/home/centos/.cache/molecule/${product_to_test}-bootstrap-${param_test_type}/${params.node_to_test}/ssh_key-us-west-2"
-                    KEYPATH_COMMON="/home/centos/.cache/molecule/${product_to_test}-common-${param_test_type}/${params.node_to_test}/ssh_key-us-west-2"
-
-
+                    KEYPATH_COMMON="/home/centos/.cache/molecule/pxc-80-setup/${params.node_to_test}/ssh_key-us-west-2"
                     SSH_USER="ubuntu"            
 
 
@@ -133,14 +130,13 @@ void setInventories(String param_test_type){
                     ).trim()
 
                     sh """
-                        mkdir -p "${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/"
-                        mkdir -p "${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/"
-                        echo \"printing path of bootstrap ${KEYPATH_BOOTSTRAP}"
+
+                        mkdir -p "${WORKSPACE}/pxc-80-setup/${params.node_to_test}/install/"
                         echo \"printing path of common  ${KEYPATH_COMMON}"
                         echo \"printing user ${SSH_USER}"
-                        echo "\n ${INSTALL_Common_Instance_PXC1} ansible_host=${INSTALL_Common_Instance_PXC1_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC1}" > ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory            
-                        echo "\n ${INSTALL_Common_Instance_PXC2} ansible_host=${INSTALL_Common_Instance_PXC2_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC2}" >> ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory
-                        echo "\n ${INSTALL_Common_Instance_PXC3} ansible_host=${INSTALL_Common_Instance_PXC3_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC3}" >> ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory
+                        echo "\n ${INSTALL_Common_Instance_PXC1} ansible_host=${INSTALL_Common_Instance_PXC1_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC1}" > ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/install/inventory            
+                        echo "\n ${INSTALL_Common_Instance_PXC2} ansible_host=${INSTALL_Common_Instance_PXC2_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC2}" >> ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/install/inventory
+                        echo "\n ${INSTALL_Common_Instance_PXC3} ansible_host=${INSTALL_Common_Instance_PXC3_Public_IP}   ansible_ssh_user=${SSH_USER} ansible_ssh_private_key_file=${KEYPATH_COMMON} ansible_ssh_common_args='-o StrictHostKeyChecking=no'  ip_env=${INSTALL_Common_Instance_PXC3}" >> ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/install/inventory
                     """
 }
 
@@ -162,12 +158,8 @@ void runlogsbackup(String product_to_test, String param_test_type) {
     withCredentials(awsCredentials) {
         sh """
             . virtenv/bin/activate
-
-            echo "Running the logs backup task for pxc bootstrap node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
-
             echo "Running the logs backup task for pxc common node"
-            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+            ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/playbooks/logsbackup.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
         """
     }
     
@@ -260,9 +252,6 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    }
                                 }
                             }
                             post{
@@ -303,8 +292,15 @@ pipeline {
                                                 aws s3 cp s3://yash-test-keyring-pxc/pxc80-28-build-install.tar.gz .
                                                 ls -la
                                             """
-                                        
+
+                                            sh """
+                                                . virtenv/bin/activate
+                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/playbook.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory
+                                            """
+
                                         }
+
+
 
                                     }
 
