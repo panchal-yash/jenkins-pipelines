@@ -155,7 +155,29 @@ void runlogsbackup(String product_to_test, String param_test_type) {
         )
     ]
 
+                    def IN_PXC1_IP = sh(
+                        script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
+                        returnStdout: true
+                    ).trim()
+
+                    def IN_PXC2_IP = sh(
+                        script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
+                        returnStdout: true
+                    ).trim()
+
+                    def IN_PXC3_IP = sh(
+                        script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[2] | jq [.private_ip] | jq -r .[]""",
+                        returnStdout: true
+                    ).trim()
+
+                    sh """
+                        echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                        echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                        echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                    """
+
     withCredentials(awsCredentials) {
+        
         sh """
             . virtenv/bin/activate
             echo "Running the logs backup task for pxc common node"
@@ -295,7 +317,7 @@ pipeline {
 
                                             sh """
                                                 . virtenv/bin/activate
-                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/playbook.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory
+                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/config-tarballs.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory
                                             """
 
                                         }
