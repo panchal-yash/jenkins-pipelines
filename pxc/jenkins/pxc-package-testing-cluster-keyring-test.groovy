@@ -347,6 +347,7 @@ pipeline {
 
                                             sh """
                                                 . virtenv/bin/activate
+                                                echo -e "\n\n\n\n" | ssh-keygen -t rsa
                                                 ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/config-tarballs.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory
                                             """
 
