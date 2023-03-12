@@ -300,7 +300,37 @@ pipeline {
                                             )
                                         ]
 
-                
+                                        def IN_PXC1_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
+
+                                        def IN_PXC2_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
+
+                                        def IN_PXC3_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[2] | jq [.private_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
+
+                                        sh """
+
+                                            echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                            echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                            echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+
+                                            sed -i 's/DB1/${IN_PXC1_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB2/${IN_PXC2_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB3/${IN_PXC3_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+
+                                        """
+
+                                        sh """
+                                            echo "Cating the file after sed"
+                                            cat ${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh
+                                        """
                                     
                                         withCredentials(awsCredentials) {
                                         
@@ -320,10 +350,13 @@ pipeline {
                                                 ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/config-tarballs.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory
                                             """
 
+                                            sh """
+                                               cd ${WORKSPACE}/package-testing/scripts/
+                                               chmod +x pxc-keyring-test.sh
+                                               ./pxc-keyring-test.sh
+                                            """
+                                        
                                         }
-
-
-
                                     }
 
                                     script{
