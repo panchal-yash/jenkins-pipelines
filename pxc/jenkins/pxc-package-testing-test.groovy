@@ -323,7 +323,6 @@ pipeline {
 
         JENWORKSPACE = "${env.WORKSPACE}"
 
-        DESTROY_ENV = "no"
     }
 
     parameters {
@@ -432,8 +431,8 @@ pipeline {
                                         echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
                                         setInventories("install")
                                         runlogsbackup(params.product_to_test, "install")
-                                        //echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                        //runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                        echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
                                 }
                             }
@@ -470,8 +469,8 @@ pipeline {
                                         echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
                                         setInventories("upgrade")
                                         runlogsbackup(params.product_to_test, "upgrade")
-                                      //  echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
-                                      //  runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                                        echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
+                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
                                     }
                                 }
                             }
