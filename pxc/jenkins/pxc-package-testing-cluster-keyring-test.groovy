@@ -316,6 +316,22 @@ pipeline {
                                         ).trim()
 
 
+                                        def INSTALL_Common_Instance_PXC1_Public_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
+
+
+                                        def INSTALL_Common_Instance_PXC2_Public_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
+
+
+                                        def INSTALL_Common_Instance_PXC3_Public_IP = sh(
+                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[2] | jq [.public_ip] | jq -r .[]""",
+                                            returnStdout: true
+                                        ).trim()
 
                                         sh """
 
@@ -323,9 +339,14 @@ pipeline {
                                             echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                                             echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
 
-                                            sed -i 's/DB1/${IN_PXC1_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB2/${IN_PXC2_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB3/${IN_PXC3_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB1_PRIV/${IN_PXC1_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB2_PRIV/${IN_PXC2_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB3_PRIV/${IN_PXC3_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+
+                                            sed -i 's/DB1_PUB/${INSTALL_Common_Instance_PXC1_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB2_PUB/${INSTALL_Common_Instance_PXC2_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB3_PUB/${INSTALL_Common_Instance_PXC3_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+
 
                                         """
 
@@ -353,6 +374,15 @@ pipeline {
                                                 export KEY=\$(cat ~/.ssh/id_rsa.pub)
                                                 echo "KEY: \"\$KEY\"" > ENVFILE
                                                 ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup/playbooks/config-tarballs.yml -i  ${WORKSPACE}/pxc-80-setup/${params.node_to_test}/${param_test_type}/inventory -e @ENVFILE
+
+                                                echo "Save the ssh keys of all molecule nodes to a file."
+                                                
+                                                ssh mysql@${IN_PXC1_IP} "cat ~/.ssh/id_rsa.pub" > FILE
+                                                ssh mysql@${IN_PXC2_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
+                                                ssh mysql@${IN_PXC3_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+
+                                                echo FILE
+
                                             """
 
                                             sh """
