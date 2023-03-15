@@ -381,7 +381,17 @@ pipeline {
                                                 ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
                                                 ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
 
-                                                echo FILE
+                                                cat FILE
+
+                                                scp FILE mysql@52.12.12.240:~/
+                                                scp FILE mysql@35.93.78.200:~/
+                                                scp FILE mysql@35.92.84.193:~/
+
+
+                                                ssh mysql@52.12.12.240 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh mysql@35.93.78.200 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh mysql@35.92.84.193 'cat ~/FILE >> ~/.ssh/authorized_keys'
+
 
                                             """
 
