@@ -383,16 +383,16 @@ pipeline {
 
                                                 cat FILE
 
-                                                scp FILE mysql@52.12.12.240:~/
-                                                scp FILE mysql@35.93.78.200:~/
-                                                scp FILE mysql@35.92.84.193:~/
+                                                scp FILE mysql@${INSTALL_Common_Instance_PXC1_Public_IP}:~/
+                                                scp FILE mysql@${INSTALL_Common_Instance_PXC2_Public_IP}:~/
+                                                scp FILE mysql@${INSTALL_Common_Instance_PXC3_Public_IP}:~/
 
 
-                                                ssh mysql@52.12.12.240 'cat ~/FILE >> ~/.ssh/authorized_keys'
-                                                ssh mysql@35.93.78.200 'cat ~/FILE >> ~/.ssh/authorized_keys'
-                                                ssh mysql@35.92.84.193 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
 
-
+                                                echo "Moved the stuff successfully"
                                             """
 
                                             sh """
