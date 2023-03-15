@@ -377,9 +377,9 @@ pipeline {
 
                                                 echo "Save the ssh keys of all molecule nodes to a file."
                                                 
-                                                ssh mysql@${IN_PXC1_IP} "cat ~/.ssh/id_rsa.pub" > FILE
-                                                ssh mysql@${IN_PXC2_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
-                                                ssh mysql@${IN_PXC3_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" > FILE
+                                                ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
+                                                ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
 
                                                 echo FILE
 
