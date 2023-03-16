@@ -393,7 +393,8 @@ pipeline {
 
                                                 echo "Moved the stuff successfully"
                                             """
-
+            
+                                                runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                         
                                         }
                                     }
