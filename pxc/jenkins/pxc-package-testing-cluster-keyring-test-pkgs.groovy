@@ -256,7 +256,8 @@ pipeline {
                 installMolecule()
                     sh '''
                         sudo yum install -y epel-release 
-                        sudo yum install -y git unzip jq
+                        sudo yum install -y git unzip jq ansible
+                        ansible-galaxy install panchal_yash.percona_xtradb_cluster_role
                         rm -rf package-testing                    
                         git clone https://github.com/panchal-yash/package-testing --branch PXC-package-testing-keyring-script
                     '''
@@ -371,7 +372,7 @@ pipeline {
                                                 echo -e "\n\n\n\n" | ssh-keygen -t rsa
                                                 export KEY=\$(cat ~/.ssh/id_rsa.pub)
                                                 echo "KEY: \"\$KEY\"" > ENVFILE
-                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup-pkgs/playbooks/config-tarballs.yml -i  ${WORKSPACE}/pxc-80-setup-pkgs/${params.node_to_test}/${param_test_type}/inventory -e @ENVFILE
+                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup-pkgs/playbooks/config-packages.yml -i  ${WORKSPACE}/pxc-80-setup-pkgs/${params.node_to_test}/${param_test_type}/inventory -e @ENVFILE
 
                                                 echo "Save the ssh keys of all molecule nodes to a file."
                                                 
