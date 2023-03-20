@@ -399,7 +399,7 @@ pipeline {
                                                echo "run the keyring tests"
                                                cd ${WORKSPACE}/package-testing/scripts/
                                                chmod +x pxc-keyring-test.sh
-                                               ./pxc-keyring-test.sh
+                                               sudo ./pxc-keyring-test.sh
                                             """
                                         
                                         }

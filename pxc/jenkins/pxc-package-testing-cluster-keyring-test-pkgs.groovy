@@ -402,6 +402,8 @@ pipeline {
                                                 runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                                 sh """
                                                 ./pxc-keyring-test-pks.sh
+                                                
+                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'sudo mysql -uroot -e\"show global status like 'wsrep_%'\"'
                                                 """
 
                                         }
