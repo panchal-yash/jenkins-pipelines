@@ -336,11 +336,11 @@ pipeline {
 
                                         sh """
 
-                                            yum install wget -y
+                                            sudo yum install wget -y
                                             echo "run the keyring tests"
                                             wget https://raw.githubusercontent.com/panchal-yash/package-testing/PXC-package-testing-keyring-script/scripts/pxc-keyring-test-pks.sh
-                                            chmod +x pxc-keyring-test.sh
-
+                                            chmod +x pxc-keyring-test-pks.sh
+                                            
                                             echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                                             echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                                             echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
@@ -401,7 +401,7 @@ pipeline {
 
                                                 runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                                 sh """
-                                                ./pxc-keyring-test.sh
+                                                ./pxc-keyring-test-pks.sh
                                                 """
 
                                         }
