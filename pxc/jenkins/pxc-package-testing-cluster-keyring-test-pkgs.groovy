@@ -336,24 +336,29 @@ pipeline {
 
                                         sh """
 
+
+                                            echo "run the keyring tests"
+                                            wget https://raw.githubusercontent.com/panchal-yash/package-testing/PXC-package-testing-keyring-script/scripts/pxc-keyring-test-pks.sh
+                                            chmod +x pxc-keyring-test.sh
+
                                             echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                                             echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                                             echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
 
-                                            sed -i 's/DB1_PRIV/${IN_PXC1_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB2_PRIV/${IN_PXC2_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB3_PRIV/${IN_PXC3_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB1_PRIV/${IN_PXC1_IP}/g' "pxc-keyring-test-pks.sh"
+                                            sed -i 's/DB2_PRIV/${IN_PXC2_IP}/g' "pxc-keyring-test-pks.sh"
+                                            sed -i 's/DB3_PRIV/${IN_PXC3_IP}/g' "pxc-keyring-test-pks.sh"
 
-                                            sed -i 's/DB1_PUB/${INSTALL_Common_Instance_PXC1_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB2_PUB/${INSTALL_Common_Instance_PXC2_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
-                                            sed -i 's/DB3_PUB/${INSTALL_Common_Instance_PXC3_Public_IP}/g' "${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh"
+                                            sed -i 's/DB1_PUB/${INSTALL_Common_Instance_PXC1_Public_IP}/g' "pxc-keyring-test-pks.sh"
+                                            sed -i 's/DB2_PUB/${INSTALL_Common_Instance_PXC2_Public_IP}/g' "pxc-keyring-test-pks.sh"
+                                            sed -i 's/DB3_PUB/${INSTALL_Common_Instance_PXC3_Public_IP}/g' "pxc-keyring-test-pks.sh"
 
 
                                         """
 
                                         sh """
                                             echo "Cating the file after sed"
-                                            cat ${WORKSPACE}/package-testing/scripts/pxc-keyring-test.sh
+                                            cat pxc-keyring-test-pks.sh
                                         """
                                     
                                         withCredentials(awsCredentials) {
@@ -393,9 +398,12 @@ pipeline {
 
                                                 echo "Moved the stuff successfully"
                                             """
-            
+
                                                 runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                        
+                                                sh """
+                                                ./pxc-keyring-test.sh
+                                                """
+
                                         }
                                     }
 
