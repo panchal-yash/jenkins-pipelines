@@ -336,7 +336,7 @@ pipeline {
 
                                         sh """
 
-
+                                            yum install wget -y
                                             echo "run the keyring tests"
                                             wget https://raw.githubusercontent.com/panchal-yash/package-testing/PXC-package-testing-keyring-script/scripts/pxc-keyring-test-pks.sh
                                             chmod +x pxc-keyring-test.sh
