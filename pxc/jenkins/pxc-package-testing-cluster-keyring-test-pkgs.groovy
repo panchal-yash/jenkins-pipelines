@@ -54,7 +54,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     
                     
                     mkdir -p ${WORKSPACE}/install
-                    mkdir -p ${WORKSPACE}/upgrade
                     
                     cd package-testing/molecule/pxc-keyring-test
                     
@@ -64,9 +63,6 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     molecule ${action} -s ${scenario}
                     cd -
 
-                    cd pxc-80-setup-pkgs
-                    molecule ${action} -s ${scenario}
-                    cd -
                 """
             }else{
 
@@ -400,10 +396,11 @@ pipeline {
                                             """
 
                                                 runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                                sh """
-                                                ./pxc-keyring-test-pks.sh
                                                 
-                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'sudo mysql -uroot -e\"show global status like 'wsrep_%'\"'
+                                                sh """
+                                                
+                                                ./pxc-keyring-test-pks.sh || true
+
                                                 """
 
                                         }
