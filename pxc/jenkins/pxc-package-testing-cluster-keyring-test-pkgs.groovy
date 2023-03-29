@@ -380,6 +380,9 @@ pipeline {
                                                 ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" > FILE
                                                 ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
                                                 ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+                                                ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+                                                ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
+                                                ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
 
                                                 cat FILE
 
@@ -391,6 +394,9 @@ pipeline {
                                                 ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
                                                 ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
                                                 ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                                ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
+                                                ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
+                                                ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
 
                                                 echo "Moved the stuff successfully"
                                             """
