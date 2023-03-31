@@ -218,7 +218,6 @@ pipeline {
             name: 'node_to_test',
             choices: [
                 'ubuntu-focal'
-                'ubuntu-jammy'
             ],
             description: 'Distribution to run test'
         )
@@ -228,6 +227,14 @@ pipeline {
                 'install'
             ],
             description: 'Test type to run test'
+        )
+        choice(
+            name: 'test_repo',
+            choices: [
+                'main',
+                'testing'
+            ],
+            description: 'Test repo to run test'
         )
     }
 
