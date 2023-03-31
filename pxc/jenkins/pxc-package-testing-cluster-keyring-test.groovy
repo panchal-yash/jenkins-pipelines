@@ -231,6 +231,15 @@ pipeline {
             ],
             description: 'Test type to run test'
         )
+        choice(
+            name: 'test_repo',
+            choices: [
+                'main',
+                'testing'
+            ]
+            description: 'Test repo addition'
+
+        )
     }
 
     stages {
