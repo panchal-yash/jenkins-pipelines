@@ -21,7 +21,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
             sh """
             mkdir -p "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/"
             """
-
+                def install_repo="${test_repo}"
 
                 if(action != "create" && action != "destroy"){
                     def IN_PXC1_IP = sh(
@@ -40,6 +40,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     ).trim()
 
                     sh """
+                        echo 'install_repo: "${install_repo}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/install/envfile"
                         echo 'PXC1_IP: "${IN_PXC1_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                         echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
                         echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
@@ -217,6 +218,7 @@ pipeline {
             name: 'node_to_test',
             choices: [
                 'ubuntu-focal'
+                'ubuntu-jammy'
             ],
             description: 'Distribution to run test'
         )
