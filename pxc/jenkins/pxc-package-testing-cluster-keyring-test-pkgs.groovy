@@ -194,6 +194,7 @@ pipeline {
 
     options {
         skipDefaultCheckout()
+        timestamps()
     }
 
     environment {
