@@ -89,7 +89,20 @@ void setInventories(String param_test_type){
                     def SSH_USER
 
                     KEYPATH_COMMON="/home/centos/.cache/molecule/pxc-80-setup-pkgs/${params.node_to_test}/ssh_key-us-west-2"
-                    SSH_USER="ubuntu"            
+                    
+
+                    
+                    if(("${params.node_to_test}" == "ubuntu-focal")  ||  ("${params.node_to_test}" == "ubuntu-bionic") || ("${params.node_to_test}" == "ubuntu-jammy")){
+                        SSH_USER="ubuntu"            
+                    }else if(("${params.node_to_test}" == "debian-11") ||  ("${params.node_to_test}" == "debian-10")){
+                        SSH_USER="admin"
+                    }else if(("${params.node_to_test}" == "ol-8") || ("${params.node_to_test}" == "ol-9") || ("${params.node_to_test}" == "min-amazon-2")){
+                        SSH_USER="ec2-user"
+                    }else if(("${params.node_to_test}" == "centos-7")){
+                        SSH_USER="centos"
+                    }else{
+                        echo "OS Not yet in list of Keypath setup"
+                    }
 
 
                     echo "${SSH_USER}"
