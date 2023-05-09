@@ -218,7 +218,8 @@ pipeline {
         choice(
             name: 'node_to_test',
             choices: [
-                'ubuntu-focal'
+                'ubuntu-focal',
+                'ubuntu-bionic'
             ],
             description: 'Distribution to run test'
         )
