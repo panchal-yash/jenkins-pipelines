@@ -233,6 +233,7 @@ pipeline {
             choices: [
                 'ubuntu-focal',
                 'ubuntu-bionic',
+                'ubuntu-jammy',
                 'debian-11',
                 'debian-10'
             ],
