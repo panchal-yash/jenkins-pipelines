@@ -32,6 +32,7 @@
                 - 'ubuntu-focal'
                 - 'ubuntu-bionic'
                 - 'debian-11'
+                - 'debian-10'
             description: "Distribution to run test"
         - choice:
             name: test_type

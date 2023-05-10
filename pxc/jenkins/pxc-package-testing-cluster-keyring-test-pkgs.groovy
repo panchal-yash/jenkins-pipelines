@@ -233,7 +233,8 @@ pipeline {
             choices: [
                 'ubuntu-focal',
                 'ubuntu-bionic',
-                'debian-11'
+                'debian-11',
+                'debian-10'
             ],
             description: 'Distribution to run test'
         )
