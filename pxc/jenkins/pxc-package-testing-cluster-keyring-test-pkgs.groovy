@@ -235,7 +235,11 @@ pipeline {
                 'ubuntu-bionic',
                 'ubuntu-jammy',
                 'debian-11',
-                'debian-10'
+                'debian-10',
+                'centos-7',
+                'ol-8',
+                'ol-9',
+                'min-amazon-2'
             ],
             description: 'Distribution to run test'
         )
