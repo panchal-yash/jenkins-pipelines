@@ -271,14 +271,7 @@ pipeline {
         stage("Set up") {
             steps {             
                 script{
-                    currentBuild.displayName = "${env.BUILD_NUMBER}-${params.product_to_test}-${params.node_to_test}-${params.test_repo}-${params.test_type}"                    
-                    if (( params.test_type == "upgrade" ) && ( params.test_repo == "main" )) {
-                         echo "Skipping as the upgrade and main are not supported together."
-                         echo "Exiting the Stage as the inputs are invalid."
-                         currentBuild.result = 'UNSTABLE'
-                    } else {
-                         echo "Continue with the package tests"
-                    }                
+                    currentBuild.displayName = "${env.BUILD_NUMBER}-${params.product_to_test}-${params.node_to_test}-${params.test_repo}-${params.test_type}"                              
                 }   
                 echo "${JENWORKSPACE}"
                 installMolecule()
@@ -450,26 +443,17 @@ pipeline {
                             }
 
                         }
-        
-                    post{
-                        always{     
-
-                            script{
-
-                                runlogsbackup(params.product_to_test, "install")
-                                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
-                            
-                            }
-
+        }
+        stage("4. Take Logs Backup and Destroy Molecule Instances") {
+                    
+                    steps {
+                        script{
+                            echo "Take Log Backups of all the Molecule Nodes"
+                            runlogsbackup(params.product_to_test, "install")
                         }
                     }
-
         }
 
-
-
-                    
         }
 
         post {
@@ -477,6 +461,9 @@ pipeline {
             always {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                     archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+                    echo "Destroy Molecule Instances"
+                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                            
                 }
             }
 
