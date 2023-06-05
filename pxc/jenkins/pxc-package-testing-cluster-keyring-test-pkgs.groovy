@@ -201,6 +201,7 @@ void runlogsbackup(String product_to_test, String param_test_type) {
 
 
 pipeline {
+
     agent {
         label 'min-centos-7-x64'
     }
@@ -292,169 +293,183 @@ pipeline {
         }
         
 
-                stage("INSTALL") {
-                            when {
-                                expression{params.test_type == "install" || params.test_type == "install_and_upgrade"}
-                            }
-                             
-                            steps {
-                                script{
-                                    def param_test_type = "install"   
-                                    echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
-                                    runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                }
-                            }
-                            post{
-                                always{     
-                                    script{
-                                        def param_test_type = "install" 
-                                        echo "Always INSTALL"
-                                        echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                                        setInventories("install")
-                                        def FILEPATH="s3://yash-test-keyring-pxc/pxc80-28-build-install.tar.gz"
+        stage("1. Setup Molecule instances for Keyring tests") {
+
+                    steps {
+                        script{
+                            def param_test_type = "install"   
+                            runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                        }
+                    }
+
+        }
+
+        stage("2. Config Molecule Instances") {
+                        steps {                
+                            script{
+                                def param_test_type = "install" 
+                                echo "Always INSTALL"
+                                setInventories("install")
 
 
-                                        def awsCredentials = [
-                                            sshUserPrivateKey(
-                                                credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
-                                                keyFileVariable: 'MOLECULE_AWS_PRIVATE_KEY',
-                                                passphraseVariable: '',
-                                                usernameVariable: ''
-                                            ),
-                                            aws(
-                                                accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                                                credentialsId: '5d78d9c7-2188-4b16-8e31-4d5782c6ceaa',
-                                                secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                                            )
-                                        ]
+                                def awsCredentials = [
+                                    sshUserPrivateKey(
+                                        credentialsId: 'MOLECULE_AWS_PRIVATE_KEY',
+                                        keyFileVariable: 'MOLECULE_AWS_PRIVATE_KEY',
+                                        passphraseVariable: '',
+                                        usernameVariable: ''
+                                    ),
+                                    aws(
+                                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                                        credentialsId: '5d78d9c7-2188-4b16-8e31-4d5782c6ceaa',
+                                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                                    )
+                                ]
 
-                                        def IN_PXC1_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
+                                def IN_PXC1_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[0] | jq [.private_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
-                                        def IN_PXC2_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
+                                def IN_PXC2_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[1] | jq [.private_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
-                                        def IN_PXC3_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[2] | jq [.private_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
-
-
-                                        def INSTALL_Common_Instance_PXC1_Public_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
+                                def IN_PXC3_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PRIVATE_IP} | jq -r .[2] | jq [.private_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
 
-                                        def INSTALL_Common_Instance_PXC2_Public_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
+                                def INSTALL_Common_Instance_PXC1_Public_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[0] | jq [.public_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
 
-                                        def INSTALL_Common_Instance_PXC3_Public_IP = sh(
-                                            script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[2] | jq [.public_ip] | jq -r .[]""",
-                                            returnStdout: true
-                                        ).trim()
-
-                                        sh """
-
-                                            sudo yum install wget -y
-                                            echo "run the keyring tests"
-                                            wget https://raw.githubusercontent.com/panchal-yash/package-testing/PXC-package-testing-keyring-script/scripts/pxc-keyring-test-pks.sh
-                                            chmod +x pxc-keyring-test-pks.sh
-                                            
-                                            echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
-                                            echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
-                                            echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
-
-                                            sed -i 's/DB1_PRIV/${IN_PXC1_IP}/g' "pxc-keyring-test-pks.sh"
-                                            sed -i 's/DB2_PRIV/${IN_PXC2_IP}/g' "pxc-keyring-test-pks.sh"
-                                            sed -i 's/DB3_PRIV/${IN_PXC3_IP}/g' "pxc-keyring-test-pks.sh"
-
-                                            sed -i 's/DB1_PUB/${INSTALL_Common_Instance_PXC1_Public_IP}/g' "pxc-keyring-test-pks.sh"
-                                            sed -i 's/DB2_PUB/${INSTALL_Common_Instance_PXC2_Public_IP}/g' "pxc-keyring-test-pks.sh"
-                                            sed -i 's/DB3_PUB/${INSTALL_Common_Instance_PXC3_Public_IP}/g' "pxc-keyring-test-pks.sh"
+                                def INSTALL_Common_Instance_PXC2_Public_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[1] | jq [.public_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
 
-                                        """
+                                def INSTALL_Common_Instance_PXC3_Public_IP = sh(
+                                    script: """cat ${INSTALL_COMMON_INSTANCE_PUBLIC_IP} | jq -r .[2] | jq [.public_ip] | jq -r .[]""",
+                                    returnStdout: true
+                                ).trim()
 
-                                        sh """
-                                            echo "Cating the file after sed"
-                                            cat pxc-keyring-test-pks.sh
-                                        """
+                                sh """
+
+                                    sudo yum install wget -y
+                                    echo "run the keyring tests"
+                                    wget https://raw.githubusercontent.com/panchal-yash/package-testing/PXC-package-testing-keyring-script/scripts/pxc-keyring-test-pks.sh
+                                    chmod +x pxc-keyring-test-pks.sh
                                     
-                                        withCredentials(awsCredentials) {
+                                    echo 'PXC1_IP: "${IN_PXC1_IP}"' > "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                    echo 'PXC2_IP: "${IN_PXC2_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                    echo 'PXC3_IP: "${IN_PXC3_IP}"' >> "${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+
+                                    sed -i 's/DB1_PRIV/${IN_PXC1_IP}/g' "pxc-keyring-test-pks.sh"
+                                    sed -i 's/DB2_PRIV/${IN_PXC2_IP}/g' "pxc-keyring-test-pks.sh"
+                                    sed -i 's/DB3_PRIV/${IN_PXC3_IP}/g' "pxc-keyring-test-pks.sh"
+
+                                    sed -i 's/DB1_PUB/${INSTALL_Common_Instance_PXC1_Public_IP}/g' "pxc-keyring-test-pks.sh"
+                                    sed -i 's/DB2_PUB/${INSTALL_Common_Instance_PXC2_Public_IP}/g' "pxc-keyring-test-pks.sh"
+                                    sed -i 's/DB3_PUB/${INSTALL_Common_Instance_PXC3_Public_IP}/g' "pxc-keyring-test-pks.sh"
+
+
+                                """
+
+                                sh """
+                                    echo "Cating the file after sed"
+                                    cat pxc-keyring-test-pks.sh
+                                """
+                            
+                                withCredentials(awsCredentials) {
+                                
+                                    sh """
+                                        echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD6iGdDs3A9vLPFPmJO3pE5TnKBT6grWis3YFcmrMCIj5RsnIdrRRg6Ull0h8ErP+4pyXEGvmwMgEWJ0NBPZL0KynQufLUTFstInEiujLpUsEfj8HpBK25w+/VukT2nX/7UagitH1cZRarAmObtU67cAtOFwBCyM1v2SoeYCKpPyxA2+MVeVVYJnkn3yUTCYDwt77XgeqS4qZ4VyuckiASLAD0/0A3wb81lm2hDB5tZOO50A6ZxdHw9SWGAgEA/i3O+4DPkJ2zd5OntaEIrSHHNT1I8D/BJyFYI9odVdnX+wwfKimqNMnn4Di3lZs2HYdiJ6CP12lp1JrksXH+zqQWvJVwM1rxJ/e638OS9rSfRlzL5TwlEKFTaE48KehpJFjXK0mpG3fbV7NU9K49Gi3gnxNKUEwINlJGLK8d04zlO2gnpkQcrq0HBIN6LAEcDsVRDrNZsERO5I9tw+bBxmmzEeMiU/2NEeLHqqoYPqO3Y27S9xZUvBoI86HcOQwlTwnk= root@yash-ThinkPad-P15-Gen-2i" >> ~/.ssh/authorized_keys
+                                        sudo yum install wget -y
+                                        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+                                        unzip -o /tmp/awscliv2.zip -d /tmp 
+                                        cd /tmp/aws && sudo ./install
+                                        cd ~/
+                                    """
+
+                                    sh """
+                                        . virtenv/bin/activate
+                                        echo -e "\n\n\n\n" | ssh-keygen -t rsa
+                                        export KEY=\$(cat ~/.ssh/id_rsa.pub)
+                                        echo "KEY: \"\$KEY\"" > ENVFILE
+                                        ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup-pkgs/playbooks/config-packages.yml -i  ${WORKSPACE}/pxc-80-setup-pkgs/${params.node_to_test}/${param_test_type}/inventory -e @ENVFILE
+
+                                        echo "Save the ssh keys of all molecule nodes to a file."
                                         
-                                            sh """
-                                                echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD6iGdDs3A9vLPFPmJO3pE5TnKBT6grWis3YFcmrMCIj5RsnIdrRRg6Ull0h8ErP+4pyXEGvmwMgEWJ0NBPZL0KynQufLUTFstInEiujLpUsEfj8HpBK25w+/VukT2nX/7UagitH1cZRarAmObtU67cAtOFwBCyM1v2SoeYCKpPyxA2+MVeVVYJnkn3yUTCYDwt77XgeqS4qZ4VyuckiASLAD0/0A3wb81lm2hDB5tZOO50A6ZxdHw9SWGAgEA/i3O+4DPkJ2zd5OntaEIrSHHNT1I8D/BJyFYI9odVdnX+wwfKimqNMnn4Di3lZs2HYdiJ6CP12lp1JrksXH+zqQWvJVwM1rxJ/e638OS9rSfRlzL5TwlEKFTaE48KehpJFjXK0mpG3fbV7NU9K49Gi3gnxNKUEwINlJGLK8d04zlO2gnpkQcrq0HBIN6LAEcDsVRDrNZsERO5I9tw+bBxmmzEeMiU/2NEeLHqqoYPqO3Y27S9xZUvBoI86HcOQwlTwnk= root@yash-ThinkPad-P15-Gen-2i" >> ~/.ssh/authorized_keys
-                                                sudo yum install wget -y
-                                                curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
-                                                unzip -o /tmp/awscliv2.zip -d /tmp 
-                                                cd /tmp/aws && sudo ./install
-                                                cd ~/
-                                            """
+                                        ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" > FILE
+                                        ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
+                                        ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+                                        ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
+                                        ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
+                                        ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
 
-                                            sh """
-                                                . virtenv/bin/activate
-                                                echo -e "\n\n\n\n" | ssh-keygen -t rsa
-                                                export KEY=\$(cat ~/.ssh/id_rsa.pub)
-                                                echo "KEY: \"\$KEY\"" > ENVFILE
-                                                ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc-keyring-test/pxc-80-setup-pkgs/playbooks/config-packages.yml -i  ${WORKSPACE}/pxc-80-setup-pkgs/${params.node_to_test}/${param_test_type}/inventory -e @ENVFILE
+                                        cat FILE
 
-                                                echo "Save the ssh keys of all molecule nodes to a file."
-                                                
-                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" > FILE
-                                                ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
-                                                ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
-                                                ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
-                                                ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE                                              
-                                                ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} "cat ~/.ssh/id_rsa.pub" >> FILE
-
-                                                cat FILE
-
-                                                scp FILE mysql@${INSTALL_Common_Instance_PXC1_Public_IP}:~/
-                                                scp FILE mysql@${INSTALL_Common_Instance_PXC2_Public_IP}:~/
-                                                scp FILE mysql@${INSTALL_Common_Instance_PXC3_Public_IP}:~/
+                                        scp FILE mysql@${INSTALL_Common_Instance_PXC1_Public_IP}:~/
+                                        scp FILE mysql@${INSTALL_Common_Instance_PXC2_Public_IP}:~/
+                                        scp FILE mysql@${INSTALL_Common_Instance_PXC3_Public_IP}:~/
 
 
-                                                ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
-                                                ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
-                                                ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
-                                                ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
-                                                ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
-                                                ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
+                                        ssh mysql@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                        ssh mysql@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                        ssh mysql@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat ~/FILE >> ~/.ssh/authorized_keys'
+                                        ssh root@${INSTALL_Common_Instance_PXC1_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
+                                        ssh root@${INSTALL_Common_Instance_PXC2_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
+                                        ssh root@${INSTALL_Common_Instance_PXC3_Public_IP} 'cat /home/mysql/FILE >> ~/.ssh/authorized_keys'
 
-                                                echo "Moved the stuff successfully"
-                                            """
+                                        echo "Moved the stuff successfully"
+                                    """
 
-                                                runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                                
-                                                sh """
-                                                
-                                                ./pxc-keyring-test-pks.sh || true
-
-                                                """
-
-                                        }
-                                    }
-
-                                    script{
-
-                                        runlogsbackup(params.product_to_test, "install")
-                                        echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
-                                    
-                                    }
+                                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                        
 
                                 }
                             }
-                }
-            
+                        }
+        }
+
+        stage("3. Running Keyring Scripts on the Molecule Instances") {
+                        steps {                
+                            script{
+                                        sh """
+                                        
+                                        ./pxc-keyring-test-pks.sh || true
+
+                                        """
+
+                            }
+
+                        }
+        
+                    post{
+                        always{     
+
+                            script{
+
+                                runlogsbackup(params.product_to_test, "install")
+                                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                                runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "upgrade", params.test_repo, "yes")
+                            
+                            }
+
+                        }
+                    }
+
+        }
+
+
+
+                    
         }
 
         post {
@@ -475,6 +490,10 @@ pipeline {
 
 
         }
-   
+
     }
+
+
+   
+
 
