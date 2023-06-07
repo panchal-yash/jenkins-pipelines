@@ -1,0 +1,14 @@
+- job:
+    name: first-job-test
+    project-type: pipeline
+    description: |
+        Do not edit this job through the web!
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/panchal-yash/jenkins-pipelines.git
+            branches:
+            - 'test-job-triggers'
+            wipe-workspace: false
+      lightweight-checkout: true
+      script-path: test-jobs/first-job-test.groovy
