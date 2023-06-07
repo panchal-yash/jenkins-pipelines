@@ -58,31 +58,17 @@ pipeline {
             }
         }
     
-        stage('Run Package Tests Stage') {
-            agent {
-               label 'min-bionic-x64'
-            }
-            steps {
-                cleanUpWS()
-                unstash 'properties'                
-                script {
-                    REVISION = sh(returnStdout: true, script: "grep REVISION test.properties | awk -F '=' '{ print\$2 }'").trim()
-                    echo "${REVISION}"
-                    build job: 'second-job-test', parameters: [string(name: 'option1', value: 'min-bullseye-x64'),string(name: 'option2', value: "${REVISION}")]
-                }
-
-            }
-        }
 
     }
 
     post {
         success {
-                            
-
-            
+            unstash 'properties'
             script {
                     echo "Success"
+                    REVISION = sh(returnStdout: true, script: "grep REVISION test.properties | awk -F '=' '{ print\$2 }'").trim()
+                    echo "${REVISION}"
+                    build job: 'second-job-test', parameters: [string(name: 'option1', value: 'min-bullseye-x64'),string(name: 'option2', value: "${REVISION}")]
             }
 
             deleteDir()
