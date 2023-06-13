@@ -20,3 +20,5 @@
                 wipe-workspace: true
         lightweight-checkout: true
         script-path: misc/ec2-instance-checks.groovy
+    triggers:
+      - timed: "0 0 * * *"

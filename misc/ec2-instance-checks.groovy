@@ -7,9 +7,6 @@ pipeline {
     agent {
         label 'micro-amazon'
     }
-    triggers {
-        cron('0 0 * * *') // Trigger the pipeline every day at midnight
-    }
     options {
         skipDefaultCheckout()
     }
