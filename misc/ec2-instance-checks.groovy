@@ -7,7 +7,9 @@ pipeline {
     agent {
         label 'micro-amazon'
     }
-
+    triggers {
+        cron('0 0 * * *') // Trigger the pipeline every day at midnight
+    }
     options {
         skipDefaultCheckout()
     }
@@ -53,7 +55,7 @@ pipeline {
                         echo "Print the overview"
                         echo "${env.ov}"
 
-                        //slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.ov}"
+                        
 
              }
 
@@ -68,9 +70,25 @@ pipeline {
         always {
 
                 script{
+                    def buildNumber = currentBuild.number
+                    def jobName = env.JOB_NAME
+                    def artifactPath = "OUTPUT.txt"  // Relative path to the archived artifact
+                    def artifactUrl = "${env.JENKINS_URL}/job/${jobName}/${buildNumber}/artifact/${artifactPath}"
 
-                    slackUploadFile channel: '#dev-server-qa', filePath: 'OUTPUT.txt', initialComment: 'Here is the file you requested'
+                    archiveArtifacts artifacts: 'OUTPUT.txt' , followSymlinks: false
+                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: """
 
+=========================
+${env.ov}
+=========================
+${artifactUrl} is the url for the detailed info
+=========================
+=========================
+
+
+"""
+                
+                
                 }
 
 
