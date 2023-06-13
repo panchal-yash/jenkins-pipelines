@@ -41,18 +41,17 @@ pipeline {
 
                         sh "./check-ec2-instances.sh"
                         
-                        env.OVERVIEW = sh(script: "cat ${WORKSPACE}/OVERVIEW",returnStdout: true).trim()
+                        env.OP = sh(script: "cat ${WORKSPACE}/OUTPUT.txt",returnStdout: true).trim()
                         
-                        env.output = sh(script: "cat output",returnStdout: true).trim()
+                        env.ov = sh(script: "cat ${WORKSPACE}/overview.txt",returnStdout: true).trim()
                     
                     }
 
-                        echo "Print the OVERVIEW"
-                        echo "${env.OVERVIEW}"
+                        echo "Print the OUTPUT"
+                        echo "${env.OP}"
 
-
-                        echo "Print the output"
-                        echo "${env.output}"
+                        echo "Print the overview"
+                        echo "${env.ov}"
 
              }
 
@@ -67,8 +66,12 @@ pipeline {
         always {
 
                 script{
-                    slackUploadFile channel: '#dev-server-qa', color: '#DEFF13', filePath: "OUTPUT"
-                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.output}"
+                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.ov}"
+                    slackUpload (
+                        channels: '#dev-server-qa', // Channel or user to upload the file to
+                        filePath: "${WORKSPACE}/OUTPUT.txt", // Path to the file to be uploaded
+                        initialComment: 'Here is the file you requested' // Optional initial comment
+                    )
                 }
 
 
