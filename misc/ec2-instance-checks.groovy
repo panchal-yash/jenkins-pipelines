@@ -39,12 +39,20 @@ pipeline {
 
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'c42456e5-c28d-4962-b32c-b75d161bff27', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 
-                        env.CHECK = sh(script: "./check-ec2-instances.sh",returnStdout: true).trim()
-
+                        sh "./check-ec2-instances.sh"
+                        
+                        env.OVERVIEW = sh(script: "cat ${WORKSPACE}/OVERVIEW",returnStdout: true).trim()
+                        
+                        env.output = sh(script: "cat output",returnStdout: true).trim()
+                    
                     }
 
+                        echo "Print the OVERVIEW"
+                        echo "${env.OVERVIEW}"
+
+
                         echo "Print the output"
-                        echo "${env.CHECK}"
+                        echo "${env.output}"
 
              }
 
@@ -57,13 +65,15 @@ pipeline {
     post {
 
         always {
-             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+
                 script{
-                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: """${env.CHECK}"""
+                    slackUploadFile channel: '#dev-server-qa', color: '#DEFF13', filePath: "OUTPUT"
+                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.output}"
                 }
+
+
              }
         }
 
     }
 
-}
