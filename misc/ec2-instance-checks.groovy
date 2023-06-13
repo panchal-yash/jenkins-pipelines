@@ -53,6 +53,8 @@ pipeline {
                         echo "Print the overview"
                         echo "${env.ov}"
 
+                        //slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.ov}"
+
              }
 
             }
@@ -66,12 +68,9 @@ pipeline {
         always {
 
                 script{
-                    slackSend channel: '#dev-server-qa', color: '#DEFF13', message: "${env.ov}"
-                    slackUpload (
-                        channels: '#dev-server-qa', // Channel or user to upload the file to
-                        filePath: "${WORKSPACE}/OUTPUT.txt", // Path to the file to be uploaded
-                        initialComment: 'Here is the file you requested' // Optional initial comment
-                    )
+
+                    slackUploadFile channel: '#dev-server-qa', filePath: 'OUTPUT.txt', initialComment: 'Here is the file you requested'
+
                 }
 
 
