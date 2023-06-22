@@ -49,6 +49,14 @@ pipeline {
 
                     cat .git/config
 
+                    echo "TESTING" > TESTFILE_JENKINS
+                    
+                    git add -A
+
+                    git commit -m "adding things automation"
+                    
+                    git push -f 
+
                     """
 
                     }
