@@ -38,10 +38,16 @@ pipeline {
 
                     cat .git/config
 
-                    git checkout test-github-token
+                    git checkout test
 
                     cat .git/config
 
+                    git status
+
+                    git config user.name "jenkins-pxc-cd"
+                    git config user.email "it+jenkins-pxc-cd@percona.com"
+
+                    cat .git/config
 
                     """
 
