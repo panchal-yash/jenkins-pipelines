@@ -1,5 +1,5 @@
 - job:
-    name: percona-xtrabackup-8.0-RELEASE
+    name: postgresql-server-autobuild-RELEASE
     project-type: pipeline
     description: |
         Do not edit this job through the web!
@@ -11,5 +11,5 @@
             - 'master'
             wipe-workspace: false
       lightweight-checkout: true
-      script-path: pxb/jenkins/pxb-80.groovy
+      script-path: ppg/postgresql_server.groovy
 

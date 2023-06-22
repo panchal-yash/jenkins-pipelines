@@ -7,14 +7,15 @@ void buildStage(String DOCKER_OS, String STAGE_PARAM) {
     sh """
         set -o xtrace
         mkdir test
-        wget \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${BRANCH}/storage/innobase/xtrabackup/utils/percona-xtrabackup-2.4_builder.sh -O percona-xtrabackup-2.4_builder.sh
+        wget \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${GIT_BRANCH}/postgres/ppg_builder.sh -O ppg-server_builder.sh
         pwd -P
+        ls -laR
         export build_dir=\$(pwd -P)
         docker run -u root -v \${build_dir}:\${build_dir} ${DOCKER_OS} sh -c "
             set -o xtrace
             cd \${build_dir}
-            bash -x ./percona-xtrabackup-2.4_builder.sh --builddir=\${build_dir}/test --install_deps=1
-            bash -x ./percona-xtrabackup-2.4_builder.sh --builddir=\${build_dir}/test --repo=${GIT_REPO} --branch=${BRANCH} --pxb_repo=${PXB_REPO} --rpm_release=${RPM_RELEASE} --deb_release=${DEB_RELEASE} ${STAGE_PARAM}"
+            bash -x ./ppg-server_builder.sh --builddir=\${build_dir}/test --install_deps=1
+            bash -x ./ppg-server_builder.sh --builddir=\${build_dir}/test --branch=${PG_BRANCH} --rpm_release=${RPM_RELEASE} --deb_release=${DEB_RELEASE} ${STAGE_PARAM}"
     """
 }
 
@@ -32,13 +33,17 @@ pipeline {
     }
     parameters {
         string(
-            defaultValue: 'https://github.com/percona/percona-xtrabackup.git',
-            description: 'URL for PXB git repository',
+            defaultValue: 'https://github.com/percona/postgres-packaging.git',
+            description: 'URL for ppg-server repository',
             name: 'GIT_REPO')
         string(
-            defaultValue: '2.4',
-            description: 'Tag/Branch for PXB repository',
-            name: 'BRANCH')
+            defaultValue: 'REL_15_RELEASE',
+            description: 'Tag/Branch for postgresql',
+            name: 'PG_BRANCH')
+        string(
+            defaultValue: '15.3',
+            description: 'Tag/Branch for ppg-server repository',
+            name: 'GIT_BRANCH')
         string(
             defaultValue: '1',
             description: 'RPM release value',
@@ -48,9 +53,9 @@ pipeline {
             description: 'DEB release value',
             name: 'DEB_RELEASE')
         string(
-            defaultValue: 'pxb-24',
-            description: 'PXB repo name',
-            name: 'PXB_REPO')
+            defaultValue: 'ppg-15.3',
+            description: 'PPG repo name',
+            name: 'PPG_REPO')
         choice(
             choices: 'laboratory\ntesting\nexperimental',
             description: 'Repo component to push packages to',
@@ -62,17 +67,17 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
     }
     stages {
-        stage('Create PXB source tarball') {
+        stage('Create PPG_SERVER source tarball') {
             steps {
-                // slackNotify("", "#00FF00", "[${JOB_NAME}]: starting build for ${BRANCH} - [${BUILD_URL}]")
+                slackNotify("#releases-ci", "#00FF00", "[${JOB_NAME}]: starting build for ${GIT_BRANCH} - [${BUILD_URL}]")
                 cleanUpWS()
-                buildStage("ubuntu:bionic", "--get_sources=1")
+                buildStage("centos:7", "--get_sources=1")
                 sh '''
-                   REPO_UPLOAD_PATH=$(grep "UPLOAD" test/percona-xtrabackup-2.4.properties | cut -d = -f 2 | sed "s:$:${BUILD_NUMBER}:")
+                   REPO_UPLOAD_PATH=$(grep "UPLOAD" test/percona-postgresql.properties | cut -d = -f 2 | sed "s:$:${BUILD_NUMBER}:")
                    AWS_STASH_PATH=$(echo ${REPO_UPLOAD_PATH} | sed  "s:UPLOAD/experimental/::")
                    echo ${REPO_UPLOAD_PATH} > uploadPath
                    echo ${AWS_STASH_PATH} > awsUploadPath
-                   cat test/percona-xtrabackup-2.4.properties
+                   cat test/percona-postgresql.properties
                    cat uploadPath
                 '''
                 script {
@@ -83,9 +88,9 @@ pipeline {
                 uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
             }
         }
-        stage('Build PXB generic source packages') {
+        stage('Build PPG-SERVER generic source packages') {
             parallel {
-                stage('Build PXB generic source rpm') {
+                stage('Build PPG-SERVER generic source rpm') {
                     agent {
                         label 'docker'
                     }
@@ -98,14 +103,14 @@ pipeline {
                         uploadRPMfromAWS("srpm/", AWS_STASH_PATH)
                     }
                 }
-                stage('Build PXB generic source deb') {
+                stage('Build PPG-SERVER generic source deb') {
                     agent {
                         label 'docker'
                     }
                     steps {
                         cleanUpWS()
                         popArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                        buildStage("ubuntu:focal", "--build_source_deb=1")
+                        buildStage("ubuntu:bionic", "--build_src_deb=1")
 
                         pushArtifactFolder("source_deb/", AWS_STASH_PATH)
                         uploadDEBfromAWS("source_deb/", AWS_STASH_PATH)
@@ -113,7 +118,7 @@ pipeline {
                 }
             }  //parallel
         } // stage
-        stage('Build PXB RPMs/DEBs/Binary tarballs') {
+        stage('Build PPG-SERVER RPMs/DEBs/Binary tarballs') {
             parallel {
                 stage('Centos 7') {
                     agent {
@@ -149,11 +154,11 @@ pipeline {
                         cleanUpWS()
                         popArtifactFolder("srpm/", AWS_STASH_PATH)
                         buildStage("oraclelinux:9", "--build_rpm=1")
-            
+
                         pushArtifactFolder("rpm/", AWS_STASH_PATH)
                         uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
                     }
-                } 
+                }
                 stage('Ubuntu Bionic(18.04)') {
                     agent {
                         label 'docker'
@@ -219,33 +224,6 @@ pipeline {
                         uploadDEBfromAWS("deb/", AWS_STASH_PATH)
                     }
                 }
-                stage('Debian Bookworm(12)') {
-                    agent {
-                        label 'docker'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("debian:bookworm", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Centos 7 tarball') {
-                    agent {
-                        label 'docker'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                        buildStage("centos:7", "--build_tarball=1")
-
-                        pushArtifactFolder("test/tarball/", AWS_STASH_PATH)
-                        uploadTarballfromAWS("test/tarball/", AWS_STASH_PATH, 'binary')
-                    }
-                }
-
             }
         }
 
@@ -258,21 +236,21 @@ pipeline {
         stage('Push to public repository') {
             steps {
                 // sync packages
-                sync2ProdAutoBuild(PXB_REPO, COMPONENT)
+                sync2ProdAutoBuild(PPG_REPO, COMPONENT)
             }
         }
 
     }
     post {
         success {
-            // slackNotify("", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${BRANCH} - [${BUILD_URL}]")
+            slackNotify("#releases-ci", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${GIT_BRANCH} - [${BUILD_URL}]")
             script {
-                currentBuild.description = "Built on ${BRANCH}"
+                currentBuild.description = "Built on ${GIT_BRANCH}"
             }
             deleteDir()
         }
         failure {
-           // slackNotify("", "#FF0000", "[${JOB_NAME}]: build failed for ${BRANCH} - [${BUILD_URL}]")
+            slackNotify("#releases-ci", "#FF0000", "[${JOB_NAME}]: build failed for ${GIT_BRANCH} - [${BUILD_URL}]")
             deleteDir()
         }
         always {
