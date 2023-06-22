@@ -38,6 +38,11 @@ pipeline {
 
                     cat .git/config
 
+                    git checkout test-github-token
+
+                    cat .git/config
+
+
                     """
 
                     }
