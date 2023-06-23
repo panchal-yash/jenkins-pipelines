@@ -30,9 +30,8 @@ pipeline {
             
     post {
         success {
-            def REVISION="SAMPLE_REVISION" 
-            def PS_RELEASE="SAMPLE_VALUE"
-                
+            def REVISION=$(echo revision)
+            def PS_RELEASE=$(echo samplerelease)                
              script{
 
 
