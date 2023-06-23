@@ -1,4 +1,4 @@
-library changelog: false, identifier: 'lib@master', retriever: modernSCM([
+ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
@@ -30,8 +30,8 @@ pipeline {
             
     post {
         success {
-            REVISION = "SAMPLE_REVISION" 
-            PS_RELEASE="SAMPLE_VALUE"
+            def REVISION="SAMPLE_REVISION" 
+            def PS_RELEASE="SAMPLE_VALUE"
                 
              script{
 
