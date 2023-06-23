@@ -2,8 +2,8 @@
     $class: 'GitSCMSource',
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
-def REVISION="evision"
-def PS_RELEASE="samplerelease"        
+def REVISION="71c9e0f5"
+def PS_RELEASE="8.0.43-25"        
 pipeline {
     agent {
         label 'micro-amazon'
