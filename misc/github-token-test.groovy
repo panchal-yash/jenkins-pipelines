@@ -21,11 +21,15 @@ pipeline {
         }
 
         stage("Checks") {
+                steps {                
+                sh "echo 'hello'"      
+                }
+        }
 
+    }
             
-
-            steps {
-
+    post {
+        success {
             REVISION = "SAMPLE_REVISION" 
             PS_RELEASE="SAMPLE_VALUE"
                 
@@ -54,13 +58,8 @@ pipeline {
 
                     }
              }
-
-            }
         }
         
-    }
-
-
-
 
     }
+}
