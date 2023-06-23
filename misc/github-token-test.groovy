@@ -45,8 +45,8 @@ pipeline {
                     git config user.email "it+jenkins-pxc-cd@percona.com"
                     OLD_REV=\$(cat VERSIONS | grep PS80_REV | cut -d '=' -f2- )
                     OLD_VER=\$(cat VERSIONS | grep PS80_VER | cut -d '=' -f2- )
-                    sed -i "s/PS80_REV=\$OLD_REV/PS80_REV="${REVISION}"/g" VERSIONS
-                    sed -i "s/PS80_VER=\$OLD_VER/PS80_VER="${PS_RELEASE}"/g" VERSIONS
+                    sed -i s/PS80_REV=\$OLD_REV/PS80_REV=""${REVISION}""/g VERSIONS
+                    sed -i s/PS80_VER=\$OLD_VER/PS80_VER=""${PS_RELEASE}""/g VERSIONS
                     git diff
                     git add -A
                     git commit -m "Autocommit: add ${REVISION} and ${PS_RELEASE} for ps80 package testing VERSIONS file."
