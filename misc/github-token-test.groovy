@@ -2,7 +2,8 @@
     $class: 'GitSCMSource',
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
-
+def REVISION="evision"
+def PS_RELEASE="samplerelease"        
 pipeline {
     agent {
         label 'micro-amazon'
@@ -30,8 +31,7 @@ pipeline {
             
     post {
         success {
-            REVISION=$(echo "revision")
-            PS_RELEASE=$(echo "samplerelease")                
+        
              script{
 
 
