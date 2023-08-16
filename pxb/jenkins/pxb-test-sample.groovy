@@ -38,27 +38,27 @@ EOF
                         XB_VERSION_EXTRA = sh(returnStdout: true, script: "grep 'XB_VERSION_EXTRA' ./FILE  | cut -d = -f 2 | sed 's/-//g'").trim()
                         echo "The fetched version is ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH}${XB_VERSION_EXTRA}"
 
+                        sh "${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA}"
 
-
-                    withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
-                    sh """
-                        
-                        set -x
-                        git clone https://jenkins-pxc-cd:$TOKEN@github.com/Percona-QA/package-testing.git
-                        cd package-testing
-                        git checkout pxb-sample-test
-                        git config user.name "jenkins-pxc-cd"
-                        git config user.email "it+jenkins-pxc-cd@percona.com"
-                        OLD_REV=\$(cat VERSIONS | grep PXB80_VER | cut -d '=' -f2- )
-                        OLD_VER=\$(cat VERSIONS | grep PXB80PKG_VER | cut -d '=' -f2- )
-                        sed -i s/PXB80_VER=\$OLD_REV/PXB80_VER='"'${XB_VERSION_MAJOR}.${XB_VERSION_MINOR}.${XB_VERSION_PATCH}'"'/g VERSIONS
-                        sed -i s/PXB80PKG_VER=\$OLD_VER/PXB80PKG_VER='"'${XB_VERSION_EXTRA}'"'/g VERSIONS
-                        git diff
-                        git add -A
-                        git commit -m "Autocommit: add ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} for PXB 80 package testing VERSIONS file."
-                        git push 
-                    """
-                    }
+//                    withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
+//                    sh """
+//                        
+//                        set -x
+//                        git clone https://jenkins-pxc-cd:$TOKEN@github.com/Percona-QA/package-testing.git
+//                        cd package-testing
+//                        git checkout pxb-sample-test
+//                        git config user.name "jenkins-pxc-cd"
+//                        git config user.email "it+jenkins-pxc-cd@percona.com"
+//                        OLD_REV=\$(cat VERSIONS | grep PXB80_VER | cut -d '=' -f2- )
+//                        OLD_VER=\$(cat VERSIONS | grep PXB80PKG_VER | cut -d '=' -f2- )
+//                        sed -i s/PXB80_VER=\$OLD_REV/PXB80_VER='"'${XB_VERSION_MAJOR}.${XB_VERSION_MINOR}.${XB_VERSION_PATCH}'"'/g VERSIONS
+//                        sed -i s/PXB80PKG_VER=\$OLD_VER/PXB80PKG_VER='"'${XB_VERSION_EXTRA}'"'/g VERSIONS
+//                        git diff
+//                        git add -A
+//                        git commit -m "Autocommit: add ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} for PXB 80 package testing VERSIONS file."
+//                        git push 
+//                    """
+//                    }
 
 
 
