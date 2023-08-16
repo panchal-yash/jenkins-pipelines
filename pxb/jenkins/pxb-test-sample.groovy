@@ -32,10 +32,10 @@ EOF
 
                     script {
                         sh "cat FILE"
-                        XB_VERSION_MAJOR = sh(returnStdout: true, script: "source ./FILE && echo \$XB_VERSION_MAJOR").trim()
-                        XB_VERSION_MINOR = sh(returnStdout: true, script: "source ./FILE && echo \$XB_VERSION_MINOR").trim()
-                        XB_VERSION_PATCH = sh(returnStdout: true, script: "source ./FILE && echo \$XB_VERSION_PATCH").trim()
-                        XB_VERSION_EXTRA = sh(returnStdout: true, script: "source ./FILE && echo \$XB_VERSION_EXTRA | sed 's/-//g'").trim()
+                        XB_VERSION_MAJOR = sh(returnStdout: true, script: "grep 'XB_VERSION_MAJOR' ./FILE | cut -d = -f 2 ").trim()
+                        XB_VERSION_MINOR = sh(returnStdout: true, script: "grep 'XB_VERSION_MINOR' ./FILE | cut -d = -f 2 ").trim()
+                        XB_VERSION_PATCH = sh(returnStdout: true, script: "grep 'XB_VERSION_PATCH' ./FILE | cut -d = -f 2  ").trim()
+                        XB_VERSION_EXTRA = sh(returnStdout: true, script: "grep 'XB_VERSION_EXTRA' ./FILE  | cut -d = -f 2 | sed 's/-//g'").trim()
                         echo "The fetched version is ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH}${XB_VERSION_EXTRA}"
 
 
