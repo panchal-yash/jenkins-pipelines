@@ -77,197 +77,23 @@ pipeline {
                 '''
                 script {
                     AWS_STASH_PATH = sh(returnStdout: true, script: "cat awsUploadPath").trim()
+                    XB_VERSION_MAJOR = sh(returnStdout: true, script: "grep 'XB_VERSION_MAJOR' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 ").trim()
+                    XB_VERSION_MINOR = sh(returnStdout: true, script: "grep 'XB_VERSION_MINOR' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 ").trim()
+                    XB_VERSION_PATCH = sh(returnStdout: true, script: "grep 'XB_VERSION_PATCH' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 ").trim()
+                    XB_VERSION_EXTRA = sh(returnStdout: true, script: "grep 'XB_VERSION_EXTRA' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 | sed 's/-//g'").trim()
                 }
-                stash includes: 'uploadPath', name: 'uploadPath'
-                pushArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
             }
         }
-        stage('Build PXB generic source packages') {
-            parallel {
-                stage('Build PXB generic source rpm') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                        buildStage("centos:7", "--build_src_rpm=1")
-
-                        pushArtifactFolder("srpm/", AWS_STASH_PATH)
-                        uploadRPMfromAWS("srpm/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Build PXB generic source deb') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                        buildStage("ubuntu:focal", "--build_source_deb=1")
-
-                        pushArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("source_deb/", AWS_STASH_PATH)
-                    }
-                }
-            }  //parallel
-        } // stage
-        stage('Build PXB RPMs/DEBs/Binary tarballs') {
-            parallel {
-                stage('Centos 7') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("srpm/", AWS_STASH_PATH)
-                        buildStage("centos:7", "--build_rpm=1")
-
-                        pushArtifactFolder("rpm/", AWS_STASH_PATH)
-                        uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Oracle Linux 8') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("srpm/", AWS_STASH_PATH)
-                        buildStage("oraclelinux:8", "--build_rpm=1")
-
-                        pushArtifactFolder("rpm/", AWS_STASH_PATH)
-                        uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Oracle Linux 9') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("srpm/", AWS_STASH_PATH)
-                        buildStage("oraclelinux:9", "--build_rpm=1")
-            
-                        pushArtifactFolder("rpm/", AWS_STASH_PATH)
-                        uploadRPMfromAWS("rpm/", AWS_STASH_PATH)
-                    }
-                } 
-                stage('Ubuntu Bionic(18.04)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("ubuntu:bionic", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Ubuntu Focal(20.04)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("ubuntu:focal", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Ubuntu Jammy(22.04)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("ubuntu:jammy", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Debian Buster(10)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("debian:buster", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Debian Bullseye(11)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("debian:bullseye", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Debian Bookworm(12)') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_deb/", AWS_STASH_PATH)
-                        buildStage("debian:bookworm", "--build_deb=1")
-
-                        pushArtifactFolder("deb/", AWS_STASH_PATH)
-                        uploadDEBfromAWS("deb/", AWS_STASH_PATH)
-                    }
-                }
-                stage('Centos 7 tarball') {
-                    agent {
-                        label 'docker-32gb'
-                    }
-                    steps {
-                        cleanUpWS()
-                        popArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                        buildStage("centos:7", "--build_tarball=1")
-
-                        pushArtifactFolder("test/tarball/", AWS_STASH_PATH)
-                        uploadTarballfromAWS("test/tarball/", AWS_STASH_PATH, 'binary')
-                    }
-                }
-
-            }
-        }
-
-        stage('Sign packages') {
-            steps {
-                signRPM()
-                signDEB()
-            }
-        }
-        stage('Push to public repository') {
-            steps {
-                // sync packages
-                sync2ProdAutoBuild(PXB_REPO, COMPONENT)
-            }
-        }
-
     }
     post {
         success {
             // slackNotify("", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${BRANCH} - [${BUILD_URL}]")
             script {
                 currentBuild.description = "Built on ${BRANCH}"
+                sh """
+                   echo " ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} "
+                """
+
             }
             deleteDir()
         }
@@ -276,9 +102,11 @@ pipeline {
             deleteDir()
         }
         always {
-            sh '''
+            sh """
                 sudo rm -rf ./*
-            '''
+                   echo " ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} "
+
+            """
             deleteDir()
         }
     }
