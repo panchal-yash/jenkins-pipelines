@@ -112,7 +112,6 @@ parameters {
                label 'min-bionic-x64'
             }
             steps {
-//                slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: Testing starting build for ${BRANCH} - [${BUILD_URL}]")
                 cleanUpWS()
                 installCli("deb")
                 buildStage("none", "--get_sources=1")
@@ -132,7 +131,62 @@ parameters {
                 stash includes: 'test/percona-server-8.0.properties', name: 'properties'
             }
         }
+        stage('Build PS RPMs/DEBs/Binary tarballs') {
+            parallel {
+                stage('Centos 7') {
+                    agent {
+                        label 'min-centos-7-x64'
+                    }
+                    steps {
+                        script {
+                        echo "Build PS RPMs/DEBs/Binary tarballs"
+                        }
+                    }
+                }
+            }
+        }
+        stage('Upload packages and tarballs from S3') {
+            agent {
+                label 'min-jammy-x64'
+            }
+            steps {
+                script {
+                echo "Upload packages and tarballs from S3"
+                }
+            }
+        }
 
+        stage('Sign packages') {
+            steps {
+                script {
+                echo "SIGN PACKAGES"
+                }
+            }
+        }
+        stage('Push to public repository') {
+            steps {
+                script {
+                echo "Push to public repository"
+                }
+            }
+        }
+        stage('Push Tarballs to TESTING download area') {
+            steps {
+                script {
+                echo "PUSH TARBALLS TO TESTING DOWNLOAD AREA"
+                }
+            }
+        }
+        stage('Build docker containers') {
+            agent {
+                label 'min-bionic-x64'
+            }
+            steps {
+                script{
+                echo "Build Docker Containers"
+                }
+           }
+       }
 
 
 
@@ -140,8 +194,6 @@ parameters {
     }
     post {
         success {
-//            slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]:Test build has been finished successfully for ${BRANCH} - [${BUILD_URL}]")
-//            slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]:Triggering Integration Tests for ${BRANCH} - [${BUILD_URL}]")
             unstash 'properties'
 
             script {
