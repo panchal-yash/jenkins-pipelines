@@ -26,12 +26,8 @@ void buildStage(String DOCKER_OS, String STAGE_PARAM) {
     sh """
         set -o xtrace
         mkdir -p test
-        wget \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${BRANCH}/build-ps/percona-server-8.0_builder.sh -O ps_builder.sh || curl \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${BRANCH}/build-ps/percona-server-8.0_builder.sh -o ps_builder.sh
-        //sudo sed -i '/export GLIBC_VER=/a sudo echo "export GLIBC_VER_TMP=\${GLIBC_VER_TMP}"' ps_builder.sh
-        //sudo sed -i '/echo "DEB_RELEASE=/a echo "GLIBC_VER_TMP=\${GLIBC_VER_TMP}" >> ../percona-server-8.0.properties' ps_builder.sh
-        
-        cat ps_builder.sh
-        
+        wget \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${BRANCH}/build-ps/percona-server-8.0_builder.sh -O ps_builder.sh || curl \$(echo ${GIT_REPO} | sed -re 's|github.com|raw.githubusercontent.com|; s|\\.git\$||')/${BRANCH}/build-ps/percona-server-8.0_builder.sh -o ps_builder.sh 
+    
         export build_dir=\$(pwd -P)
         if [ "$DOCKER_OS" = "none" ]; then
             set -o xtrace
@@ -132,16 +128,12 @@ parameters {
             }
         }
         stage('Build PS RPMs/DEBs/Binary tarballs') {
-            parallel {
-                stage('Centos 7') {
-                    agent {
-                        label 'min-centos-7-x64'
-                    }
-                    steps {
-                        script {
-                        echo "Build PS RPMs/DEBs/Binary tarballs"
-                        }
-                    }
+            agent {
+                label 'min-centos-7-x64'
+            }
+            steps {
+                script {
+                echo "Build PS RPMs/DEBs/Binary tarballs"
                 }
             }
         }
