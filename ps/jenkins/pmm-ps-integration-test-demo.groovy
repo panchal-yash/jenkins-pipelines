@@ -103,7 +103,7 @@ parameters {
         timestamps ()
     }
     stages {
-        stage('Create PS source tarball') {
+        stage('Create PS source tarball: DEMO') {
             agent {
                label 'min-bionic-x64'
             }
@@ -128,9 +128,6 @@ parameters {
             }
         }
         stage('Build PS RPMs/DEBs/Binary tarballs') {
-            agent {
-                label 'min-centos-7-x64'
-            }
             steps {
                 script {
                 echo "Build PS RPMs/DEBs/Binary tarballs"
@@ -138,9 +135,6 @@ parameters {
             }
         }
         stage('Upload packages and tarballs from S3') {
-            agent {
-                label 'min-jammy-x64'
-            }
             steps {
                 script {
                 echo "Upload packages and tarballs from S3"
@@ -170,9 +164,6 @@ parameters {
             }
         }
         stage('Build docker containers') {
-            agent {
-                label 'min-bionic-x64'
-            }
             steps {
                 script{
                 echo "Build Docker Containers"
