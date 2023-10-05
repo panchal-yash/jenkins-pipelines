@@ -184,6 +184,9 @@ parameters {
                 REVISION = sh(returnStdout: true, script: "grep REVISION test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
                 PS_RELEASE = sh(returnStdout: true, script: "echo ${BRANCH} | sed 's/release-//g'").trim()
                 //GLIBC_VER_TMP = sh(returnStdout: true, script: "grep GLIBC_VER_TMP test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
+                echo "Trigger Package Testing Job for PS"
+                build job: 'package-testing-ps80', propagate: false, wait: false, parameters: [string(name: 'product_to_test', value: 'ps80'),string(name: 'install_repo', value: "testing"),string(name: 'node_to_test', value: "all"),string(name: 'action_to_test', value: "all"),string(name: 'check_warnings', value: "yes"),string(name: 'install_mysql_shell', value: "no")]
+                echo "Trigger PMM_PS Github Actions Workflow"
                 withCredentials([string(credentialsId: 'GITHUB_API_TOKEN', variable: 'GITHUB_API_TOKEN')]) {
                     sh """
                         curl -i -v -X POST \
@@ -193,10 +196,6 @@ parameters {
                              -d '{"ref":"main","inputs":{"ps_version":"${PS_RELEASE}"}}'
                     """
                 }
-                
-                //build job: 'package-testing-ps80', propagate: false, wait: false, parameters: [string(name: 'product_to_test', value: 'ps80'),string(name: 'install_repo', value: "testing"),string(name: 'node_to_test', value: "all"),string(name: 'action_to_test', value: "all"),string(name: 'check_warnings', value: "yes"),string(name: 'install_mysql_shell', value: "no")]
-
-
             }
             deleteDir()
         }
