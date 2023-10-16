@@ -3,33 +3,6 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
 
-product_to_test = params.product_to_test
-
-List nodes_to_test = []
-if (params.node_to_test == "all") {
-    nodes_to_test = all_nodes
-} else {
-    nodes_to_test = [params.node_to_test]
-}
-
-
-product_action_playbooks = [
-    ps80: [
-        install: "ps_80.yml",
-        upgrade: "ps_80_upgrade.yml",
-        "maj-upgrade-to": "ps_80_major_upgrade_to.yml",
-        kmip: "ps_80_kmip.yml",
-    ],
-    client_test: [
-        install: "client_test.yml",
-        upgrade: "client_test_upgrade.yml",
-    ]
-]
-
-Map product_actions = product_action_playbooks.collectEntries { key, value ->
-    [key, value.keySet().collect()]
-}
-
 def package_tests_ps80(){
 
                     def arrayA = [  "min-buster-x64",
@@ -98,7 +71,7 @@ def package_tests_ps80(){
                                         
                                         }
 
-                                        def playbook = product_action_playbooks[env.product_to_test][action_to_test]
+                                        def playbook = "${ps80_install_pkg_minitests_playbook}"
                                         def playbook_path = "package-testing/playbooks/${playbook}"
 
 
@@ -143,7 +116,7 @@ pipeline {
     agent none
 
     environment {
-        product_to_test = 'ps80'
+        ps80_install_pkg_minitests_playbook = 'ps_80.yml'
         install_repo = 'testing'
         action_to_test = 'install'
         check_warnings = 'no'
