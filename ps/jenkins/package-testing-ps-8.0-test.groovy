@@ -30,34 +30,8 @@ Map product_actions = product_action_playbooks.collectEntries { key, value ->
     [key, value.keySet().collect()]
 }
 
+def package_tests_ps80(){
 
-
-pipeline {
-    agent none
-
-    environment {
-        product_to_test = 'ps80'
-        install_repo = 'testing'
-        action_to_test = 'install'
-        check_warnings = 'no'
-        install_mysql_shell = 'no'
-    }
-
-    stages {
-        stage("Prepare") {
-            steps {
-                script {
-                    currentBuild.displayName = "#${BUILD_NUMBER}"
-                    currentBuild.description = "Testing.."
-                }
-                
-            }
-        }
-
-        stage('Test Installation of the PS80 Testing Package') {
-            steps 
-            {
-                script {
                     def arrayA = [  "min-buster-x64",
                                     "min-bullseye-x64",
                                     "min-bookworm-x64",
@@ -161,6 +135,37 @@ pipeline {
                         }
                     }
                     parallel stepsForParallel
+
+}
+
+
+pipeline {
+    agent none
+
+    environment {
+        product_to_test = 'ps80'
+        install_repo = 'testing'
+        action_to_test = 'install'
+        check_warnings = 'no'
+        install_mysql_shell = 'no'
+    }
+
+    stages {
+        stage("Prepare") {
+            steps {
+                script {
+                    currentBuild.displayName = "#${BUILD_NUMBER}"
+                    currentBuild.description = "Testing.."
+                }
+                
+            }
+        }
+
+        stage('Test Installation of the PS80 Testing Package') {
+            steps 
+            {
+                script {
+                    package_tests_ps80()
                 }
             }
         }
