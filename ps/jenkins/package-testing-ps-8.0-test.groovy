@@ -12,74 +12,6 @@ if (params.node_to_test == "all") {
     nodes_to_test = [params.node_to_test]
 }
 
-setup_rhel_package_tests = { ->
-    sh '''
-        sudo yum install -y epel-release
-        sudo yum -y update
-        sudo yum install -y ansible git wget tar
-    '''
-}
-
-setup_rhel8_package_tests = { ->
-    sh '''
-        sudo yum install -y epel-release
-        sudo yum -y update
-        sudo yum install -y ansible-2.9.27 git wget tar
-    '''
-}
-
-setup_amazon_package_tests = { ->
-    sh '''
-        sudo amazon-linux-extras install epel
-        sudo yum -y update
-        sudo yum install -y ansible git wget
-    '''
-}
-
-setup_stretch_package_tests = { ->
-    sh '''
-        sudo apt-get update
-        sudo apt-get install -y dirmngr gnupg2
-        echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" | sudo tee -a /etc/apt/sources.list > /dev/null
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-        sudo apt-get update
-        sudo apt-get install -y ansible git wget
-    '''
-}
-
-setup_debian_package_tests = { ->
-    sh '''
-        sudo apt-get update
-        sudo apt-get install -y ansible git wget
-    '''
-}
-
-setup_ubuntu_package_tests = { ->
-    sh '''
-        sudo apt-get update
-        sudo apt-get install -y software-properties-common
-        sudo apt-add-repository --yes --update ppa:ansible/ansible
-        sudo apt-get install -y ansible git wget
-    '''
-}
-
-
-node_setups = [
-    "min-buster-x64": setup_debian_package_tests,
-    "min-bullseye-x64": setup_debian_package_tests,
-    "min-bookworm-x64": setup_debian_package_tests,
-    "min-ol-8-x64": setup_rhel8_package_tests,
-    "min-centos-7-x64": setup_rhel_package_tests,
-    "min-bionic-x64": setup_ubuntu_package_tests,
-    "min-focal-x64": setup_ubuntu_package_tests,
-    "min-amazon-2-x64": setup_amazon_package_tests,
-    "min-jammy-x64": setup_ubuntu_package_tests,
-    "min-ol-9-x64": setup_rhel_package_tests,
-]
-
-void setup_package_tests(node) {
-    node_setups[node]()
-}
 
 product_action_playbooks = [
     ps80: [
@@ -122,8 +54,9 @@ pipeline {
             }
         }
 
-        stage('Parallel Node Stages') {
-            steps {
+        stage('Test Installation of the PS80 Testing Package') {
+            steps 
+            {
                 script {
                     def arrayA = [  "min-buster-x64",
                                     "min-bullseye-x64",
@@ -142,28 +75,53 @@ pipeline {
                         def nodeName = arrayA[i]
                         stepsForParallel[nodeName] = {
                                 stage("Run on ${nodeName}") {
-                                    node(nodeName) {
+                                    node(nodeName){
+                                    
 
-                                        // Check node name here using OR condition
                                         if (nodeName == 'min-buster-x64' || nodeName == 'min-bullseye-x64' || nodeName == 'min-bookworm-x64') {
-                                            setup_debian_package_tests
-                                            // Additional steps for node1 or node2
-                                        } else if (nodeName == 'min-ol-8-x64') {
-                                            setup_rhel8_package_tests
-                                            echo "Running on node3"
-                                            // Additional steps for node3
-                                        } else if (nodeName == 'min-centos-7-x64' || nodeName == 'min-ol-9-x64'){
-                                            setup_rhel_package_tests
                                             
+                                            sh '''
+                                                sudo apt-get update
+                                                sudo apt-get install -y ansible git wget
+                                            '''
+
+                                        } else if (nodeName == 'min-ol-8-x64') {
+                                            
+                                            sh '''
+                                                sudo yum install -y epel-release
+                                                sudo yum -y update
+                                                sudo yum install -y ansible-2.9.27 git wget tar
+                                            '''
+
+                                        } else if (nodeName == 'min-centos-7-x64' || nodeName == 'min-ol-9-x64'){
+                                            
+                                            sh '''
+                                                sudo yum install -y epel-release
+                                                sudo yum -y update
+                                                sudo yum install -y ansible git wget tar
+                                            '''
+
                                         } else if (nodeName == 'min-bionic-x64' || nodeName == 'min-focal-x64' || nodeName == 'min-jammy-x64'){
-                                            setup_ubuntu_package_tests
+
+                                            sh '''
+                                                sudo apt-get update
+                                                sudo apt-get install -y software-properties-common
+                                                sudo apt-add-repository --yes --update ppa:ansible/ansible
+                                                sudo apt-get install -y ansible git wget
+                                            '''
                                         
                                         } else if (nodeName == 'min-amazon-2-x64'){
-                                            setup_amazon_package_tests
-                                        
+
+                                            sh '''
+                                                sudo amazon-linux-extras install epel
+                                                sudo yum -y update
+                                                sudo yum install -y ansible git wget
+                                            '''
+
                                         }  else {
+                                            
                                             echo "Unexpected node name: ${nodeName}"
-                                            // Handle unexpected node name
+                                        
                                         }
 
                                         def playbook = product_action_playbooks[env.product_to_test][action_to_test]
@@ -198,6 +156,7 @@ pipeline {
                                             // Additional steps for success case
                                         }
                                     }
+                                    
                                 }
                         }
                     }
@@ -208,4 +167,5 @@ pipeline {
 
 
     }
+
 }
