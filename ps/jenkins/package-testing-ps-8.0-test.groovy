@@ -83,6 +83,7 @@ def package_tests_ps80(){
                                         def BUILD_URL = "BUILD_URL"
 
                                         try{
+                                            error "ERORR@!!!!"
                                             sh """
                                                 export install_repo="\${install_repo}"
                                                 export client_to_test="ps80"
