@@ -79,29 +79,28 @@ def package_tests_ps80(){
                                         sh '''
                                             git clone --depth 1 https://github.com/Percona-QA/package-testing
                                         '''
+                                        def BRANCH = "Branch"
+                                        def BUILD_URL = "BUILD_URL"
 
-                                        sh """
-                                            export install_repo="\${install_repo}"
-                                            export client_to_test="ps80"
-                                            export check_warning="\${check_warnings}"
-                                            export install_mysql_shell="\${install_mysql_shell}"
-                                            ansible-playbook \
-                                            --connection=local \
-                                            --inventory 127.0.0.1, \
-                                            --limit 127.0.0.1 \
-                                            ${playbook_path}
-                                        """
+                                        try{
+                                            sh """
+                                                export install_repo="\${install_repo}"
+                                                export client_to_test="ps80"
+                                                export check_warning="\${check_warnings}"
+                                                export install_mysql_shell="\${install_mysql_shell}"
+                                                ansible-playbook \
+                                                --connection=local \
+                                                --inventory 127.0.0.1, \
+                                                --limit 127.0.0.1 \
+                                                ${playbook_path}
+                                            """
+                                        } catch (Exception e){
 
-                                        if (currentBuild.result == 'FAILURE') {
-                                            echo "Build failed on ${nodeName}"
-                                            // Additional steps for failure case
-                                        } else if (currentBuild.result == 'UNSTABLE') {
-                                            echo "Build unstable on ${nodeName}"
-                                            // Additional steps for unstable case
-                                        } else {
-                                            echo "Build succeeded on ${nodeName}"
-                                            // Additional steps for success case
+                                            slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
+
                                         }
+
+
                                     }
                                     
                                 }
