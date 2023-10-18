@@ -64,10 +64,10 @@ void cleanUpWS() {
 }
 
 def AWS_STASH_PATH
+
+def package_tests_ps80(){
 def BRANCH = "BRANCH"
 def BUILD_URL = "BUILD_URL"
-def package_tests_ps80(){
-
                     def arrayA = [  "min-buster-x64",
                                     "min-bullseye-x64",
                                     "min-bookworm-x64",
