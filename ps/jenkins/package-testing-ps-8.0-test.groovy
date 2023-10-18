@@ -96,14 +96,14 @@ def package_tests_ps80(){
                                                 ${playbook_path}
                                             """
                                         } catch (Exception e){
-
+                                            stageSuccess = false
                                             slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
 
                                         }
-
-
-                                    }
-                                    
+                                        if (!stageSuccessful) {
+                                            error("Mini Package Tests Failed!")
+                                        }
+                                    }                                    
                                 }
                         }
                     }
