@@ -66,8 +66,12 @@ void cleanUpWS() {
 def AWS_STASH_PATH
 
 def package_tests_ps80(){
-def BRANCH = "BRANCH"
-def BUILD_URL = "BUILD_URL"
+
+                    ps80_install_pkg_minitests_playbook = 'ps_80.yml'
+                    install_repo = 'testing'
+                    action_to_test = 'install'
+                    check_warnings = 'no'
+                    install_mysql_shell = 'no'
                     def arrayA = [  "min-buster-x64",
                                     "min-bullseye-x64",
                                     "min-bookworm-x64",
@@ -156,7 +160,7 @@ def BUILD_URL = "BUILD_URL"
                                             echo "${playbook_path}"
                                         } catch (Exception e){
                                             stageSuccess = false
-                                            slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
+                                            slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH}  FAILED !!")
                                         }
                                         if (!stageSuccessful) {
                                             error("Mini Package Tests Failed! for ${nodeName}")
