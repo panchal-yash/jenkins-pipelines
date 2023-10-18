@@ -64,7 +64,8 @@ void cleanUpWS() {
 }
 
 def AWS_STASH_PATH
-
+def BRANCH = "BRANCH"
+def BUILD_URL = "BUILD_URL"
 def package_tests_ps80(){
 
                     def arrayA = [  "min-buster-x64",
@@ -141,17 +142,18 @@ def package_tests_ps80(){
 
                                         try{
                                             error "EROOR HERE"
-                                            sh """
-                                                export install_repo="\${install_repo}"
-                                                export client_to_test="ps80"
-                                                export check_warning="\${check_warnings}"
-                                                export install_mysql_shell="\${install_mysql_shell}"
-                                                ansible-playbook \
-                                                --connection=local \
-                                                --inventory 127.0.0.1, \
-                                                --limit 127.0.0.1 \
-                                                ${playbook_path}
-                                            """
+//                                            sh """
+//                                                export install_repo="\${install_repo}"
+//                                                export client_to_test="ps80"
+//                                                export check_warning="\${check_warnings}"
+//                                                export install_mysql_shell="\${install_mysql_shell}"
+//                                                ansible-playbook \
+//                                                --connection=local \
+//                                                --inventory 127.0.0.1, \
+//                                                --limit 127.0.0.1 \
+//                                                ${playbook_path}
+//                                            """
+                                            echo "${playbook_path}"
                                         } catch (Exception e){
                                             stageSuccess = false
                                             slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
