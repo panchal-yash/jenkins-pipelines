@@ -3,21 +3,21 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
 
-def fetch_job_id(String JobName){
-
-    // Get Job A
-    def job = Jenkins.instance.getItem(JobName)
-
-    // Get last successful build of Job A
-    def lastSuccessfulBuild = job.getLastSuccessfulBuild()
-
-    // Get build ID
-    def buildId = lastSuccessfulBuild.getId()
-
-    // Output or pass it to subsequent steps
-    println("Last successful build ID of Job A: ${buildId}")
-    return buildId
-}
+//def fetch_job_id(String JobName){
+//
+//    // Get Job A
+//    def job = Jenkins.instance.getItem(JobName)
+//
+//    // Get last successful build of Job A
+//    def lastSuccessfulBuild = job.getLastSuccessfulBuild()
+//
+//    // Get build ID
+//    def buildId = lastSuccessfulBuild.getId()
+//
+//    // Output or pass it to subsequent steps
+//    println("Last successful build ID of Job A: ${buildId}")
+//    return buildId
+//}
 
 pipeline {
     agent {
@@ -59,9 +59,13 @@ pipeline {
     post {
         always {
             echo "Fetch the files"
-            fetch_job_id("sample-latest-1")
-            fetch_job_id("sample-latest-2")
-            fetch_job_id("sample-latest-3")
+
+            copyArtifacts(projectName: 'sample-latest-1', selector: lastSuccessful(), target: 'Testresults.xml')
+            sh '''mv Testresults.xml sample-latest-1.xml'''
+            copyArtifacts(projectName: 'sample-latest-2', selector: lastSuccessful(), target: 'Testresults.xml')
+            sh '''mv Testresults.xml sample-latest-2.xml'''
+            copyArtifacts(projectName: 'sample-latest-3', selector: lastSuccessful(), target: 'Testresults.xml')
+            sh '''mv Testresults.xml sample-latest-3.xml'''
         }
     }
 }

@@ -16,7 +16,7 @@ pipeline {
     stages {
         stage('Create a File for Sample Test 1') {
             steps {
-                echo "FILE 1" > Testresults.xml
+                sh """echo "FILE 1" > Testresults.xml"""
             }
         }
         stage('Archive artifacts') {
