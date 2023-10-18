@@ -68,10 +68,20 @@ pipeline {
             //sh '''mv Testresults.xml sample-latest-3.xml'''
             archiveArtifacts artifacts: 'sample-latest-*/*.xml', allowEmptyArchive: true
             sh "cat sample-latest-1/*"
-            sh "cat sample-latest-2/*"
-            sh "cat sample-latest-3/*"
+
+            sh 'echo "----------------------------" > REPORT '
+
+            sh 'cat sample-latest-1/Testresults.xml >> REPORT'
+
+            sh 'echo "----------------------------" >> REPORT '
+
+            sh "cat sample-latest-2/Testresults.xml >> REPORT"
             
-            //sh 'cat arts/*.xml'
+            sh 'echo "----------------------------" >> REPORT '
+
+            sh "cat sample-latest-3/Testresults.xml >> REPORT"
+            
+            archiveArtifacts artifacts: 'REPORT'
         }
     }
 }

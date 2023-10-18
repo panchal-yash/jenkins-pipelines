@@ -7,7 +7,6 @@ pipeline {
     agent {
         label 'docker'
     }
-    
     options {
         skipDefaultCheckout()
         disableConcurrentBuilds()
