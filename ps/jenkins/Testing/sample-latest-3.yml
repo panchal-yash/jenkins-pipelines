@@ -1,0 +1,15 @@
+- job:
+    name: sample-latest-3
+    project-type: pipeline
+    description: |
+        Do not edit this job through the web!
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/panchal-yash/jenkins-pipelines.git
+            branches:
+            - 'ps-80-buil-add-pkgs-minitests-version-check'
+            wipe-workspace: false
+      lightweight-checkout: true
+      script-path: ps/jenkins/Testing/sample-latest-3.groovy
+
