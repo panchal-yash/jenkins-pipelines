@@ -7,11 +7,13 @@ pipeline {
     agent {
         label 'docker'
     }
+    
     options {
         skipDefaultCheckout()
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps ()
+        copyArtifactPermission('sample-scheduler');
     }
     stages {
         stage('Create a File for Sample Test 1') {

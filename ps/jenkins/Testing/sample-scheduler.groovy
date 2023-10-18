@@ -61,14 +61,15 @@ pipeline {
 
             sh 'ls -la'
             copyArtifacts(projectName: 'sample-latest-1', selector: lastSuccessful(), target: 'arts')
-            sh '''mv Testresults.xml sample-latest-1.xml'''
+            //sh '''mv Testresults.xml sample-latest-1.xml'''
             copyArtifacts(projectName: 'sample-latest-2', selector: lastSuccessful(), target: 'arts')
-            sh '''mv Testresults.xml sample-latest-2.xml'''
+            //sh '''mv Testresults.xml sample-latest-2.xml'''
             copyArtifacts(projectName: 'sample-latest-3', selector: lastSuccessful(), target: 'arts')
-            sh '''mv Testresults.xml sample-latest-3.xml'''
-            archiveArtifacts artifacts: 'arts/*.xml', allowEmptyArchive: true
+            //sh '''mv Testresults.xml sample-latest-3.xml'''
             sh 'ls -la'
-            sh 'cat arts/*.xml'
+            sh 'ls -la arts'
+            archiveArtifacts artifacts: 'arts', allowEmptyArchive: true
+            //sh 'cat arts/*.xml'
         }
     }
 }
