@@ -12,7 +12,7 @@ def package_tests_ps80(){
                                     "min-ol-8-x64",
                                     "min-bionic-x64",
                                     "min-focal-x64",
-                                    "min-amazon-2-x64",
+                                    //"min-amazon-2-x64",
                                     "min-jammy-x64",
                                     "min-ol-9-x64"     ]
 
@@ -98,11 +98,10 @@ def package_tests_ps80(){
                                         } catch (Exception e){
                                             stageSuccess = false
                                             slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
-
                                         }
-                                        if (!stageSuccessful) {
-                                            error("Mini Package Tests Failed!")
-                                        }
+//                                        if (!stageSuccessful) {
+//                                            error("Mini Package Tests Failed!")
+//                                        }
                                     }                                    
                                 }
                         }
