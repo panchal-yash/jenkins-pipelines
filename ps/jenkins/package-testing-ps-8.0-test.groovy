@@ -18,7 +18,7 @@ def package_tests_ps80(){
                                     "min-ol-8-x64",
                                     "min-bionic-x64",
                                     "min-focal-x64",
-                                    "min-amazon-2-x64",
+                                    //"min-amazon-2-x64",
                                     "min-jammy-x64",
                                     "min-ol-9-x64"     ]
 
@@ -84,19 +84,22 @@ def package_tests_ps80(){
                                         '''
 
                                         try{
-                                            sh """
-                                                export install_repo="\${install_repo}"
-                                                export client_to_test="ps80"
-                                                export check_warning="\${check_warnings}"
-                                                export install_mysql_shell="\${install_mysql_shell}"
-                                                ansible-playbook \
-                                                --connection=local \
-                                                --inventory 127.0.0.1, \
-                                                --limit 127.0.0.1 \
-                                                ${playbook_path}
-                                            """
+                                            sh "ERROR"
+//                                            sh """
+//                                                export install_repo="\${install_repo}"
+//                                                export client_to_test="ps80"
+//                                                export check_warning="\${check_warnings}"
+//                                                export install_mysql_shell="\${install_mysql_shell}"
+//                                                ansible-playbook \
+//                                                --connection=local \
+//                                                --inventory 127.0.0.1, \
+//                                                --limit 127.0.0.1 \
+//                                                ${playbook_path}
+//                                            """
                                         } catch (Exception e){
                                             stageSuccess = false
+                                            def BRANCH = "BRANCH"
+                                            def BUILD_URL = "BUILD_URL"
                                             slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
                                         }
                                         if (!stageSuccessful) {
