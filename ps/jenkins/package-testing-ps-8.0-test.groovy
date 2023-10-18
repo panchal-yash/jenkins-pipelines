@@ -132,12 +132,22 @@ pipeline {
             steps 
             {
                 script {
-                    package_tests_ps80()
+                    echo "INSTLLLATION"
+                    //package_tests_ps80()
                 }
             }
         }
 
-
     }
-
+    post {
+        success {
+            echo "Notification Part"
+                script {
+                    package_tests_ps80()
+                }
+        }
+        failure {
+            echo "JOB_FAILED"
+        }
+    }
 }
