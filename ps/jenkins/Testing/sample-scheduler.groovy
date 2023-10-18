@@ -58,14 +58,17 @@ pipeline {
     }
     post {
         always {
-            echo "Fetch the files"
 
-            copyArtifacts(projectName: 'sample-latest-1', selector: lastSuccessful(), target: 'Testresults.xml')
+            sh 'ls -la'
+            copyArtifacts(projectName: 'sample-latest-1', selector: lastSuccessful(), target: 'arts')
             sh '''mv Testresults.xml sample-latest-1.xml'''
-            copyArtifacts(projectName: 'sample-latest-2', selector: lastSuccessful(), target: 'Testresults.xml')
+            copyArtifacts(projectName: 'sample-latest-2', selector: lastSuccessful(), target: 'arts')
             sh '''mv Testresults.xml sample-latest-2.xml'''
-            copyArtifacts(projectName: 'sample-latest-3', selector: lastSuccessful(), target: 'Testresults.xml')
+            copyArtifacts(projectName: 'sample-latest-3', selector: lastSuccessful(), target: 'arts')
             sh '''mv Testresults.xml sample-latest-3.xml'''
+            archiveArtifacts artifacts: 'arts/*.xml', allowEmptyArchive: true
+            sh 'ls -la'
+            sh 'cat arts/*.xml'
         }
     }
 }
