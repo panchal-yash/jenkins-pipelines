@@ -5,6 +5,12 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
 
 def package_tests_ps80(){
 
+                    ps80_install_pkg_minitests_playbook = 'ps_80.yml'
+                    install_repo = 'testing'
+                    action_to_test = 'install'
+                    check_warnings = 'no'
+                    install_mysql_shell = 'no'
+
                     def arrayA = [  "min-buster-x64",
                                     "min-bullseye-x64",
                                     "min-bookworm-x64",
@@ -12,7 +18,7 @@ def package_tests_ps80(){
                                     "min-ol-8-x64",
                                     "min-bionic-x64",
                                     "min-focal-x64",
-                                    //"min-amazon-2-x64",
+                                    "min-amazon-2-x64",
                                     "min-jammy-x64",
                                     "min-ol-9-x64"     ]
 
@@ -24,7 +30,6 @@ def package_tests_ps80(){
                                 stage("Run on ${nodeName}") {
                                     node(nodeName){
                                     
-
                                         if (nodeName == 'min-buster-x64' || nodeName == 'min-bullseye-x64' || nodeName == 'min-bookworm-x64') {
                                             
                                             sh '''
@@ -74,16 +79,11 @@ def package_tests_ps80(){
                                         def playbook = "${ps80_install_pkg_minitests_playbook}"
                                         def playbook_path = "package-testing/playbooks/${playbook}"
 
-
-
                                         sh '''
                                             git clone --depth 1 https://github.com/Percona-QA/package-testing
                                         '''
-                                        def BRANCH = "Branch"
-                                        def BUILD_URL = "BUILD_URL"
 
                                         try{
-                                            error "ERORR@!!!!"
                                             sh """
                                                 export install_repo="\${install_repo}"
                                                 export client_to_test="ps80"
@@ -100,7 +100,7 @@ def package_tests_ps80(){
                                             slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH} - [${BUILD_URL}] FAILED !  !")
                                         }
                                         if (!stageSuccessful) {
-                                            error("Mini Package Tests Failed!")
+                                            error("Mini Package Tests Failed! for ${nodeName}")
                                         }
                                     }                                    
                                 }
@@ -113,14 +113,6 @@ def package_tests_ps80(){
 
 pipeline {
     agent none
-
-    environment {
-        ps80_install_pkg_minitests_playbook = 'ps_80.yml'
-        install_repo = 'testing'
-        action_to_test = 'install'
-        check_warnings = 'no'
-        install_mysql_shell = 'no'
-    }
 
     stages {
         stage("Prepare") {
