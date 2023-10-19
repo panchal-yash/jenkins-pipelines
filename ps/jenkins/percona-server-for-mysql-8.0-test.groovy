@@ -100,12 +100,11 @@ def package_tests_ps80(){
 
                                         } else if (nodeName == 'min-ol-8-x64') {
                                             
-                                            error ("FAILED ON OL8")
-//                                            sh '''
-//                                                sudo yum install -y epel-release
-//                                                sudo yum -y update
-//                                                sudo yum install -y ansible-2.9.27 git wget tar
-//                                            '''
+                                            sh '''
+                                                sudo yum install -y epel-release
+                                                sudo yum -y update
+                                                sudo yum install -y ansible-2.9.27 git wget tar
+                                            '''
 
                                         } else if (nodeName == 'min-centos-7-x64' || nodeName == 'min-ol-9-x64'){
                                             
