@@ -3,21 +3,6 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
 
-//def fetch_job_id(String JobName){
-//
-//    // Get Job A
-//    def job = Jenkins.instance.getItem(JobName)
-//
-//    // Get last successful build of Job A
-//    def lastSuccessfulBuild = job.getLastSuccessfulBuild()
-//
-//    // Get build ID
-//    def buildId = lastSuccessfulBuild.getId()
-//
-//    // Output or pass it to subsequent steps
-//    println("Last successful build ID of Job A: ${buildId}")
-//    return buildId
-//}
 
 pipeline {
     agent {
@@ -82,6 +67,8 @@ pipeline {
             sh "cat sample-latest-3/Testresults.xml >> REPORT"
             
             archiveArtifacts artifacts: 'REPORT'
+
+//            # Show test result with JUnit test results.
         }
     }
 }
