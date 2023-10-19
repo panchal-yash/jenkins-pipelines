@@ -90,7 +90,7 @@ def package_tests_ps80(){
                         stepsForParallel[nodeName] = {
                                 stage("Run on ${nodeName}") {
                                     node(nodeName){
-                                    
+                                    try{
                                         if (nodeName == 'min-buster-x64' || nodeName == 'min-bullseye-x64' || nodeName == 'min-bookworm-x64') {
                                             
                                             sh '''
@@ -100,11 +100,12 @@ def package_tests_ps80(){
 
                                         } else if (nodeName == 'min-ol-8-x64') {
                                             
-                                            sh '''
-                                                sudo yum install -y epel-release
-                                                sudo yum -y update
-                                                sudo yum install -y ansible-2.9.27 git wget tar
-                                            '''
+                                            error ("FAILED ON OL8")
+//                                            sh '''
+//                                                sudo yum install -y epel-release
+//                                                sudo yum -y update
+//                                                sudo yum install -y ansible-2.9.27 git wget tar
+//                                            '''
 
                                         } else if (nodeName == 'min-centos-7-x64' || nodeName == 'min-ol-9-x64'){
                                             
@@ -136,7 +137,10 @@ def package_tests_ps80(){
                                             echo "Unexpected node name: ${nodeName}"
                                         
                                         }
-
+                                    } catch (Exception e){
+                                            stageSuccess = false
+                                            slackNotify("#dev-server-qa", "#FF0000", "[${JOB_NAME}]: Server Provision for Mini Package Testing for ${nodeName} at ${BRANCH}  FAILED !!")
+                                    }
                                         def playbook = "${ps80_install_pkg_minitests_playbook}"
                                         def playbook_path = "package-testing/playbooks/${playbook}"
 
