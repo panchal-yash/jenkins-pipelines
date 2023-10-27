@@ -38,35 +38,47 @@ pipeline {
                         build job: 'ps-operator-eks-latest', propagate: false, wait: true, parameters: [string(name: 'TEST_SUITE', value: 'run-release.csv'),string(name: 'IGNORE_PREVIOUS_RUN', value: "NO"),string(name: 'GIT_BRANCH', value: "main"),string(name: 'PLATFORM_VER', value: "latest"),string(name: 'CLUSTER_WIDE', value: "YES")]
                     }
                 }
+                stage('Trigger ps-operator-aws-openshift-latest job 3 times') {
+                    steps {
+                        build job: 'ps-operator-aws-openshift-latest', propagate: false, wait: true, parameters: [string(name: 'TEST_SUITE', value: 'run-release.csv'),string(name: 'IGNORE_PREVIOUS_RUN', value: "NO"),string(name: 'GIT_BRANCH', value: "main"),string(name: 'PLATFORM_VER', value: "latest"),string(name: 'CLUSTER_WIDE', value: "YES")]
+                        build job: 'ps-operator-aws-openshift-latest', propagate: false, wait: true, parameters: [string(name: 'TEST_SUITE', value: 'run-release.csv'),string(name: 'IGNORE_PREVIOUS_RUN', value: "NO"),string(name: 'GIT_BRANCH', value: "main"),string(name: 'PLATFORM_VER', value: "latest"),string(name: 'CLUSTER_WIDE', value: "YES")]
+                        build job: 'ps-operator-aws-openshift-latest', propagate: false, wait: true, parameters: [string(name: 'TEST_SUITE', value: 'run-release.csv'),string(name: 'IGNORE_PREVIOUS_RUN', value: "NO"),string(name: 'GIT_BRANCH', value: "main"),string(name: 'PLATFORM_VER', value: "latest"),string(name: 'CLUSTER_WIDE', value: "YES")]
+                    }
+                }
             }
         }
     }
     post {
         always {
 
-            copyArtifacts(projectName: 'ps-operator-aks-latest', selector: lastSuccessful(), target: 'ps-operator-aks-latest')
+            //copyArtifacts(projectName: 'ps-operator-aks-latest', selector: lastSuccessful(), target: 'ps-operator-aks-latest')
 
             copyArtifacts(projectName: 'ps-operator-gke-latest', selector: lastSuccessful(), target: 'ps-operator-gke-latest')
 
             copyArtifacts(projectName: 'ps-operator-eks-latest', selector: lastSuccessful(), target: 'ps-operator-eks-latest')
 
-            archiveArtifacts artifacts: 'ps-operator-aks-latest/*.xml', allowEmptyArchive: true
+            copyArtifacts(projectName: 'ps-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'ps-operator-aws-openshift-latest')
+
+            //archiveArtifacts artifacts: 'ps-operator-aks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'ps-operator-gke-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'ps-operator-eks-latest/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'ps-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
             
-            sh "cat ps-operator-aks-latest/*"
-
             sh 'echo "----------------------------" > REPORT '
 
-            sh 'cat ps-operator-aks-latest/TestsReport.xml >> REPORT'
+            //sh 'cat ps-operator-aks-latest/TestsReport.xml >> REPORT'
 
-            sh 'echo "----------------------------" >> REPORT '
+            //sh 'echo "----------------------------" >> REPORT '
 
             sh "cat ps-operator-gke-latest/TestsReport.xml >> REPORT"
             
             sh 'echo "----------------------------" >> REPORT '
 
             sh "cat ps-operator-eks-latest/TestsReport.xml >> REPORT"
+
+            sh 'echo "----------------------------" >> REPORT '
+
+            sh "cat ps-operator-aws-openshift-latest/TestsReport.xml >> REPORT"
             
             archiveArtifacts artifacts: 'REPORT'
 
