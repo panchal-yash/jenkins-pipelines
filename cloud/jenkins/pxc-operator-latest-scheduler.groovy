@@ -51,7 +51,7 @@ pipeline {
     post {
         always {
 
-            //copyArtifacts(projectName: 'pxc-operator-aks-latest', selector: lastSuccessful(), target: 'pxc-operator-aks-latest')
+            copyArtifacts(projectName: 'pxc-operator-aks-latest', selector: lastSuccessful(), target: 'pxc-operator-aks-latest')
 
             copyArtifacts(projectName: 'pxc-operator-gke-latest', selector: lastSuccessful(), target: 'pxc-operator-gke-latest')
 
@@ -59,16 +59,16 @@ pipeline {
 
             copyArtifacts(projectName: 'pxc-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'pxc-operator-aws-openshift-latest')
 
-            //archiveArtifacts artifacts: 'pxc-operator-aks-latest/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'pxc-operator-aks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pxc-operator-gke-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pxc-operator-eks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pxc-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
             
             sh 'echo "----------------------------" > REPORT '
 
-            //sh 'cat pxc-operator-aks-latest/TestsReport.xml >> REPORT'
+            sh 'cat pxc-operator-aks-latest/TestsReport.xml >> REPORT'
 
-            //sh 'echo "----------------------------" >> REPORT '
+            sh 'echo "----------------------------" >> REPORT '
 
             sh "cat pxc-operator-gke-latest/TestsReport.xml >> REPORT"
             
