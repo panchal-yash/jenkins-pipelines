@@ -51,7 +51,7 @@ pipeline {
     post {
         always {
 
-            copyArtifacts(projectName: 'pgo-operator-aks-latest', selector: lastSuccessful(), target: 'pgo-operator-aks-latest')
+            //copyArtifacts(projectName: 'pgo-operator-aks-latest', selector: lastSuccessful(), target: 'pgo-operator-aks-latest')
 
             copyArtifacts(projectName: 'pgo-operator-gke-latest', selector: lastSuccessful(), target: 'pgo-operator-gke-latest')
 
@@ -59,18 +59,16 @@ pipeline {
 
             copyArtifacts(projectName: 'pgo-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'pgo-operator-aws-openshift-latest')
 
-            archiveArtifacts artifacts: 'pgo-operator-aks-latest/*.xml', allowEmptyArchive: true
+            //archiveArtifacts artifacts: 'pgo-operator-aks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pgo-operator-gke-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pgo-operator-eks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'pgo-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
             
-            sh "cat pgo-operator-aks-latest/*"
-
             sh 'echo "----------------------------" > REPORT '
 
-            sh 'cat pgo-operator-aks-latest/TestsReport.xml >> REPORT'
+            //sh 'cat pgo-operator-aks-latest/TestsReport.xml >> REPORT'
 
-            sh 'echo "----------------------------" >> REPORT '
+            //sh 'echo "----------------------------" >> REPORT '
 
             sh "cat pgo-operator-gke-latest/TestsReport.xml >> REPORT"
             
