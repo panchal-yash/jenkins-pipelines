@@ -57,12 +57,12 @@ pipeline {
 
             copyArtifacts(projectName: 'ps-operator-eks-latest', selector: lastSuccessful(), target: 'ps-operator-eks-latest')
 
-            copyArtifacts(projectName: 'ps-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'ps-operator-aws-openshift-latest')
+            //copyArtifacts(projectName: 'ps-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'ps-operator-aws-openshift-latest')
 
             //archiveArtifacts artifacts: 'ps-operator-aks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'ps-operator-gke-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'ps-operator-eks-latest/*.xml', allowEmptyArchive: true
-            archiveArtifacts artifacts: 'ps-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
+            //archiveArtifacts artifacts: 'ps-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
             
             sh 'echo "----------------------------" > REPORT '
 
@@ -76,9 +76,9 @@ pipeline {
 
             sh "cat ps-operator-eks-latest/TestsReport.xml >> REPORT"
 
-            sh 'echo "----------------------------" >> REPORT '
+            //sh 'echo "----------------------------" >> REPORT '
 
-            sh "cat ps-operator-aws-openshift-latest/TestsReport.xml >> REPORT"
+            //sh "cat ps-operator-aws-openshift-latest/TestsReport.xml >> REPORT"
             
             archiveArtifacts artifacts: 'REPORT'
 
