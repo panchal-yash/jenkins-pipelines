@@ -51,7 +51,7 @@ pipeline {
     post {
         always {
 
-            //copyArtifacts(projectName: 'psmdb-operator-aks-latest', selector: lastSuccessful(), target: 'psmdb-operator-aks-latest')
+            copyArtifacts(projectName: 'psmdb-operator-aks-latest', selector: lastSuccessful(), target: 'psmdb-operator-aks-latest')
 
             copyArtifacts(projectName: 'psmdb-operator-gke-latest', selector: lastSuccessful(), target: 'psmdb-operator-gke-latest')
 
@@ -59,16 +59,16 @@ pipeline {
 
             copyArtifacts(projectName: 'psmdb-operator-aws-openshift-latest', selector: lastSuccessful(), target: 'psmdb-operator-aws-openshift-latest')
 
-            //archiveArtifacts artifacts: 'psmdb-operator-aks-latest/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'psmdb-operator-aks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'psmdb-operator-gke-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'psmdb-operator-eks-latest/*.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'psmdb-operator-aws-openshift-latest/*.xml', allowEmptyArchive: true
             
             sh 'echo "----------------------------" > REPORT '
 
-            //sh 'cat psmdb-operator-aks-latest/TestsReport.xml >> REPORT'
+            sh 'cat psmdb-operator-aks-latest/TestsReport.xml >> REPORT'
 
-            //sh 'echo "----------------------------" >> REPORT '
+            sh 'echo "----------------------------" >> REPORT '
 
             sh "cat psmdb-operator-gke-latest/TestsReport.xml >> REPORT"
             
