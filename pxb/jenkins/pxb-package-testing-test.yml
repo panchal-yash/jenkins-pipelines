@@ -46,6 +46,6 @@
             description: 'Choose the repo to install packages and run the tests'
         - string:
             name: git_repo
-            default: 'https://github.com/mohitj1988/package-testing.git'
+            default: 'https://github.com/panchal-yash/package-testing.git'
             description: ""
             trim: false

@@ -111,7 +111,7 @@ void runPlaybook(String action_to_test) {
     def git_repo = params.git_repo
 
     sh """
-        git clone --branch pxb_version_update --depth 1 "${git_repo}"
+        git clone --branch pxb-8.1-mj-branch --depth 1 "${git_repo}"
     """
 
     setup_package_tests()
@@ -158,7 +158,7 @@ pipeline {
             name: 'install_repo'
         )
         string(
-            defaultValue: 'https://github.com/mohitj1988/package-testing.git',
+            defaultValue: 'https://github.com/panchal-yash/package-testing.git',
             description: '',
             name: 'git_repo',
             trim: false
