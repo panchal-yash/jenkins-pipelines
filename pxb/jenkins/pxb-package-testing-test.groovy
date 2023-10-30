@@ -116,6 +116,8 @@ void runPlaybook(String action_to_test) {
 
     setup_package_tests()
 
+    echo ""
+
     sh """
         export install_repo="\${install_repo}"
 
