@@ -1,0 +1,37 @@
+- job:
+    name: pxb-package-testing-all-8.1-test
+    project-type: pipeline
+    description: |
+        Do not edit this job through the web!
+    properties:
+        - build-discarder:
+            num-to-keep: 15
+    pipeline-scm:
+        scm:
+            - git:
+                url: https://github.com/panchal-yash/jenkins-pipelines.git
+                branches:
+                    - 'pxb81-testing'
+                wipe-workspace: true
+        lightweight-checkout: true
+        script-path: pxb/jenkins/pxb-package-testing-all-test.groovy
+    parameters:
+        - choice:
+            name: product_to_test
+            choices:
+                - "pxb81"
+                - "pxb80"
+                - "pxb24"
+            description: 'Choose the product version to test: PXB8.0 OR PXB2.4'
+        - choice:
+            name: install_repo
+            choices:
+                - "testing"
+                - "main"
+                - "experimental"
+            description: 'Choose the repo from which to install packages and run the tests'
+        - string:
+            name: git_repo
+            default: 'https://github.com/panchal-yash/package-testing.git'
+            description: ""
+            trim: false
