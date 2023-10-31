@@ -67,7 +67,7 @@ pipeline {
                 echo "GELLO"
             }
         }
-/*
+
         stage('Create PXB source tarball') {
             steps {
                 // slackNotify("", "#00FF00", "[${JOB_NAME}]: starting build for ${BRANCH} - [${BUILD_URL}]")
@@ -88,11 +88,12 @@ pipeline {
                     XB_VERSION_PATCH = sh(returnStdout: true, script: "grep 'XB_VERSION_PATCH' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 ").trim()
                     XB_VERSION_EXTRA = sh(returnStdout: true, script: "grep 'XB_VERSION_EXTRA' ./test/percona-xtrabackup-8.0.properties | cut -d = -f 2 | sed 's/-//g'").trim()
                 }
-                stash includes: 'uploadPath', name: 'uploadPath'
-                pushArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
+                //stash includes: 'uploadPath', name: 'uploadPath'
+                //pushArtifactFolder("source_tarball/", AWS_STASH_PATH)
+                //uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
             }
         }
+/*
         stage('Build PXB generic source packages') {
             parallel {
                 stage('Build PXB generic source rpm') {
@@ -312,8 +313,10 @@ pipeline {
                         echo "There are changes"
                         git add -A
                         if [[ ${PXB_REPO} == "pxb-80" ]]; then
+                            echo "PXB-80"
                             git commit -m "Autocommit: add ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} for PXB80 package testing VERSIONS file."
                         elif [[ ${PXB_REPO} == "pxb-81" ]]; then
+                            echo "PXB-81"
                             git commit -m "Autocommit: add ${XB_VERSION_MAJOR}-${XB_VERSION_MINOR}-${XB_VERSION_PATCH} and ${XB_VERSION_EXTRA} for PXB81 package testing VERSIONS file."
                         else
                             echo "Not valid PXB_REPO"
