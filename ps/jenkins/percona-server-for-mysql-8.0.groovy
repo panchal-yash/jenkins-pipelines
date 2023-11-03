@@ -121,7 +121,7 @@ def runPlaybook(def nodeName) {
     def ps80_install_pkg_minitests_playbook = 'ps_80.yml'
     def install_repo = 'testing'
     def action_to_test = 'install'
-    def check_warnings = 'no'
+    def check_warnings = 'yes'
     def install_mysql_shell = 'no'
 
     try {
@@ -205,7 +205,7 @@ parameters {
             description: 'Repo component to push packages to',
             name: 'COMPONENT')
         choice(
-            choices: '#releases\n#releases-ci',
+            choices: '#dev-server-qa\n#releases\n#releases-ci',
             description: 'Channel for notifications',
             name: 'SLACKNOTIFY')
     }
@@ -216,6 +216,7 @@ parameters {
         timestamps ()
     }
     stages {
+/*
         stage('Create PS source tarball') {
             agent {
                label 'min-bionic-x64'
@@ -671,82 +672,23 @@ parameters {
                 }
             }
         }
-        stage('Build docker containers') {
-            agent {
-                label 'min-bionic-x64'
+*/
+        stage("TESTING"){
+            steps{
+                echo "TESTING"
             }
-            steps {
-                echo "====> Build docker container"
-                cleanUpWS()
-                installCli("deb")
-                sh '''
-                   sleep 900
-                '''
-                unstash 'properties'
-                sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-                    sudo apt-get install -y docker.io
-                    sudo systemctl status docker
-                    sudo apt-get install -y qemu binfmt-support qemu-user-static
-                    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                    git clone https://github.com/percona/percona-docker
-                    cd percona-docker/percona-server-8.0
-                    sed -i "s/ENV PS_VERSION.*/ENV PS_VERSION ${PS_RELEASE}.${RPM_RELEASE}/g" Dockerfile
-                    sed -i "s/ENV PS_REPO .*/ENV PS_REPO testing/g" Dockerfile
-                    sed -i "s/ENV PS_VERSION.*/ENV PS_VERSION ${PS_RELEASE}.${RPM_RELEASE}/g" Dockerfile.aarch64
-                    sed -i "s/ENV PS_REPO .*/ENV PS_REPO testing/g" Dockerfile.aarch64
-                    sudo docker build -t perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} .
-                    sudo docker build -t perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 -f Dockerfile.aarch64 .
-                    sudo docker images
-                 '''
-                 withCredentials([
-                     usernamePassword(credentialsId: 'hub.docker.com',
-                     passwordVariable: 'PASS',
-                     usernameVariable: 'USER'
-                     )]) {
-                 sh '''
-                     echo "${PASS}" | sudo docker login -u "${USER}" --password-stdin
-                     PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                     sudo docker tag perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} perconalab/percona-server:${PS_RELEASE}
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}
-                     sudo docker tag perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 perconalab/percona-server:${PS_RELEASE}-aarch64
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}-aarch64
-                 '''
-                 }
-                 sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo docker manifest create perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi \
-                         perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} \
-                         perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64
-                    sudo docker manifest annotate perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 --os linux --arch arm64 --variant v8
-                    sudo docker manifest annotate perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} --os linux --arch amd64
-                    sudo docker manifest inspect perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi
-                '''
-                 withCredentials([
-                    usernamePassword(credentialsId: 'hub.docker.com',
-                    passwordVariable: 'PASS',
-                    usernameVariable: 'USER'
-                    )]) {
-                 sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    echo "${PASS}" | sudo docker login -u "${USER}" --password-stdin
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo docker manifest push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi
-                 '''
-                 }
-           }
-       }
+        }
+
     }
     post {
         success {
+            /*
             slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${BRANCH} - [${BUILD_URL}]")
             slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: Triggering Builds for Package Testing for ${BRANCH} - [${BUILD_URL}]")
             unstash 'properties'
-
+            */
             script {
+            /*
                 currentBuild.description = "Built on ${BRANCH}; path to packages: ${COMPONENT}/${AWS_STASH_PATH}"
                 REVISION = sh(returnStdout: true, script: "grep REVISION test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
                 PS_RELEASE = sh(returnStdout: true, script: "echo ${BRANCH} | sed 's/release-//g'").trim()
@@ -770,7 +712,7 @@ parameters {
 
                 """
                 }
-
+            */
                 echo "Start Minitests for PS"
                 
                 package_tests_ps80()
