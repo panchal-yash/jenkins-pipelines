@@ -3,7 +3,7 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
-
+import groovy.transform.Field
 void installCli(String PLATFORM) {
     sh """
         set -o xtrace
@@ -181,7 +181,7 @@ def package_tests_ps80(def nodes) {
 }
 
 def AWS_STASH_PATH
-def mini_test_error = "False"
+@Field def mini_test_error = "False"
 
 pipeline {
     agent {
