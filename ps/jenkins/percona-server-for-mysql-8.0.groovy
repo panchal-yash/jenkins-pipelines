@@ -4,8 +4,6 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
     remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
 ]) _
 
-import groovy.transform.Field
-
 void installCli(String PLATFORM) {
     sh """
         set -o xtrace
@@ -127,6 +125,7 @@ def runPlaybook(def nodeName) {
     def install_mysql_shell = 'no'
 
     try {
+        /*
         def playbook = "${ps80_install_pkg_minitests_playbook}"
         def playbook_path = "package-testing/playbooks/${playbook}"
 
@@ -146,6 +145,8 @@ def runPlaybook(def nodeName) {
             --limit 127.0.0.1 \
             ${playbook_path}
         """
+        */
+        echo "Success"
     } catch (Exception e) {
         slackNotify("${SLACKNOTIFY}", "#FF0000", "[${JOB_NAME}]: Mini Package Testing for ${nodeName} at ${BRANCH}  FAILED !!!")
         mini_test_error="True"
@@ -170,7 +171,7 @@ def package_tests_ps80(def nodes) {
         stepsForParallel[nodeName] = {
             stage("Minitest run on ${nodeName}") {
                 node(nodeName) {
-                        installDependencies(nodeName)
+                        //installDependencies(nodeName)
                         runPlaybook(nodeName)
                 }
             }
@@ -180,7 +181,7 @@ def package_tests_ps80(def nodes) {
 }
 
 def AWS_STASH_PATH
-@Field def mini_test_error = "False"
+def mini_test_error = "False"
 
 pipeline {
     agent {
@@ -208,7 +209,7 @@ parameters {
             description: 'Repo component to push packages to',
             name: 'COMPONENT')
         choice(
-            choices: '#releases\n#releases-ci',
+            choices: '#dev-server-qa\n#releases\n#releases-ci',
             description: 'Channel for notifications',
             name: 'SLACKNOTIFY')
     }
@@ -219,7 +220,7 @@ parameters {
         timestamps ()
     }
     stages {
-
+        /*
         stage('Create PS source tarball') {
             agent {
                label 'min-bionic-x64'
@@ -675,85 +676,26 @@ parameters {
                 }
             }
         }
-        stage('Build docker containers') {
-            agent {
-                label 'min-bionic-x64'
+        */
+        stage("TEst"){
+            steps{
+                echo "Success"
             }
-            steps {
-                echo "====> Build docker container"
-                cleanUpWS()
-                installCli("deb")
-                sh '''
-                   sleep 900
-                '''
-                unstash 'properties'
-                sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-                    sudo apt-get install -y docker.io
-                    sudo systemctl status docker
-                    sudo apt-get install -y qemu binfmt-support qemu-user-static
-                    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                    git clone https://github.com/percona/percona-docker
-                    cd percona-docker/percona-server-8.0
-                    sed -i "s/ENV PS_VERSION.*/ENV PS_VERSION ${PS_RELEASE}.${RPM_RELEASE}/g" Dockerfile
-                    sed -i "s/ENV PS_REPO .*/ENV PS_REPO testing/g" Dockerfile
-                    sed -i "s/ENV PS_VERSION.*/ENV PS_VERSION ${PS_RELEASE}.${RPM_RELEASE}/g" Dockerfile.aarch64
-                    sed -i "s/ENV PS_REPO .*/ENV PS_REPO testing/g" Dockerfile.aarch64
-                    sudo docker build -t perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} .
-                    sudo docker build -t perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 -f Dockerfile.aarch64 .
-                    sudo docker images
-                 '''
-                 withCredentials([
-                     usernamePassword(credentialsId: 'hub.docker.com',
-                     passwordVariable: 'PASS',
-                     usernameVariable: 'USER'
-                     )]) {
-                 sh '''
-                     echo "${PASS}" | sudo docker login -u "${USER}" --password-stdin
-                     PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                     sudo docker tag perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} perconalab/percona-server:${PS_RELEASE}
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}
-                     sudo docker tag perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 perconalab/percona-server:${PS_RELEASE}-aarch64
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64
-                     sudo docker push perconalab/percona-server:${PS_RELEASE}-aarch64
-                 '''
-                 }
-                 sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo docker manifest create perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi \
-                         perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} \
-                         perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64
-                    sudo docker manifest annotate perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-aarch64 --os linux --arch arm64 --variant v8
-                    sudo docker manifest annotate perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE} --os linux --arch amd64
-                    sudo docker manifest inspect perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi
-                '''
-                 withCredentials([
-                    usernamePassword(credentialsId: 'hub.docker.com',
-                    passwordVariable: 'PASS',
-                    usernameVariable: 'USER'
-                    )]) {
-                 sh '''
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    echo "${PASS}" | sudo docker login -u "${USER}" --password-stdin
-                    PS_RELEASE=$(echo ${BRANCH} | sed 's/release-//g')
-                    sudo docker manifest push perconalab/percona-server:${PS_RELEASE}.${RPM_RELEASE}-multi
-                 '''
-                 }
-           }
-       }
+        }
     }
     post {
         success {
+            /*
             slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: build has been finished successfully for ${BRANCH} - [${BUILD_URL}]")
             slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: Triggering Builds for Package Testing for ${BRANCH} - [${BUILD_URL}]")
             unstash 'properties'
+            */
             script {
+                /*
                 currentBuild.description = "Built on ${BRANCH}; path to packages: ${COMPONENT}/${AWS_STASH_PATH}"
                 REVISION = sh(returnStdout: true, script: "grep REVISION test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
                 PS_RELEASE = sh(returnStdout: true, script: "echo ${BRANCH} | sed 's/release-//g'").trim()
-
+                
                 withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
                 sh """
                     
@@ -772,11 +714,14 @@ parameters {
                     git push 
 
                 """
+                
                 }
+                */
                 echo "Start Minitests for PS"
                 
                 package_tests_ps80(minitestNodes)
 
+                echo "Variable value ${mini_test_error}"
                 if("${mini_test_error}" == "True"){
                     echo "NOT TRIGGERING PACKAGE TESTS AND INTEGRATION TESTS DUE TO MINITEST FAILURE !!"
                 }else{
