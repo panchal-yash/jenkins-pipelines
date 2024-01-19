@@ -209,7 +209,7 @@ parameters {
             description: 'Repo component to push packages to',
             name: 'COMPONENT')
         choice(
-            choices: '#releases\n#releases-ci',
+            choices: 'dev-server-qa\n#releases\n#releases-ci',
             description: 'Channel for notifications',
             name: 'SLACKNOTIFY')
     }
@@ -225,7 +225,6 @@ parameters {
                label 'min-bionic-x64'
             }
             steps {
-                slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: starting build for ${BRANCH} - [${BUILD_URL}]")
                 cleanUpWS()
                 installCli("deb")
                 buildStage("none", "--get_sources=1")
@@ -238,13 +237,8 @@ parameters {
                    cat uploadPath
                    cat awsUploadPath
                 '''
-                script {
-                    AWS_STASH_PATH = sh(returnStdout: true, script: "cat awsUploadPath").trim()
-                }
                 stash includes: 'uploadPath', name: 'uploadPath'
                 stash includes: 'test/percona-server-8.0.properties', name: 'properties'
-                pushArtifactFolder("source_tarball/", AWS_STASH_PATH)
-                uploadTarballfromAWS("source_tarball/", AWS_STASH_PATH, 'source')
             }
         }
 /*
@@ -702,7 +696,9 @@ parameters {
                     git config user.name "jenkins-pxc-cd"
                     git config user.email "it+jenkins-pxc-cd@percona.com"
                     echo "${PS8_RELEASE_VERSION} is the VALUE!!@!"
-                    if [[ "${PS8_RELEASE_VERSION}" =~ ^8.[0-9]{1}$ ]]; then
+                    export RELEASE_VER_VAL="${PS8_RELEASE_VERSION}"
+                    if [[ "\$RELEASE_VER_VAL" =~ ^8.[0-9]{1}\$ ]]; then
+                        echo "\$RELEASE_VER_VAL is a valid version"
                         OLD_REV=\$(cat VERSIONS | grep PS_INN_LTS_REV | cut -d '=' -f2- )
                         OLD_VER=\$(cat VERSIONS | grep PS_INN_LTS_VER | cut -d '=' -f2- )
                         sed -i s/PS_INN_LTS_REV=\$OLD_REV/PS_INN_LTS_REV='"'${REVISION}'"'/g VERSIONS
