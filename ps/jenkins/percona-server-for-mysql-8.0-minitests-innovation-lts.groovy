@@ -227,17 +227,42 @@ parameters {
             steps {
                 cleanUpWS()
                 installCli("deb")
-                buildStage("none", "--get_sources=1")
+                //buildStage("none", "--get_sources=1")
+
+        
                 sh '''
-                   REPO_UPLOAD_PATH=$(grep "UPLOAD" test/percona-server-8.0.properties | cut -d = -f 2 | sed "s:$:${BUILD_NUMBER}:")
-                   AWS_STASH_PATH=$(echo ${REPO_UPLOAD_PATH} | sed  "s:UPLOAD/experimental/::")
-                   echo ${REPO_UPLOAD_PATH} > uploadPath
+                   set -o xtrace
+                   mkdir -p test
+                   export build_dir=\$(pwd -P)
+                   cd \${build_dir}
                    echo ${AWS_STASH_PATH} > awsUploadPath
+                   cat <<EOF > test/percona-server-8.0.properties
+MYSQL_VERSION_MAJOR=8
+MYSQL_VERSION_MINOR=0
+MYSQL_VERSION_PATCH=28
+MYSQL_VERSION_EXTRA=-19
+
+REVISION=5d19eae2493
+BRANCH_NAME=release-8.0.28-19
+PRODUCT=Percona-Server-8.0
+PRODUCT_FULL=Percona-Server-8.0.28-19
+BUILD_NUMBER=6
+BUILD_ID=6
+BUILD_TOKUDB_TOKUBACKUP=0
+PERCONAFT_REPO=
+PERCONAFT_BRANCH=Percona-Server-8.0.27-18
+TOKUBACKUP_REPO=
+TOKUBACKUP_BRANCH=Percona-Server-8.0.27-18
+ZENFS_REPO=
+ZENFS_BRANCH=
+TOKUDB_VERSION=8.0.28-19
+BOOST_PACKAGE_NAME=boost_1_73_0
+RPM_RELEASE=1
+DEB_RELEASE=1
+DESTINATION=experimental
+EOF
                    cat test/percona-server-8.0.properties
-                   cat uploadPath
-                   cat awsUploadPath
                 '''
-                stash includes: 'uploadPath', name: 'uploadPath'
                 stash includes: 'test/percona-server-8.0.properties', name: 'properties'
             }
         }
@@ -686,10 +711,9 @@ parameters {
                 currentBuild.description = "Built on ${BRANCH}; path to packages: ${COMPONENT}/${AWS_STASH_PATH}"
                 REVISION = sh(returnStdout: true, script: "grep REVISION test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
                 PS_RELEASE = sh(returnStdout: true, script: "echo ${BRANCH} | sed 's/release-//g'").trim()
-                PS8_RELEASE_VERSION = sh(returnStdout: true, script: """ echo ${BRANCH} | sed -nE '/release-(8\\.0|8\\.1)\\..*/s//\\1/p' """).trim()
+                PS8_RELEASE_VERSION = sh(returnStdout: true, script: """ echo ${BRANCH} | sed -nE '/release-(8\\.[0-9]{1})\\..*/s//\\1/p' """).trim()
                 withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
                 sh """
-                    
                     set -x
                     git clone -b testing-branch  https://jenkins-pxc-cd:$TOKEN@github.com/Percona-QA/package-testing.git
                     cd package-testing
@@ -703,6 +727,7 @@ parameters {
                         OLD_VER=\$(cat VERSIONS | grep PS_INN_LTS_VER | cut -d '=' -f2- )
                         sed -i s/PS_INN_LTS_REV=\$OLD_REV/PS_INN_LTS_REV='"'${REVISION}'"'/g VERSIONS
                         sed -i s/PS_INN_LTS_VER=\$OLD_VER/PS_INN_LTS_VER='"'${PS_RELEASE}'"'/g VERSIONS
+
                     else
                         echo "INVALID PS8_RELEASE_VERSION VALUE: ${PS8_RELEASE_VERSION}"
                     fi
