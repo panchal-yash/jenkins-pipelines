@@ -704,6 +704,11 @@ EOF
                 REVISION = sh(returnStdout: true, script: "grep REVISION test/percona-server-8.0.properties | awk -F '=' '{ print\$2 }'").trim()
                 PS_RELEASE = sh(returnStdout: true, script: "echo ${BRANCH} | sed 's/release-//g'").trim()
                 PS8_RELEASE_VERSION = sh(returnStdout: true, script: """ echo ${BRANCH} | sed -nE '/release-(8\\.[0-9]{1})\\..*/s//\\1/p' """).trim()
+                
+                
+                if("${PS8_RELEASE_VERSION}"){
+                    echo "Executing MINITESTS as VALID VALUES FOR PS8_RELEASE_VERSION:${PS8_RELEASE_VERSION}"
+                    echo "Checking for the Github Repo VERSIONS file changes..."
                 withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
                 sh """
                     set -x
@@ -734,8 +739,6 @@ EOF
                     fi
                 """
                 }
-                if("${PS8_RELEASE_VERSION}"){
-                    echo "Executing MINITESTS as VALID VALUES FOR PS8_RELEASE_VERSION:${PS8_RELEASE_VERSION}"
                     package_tests_ps80(minitestNodes)
                     if("${mini_test_error}" == "True"){
                         echo "NOT TRIGGERING PACKAGE TESTS AND INTEGRATION TESTS DUE TO MINITEST FAILURE !!"
@@ -759,6 +762,7 @@ EOF
                 }
                 else{
                     echo "Skipping MINITESTS and Other Triggers as invalid RELEASE VERSION FOR THIS JOB"
+                    exit 
                     //slackNotify("${SLACKNOTIFY}", "#00FF00", "[${JOB_NAME}]: Skipping MINITESTS and Other Triggers as invalid RELEASE VERSION FOR THIS JOB ${BRANCH} - [${BUILD_URL}]")
                 } 
             }
