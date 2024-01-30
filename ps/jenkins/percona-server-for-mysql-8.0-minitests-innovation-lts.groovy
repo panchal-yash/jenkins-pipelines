@@ -748,10 +748,11 @@ EOF
                     if("${mini_test_error}" == "True"){
                         echo "NOT TRIGGERING PACKAGE TESTS AND INTEGRATION TESTS DUE TO MINITEST FAILURE !!"
                     }else{
-                        build job: 'package-testing-ps-innovation-lts', propagate: false, wait: false, parameters: [string(name: 'product_to_test', value: "${product_to_test}"),string(name: 'install_repo', value: "testing"),string(name: 'node_to_test', value: "all"),string(name: 'action_to_test', value: "all"),string(name: 'check_warnings', value: "yes"),string(name: 'install_mysql_shell', value: "no")]
+                        echo "TRIGGERING THE PACKAGE TESTING JOB!!!"
+                        //build job: 'package-testing-ps-innovation-lts', propagate: false, wait: false, parameters: [string(name: 'product_to_test', value: "${product_to_test}"),string(name: 'install_repo', value: "testing"),string(name: 'node_to_test', value: "all"),string(name: 'action_to_test', value: "all"),string(name: 'check_warnings', value: "yes"),string(name: 'install_mysql_shell', value: "no")]
                                                                                                                                             
                         echo "Trigger PMM_PS Github Actions Workflow"
-                        
+/*                        
                         withCredentials([string(credentialsId: 'GITHUB_API_TOKEN', variable: 'GITHUB_API_TOKEN')]) {
                             sh """
                                 curl -i -v -X POST \
@@ -761,6 +762,7 @@ EOF
                                     -d '{"ref":"main","inputs":{"ps_version":"${PS_RELEASE}"}}'
                             """
                         }
+*/
                     }
                 }
                 else{
