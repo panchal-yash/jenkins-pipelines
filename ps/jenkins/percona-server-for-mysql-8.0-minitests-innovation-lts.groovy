@@ -125,7 +125,7 @@ def runPlaybook(def nodeName) {
 
         sh '''
             set -xe
-            git clone -b POC-INNOVATION-LTS --depth 1 https://github.com/panchal-yash/package-testing
+            git clone -b master --depth 1 https://github.com/Percona-QA/package-testing
         '''
         sh """
             set -xe
