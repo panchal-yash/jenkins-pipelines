@@ -708,7 +708,7 @@ EOF
                 if("${PS8_RELEASE_VERSION}"){
                     echo "Executing MINITESTS as VALID VALUES FOR PS8_RELEASE_VERSION:${PS8_RELEASE_VERSION}"
                     echo "Checking for the Github Repo VERSIONS file changes..."
-                withCredentials([string(credentialsId: 'PXC_GITHUB_API_TOKEN', variable: 'TOKEN')]) {
+                withCredentials([string(credentialsId: 'GITHUB_API_TOKEN', variable: 'TOKEN')]) {
                 sh """
                     set -x
                     git clone -b testing-branch  https://jenkins-pxc-cd:$TOKEN@github.com/Percona-QA/package-testing.git
