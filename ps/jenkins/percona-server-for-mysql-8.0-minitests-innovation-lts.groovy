@@ -66,11 +66,11 @@ void cleanUpWS() {
 }
 
 def installDependencies(def nodeName) {
-    def aptNodes = ['min-buster-x64', 'min-bullseye-x64', 'min-bookworm-x64', 'min-bionic-x64', 'min-focal-x64', 'min-jammy-x64']
+    def aptNodes = ['min-bullseye-x64', 'min-bookworm-x64', 'min-bionic-x64', 'min-focal-x64', 'min-jammy-x64']
     def yumNodes = ['min-ol-8-x64', 'min-centos-7-x64', 'min-ol-9-x64']
     try{
         if (aptNodes.contains(nodeName)) {
-            if(nodeName == "min-buster-x64" || nodeName == "min-bullseye-x64" || nodeName == "min-bookworm-x64"){            
+            if(nodeName == "min-bullseye-x64" || nodeName == "min-bookworm-x64"){            
                 sh '''
                     sudo apt-get update
                     sudo apt-get install -y ansible git wget
@@ -145,8 +145,7 @@ def runPlaybook(def nodeName) {
     }
 }
 
-def minitestNodes = [  "min-buster-x64",
-                       "min-bullseye-x64",
+def minitestNodes = [  "min-bullseye-x64",
                        "min-bookworm-x64",
                        "min-centos-7-x64",
                        "min-ol-8-x64",
