@@ -66,7 +66,7 @@ void cleanUpWS() {
 }
 
 def installDependencies(def nodeName) {
-    def aptNodes = ['min-bullseye-x64', 'min-bookworm-x64', 'min-bionic-x64', 'min-focal-x64', 'min-jammy-x64']
+    def aptNodes = ['min-bullseye-x64', 'min-bookworm-x64', 'min-focal-x64', 'min-jammy-x64']
     def yumNodes = ['min-ol-8-x64', 'min-centos-7-x64', 'min-ol-9-x64']
     try{
         if (aptNodes.contains(nodeName)) {
@@ -75,7 +75,7 @@ def installDependencies(def nodeName) {
                     sudo apt-get update
                     sudo apt-get install -y ansible git wget
                 '''
-            }else if(nodeName == "min-bionic-x64" || nodeName == "min-focal-x64" || nodeName == "min-jammy-x64"){
+            }else if(nodeName == "min-focal-x64" || nodeName == "min-jammy-x64"){
                 sh '''
                     sudo apt-get update
                     sudo apt-get install -y software-properties-common
@@ -149,7 +149,6 @@ def minitestNodes = [  "min-bullseye-x64",
                        "min-bookworm-x64",
                        "min-centos-7-x64",
                        "min-ol-8-x64",
-                       "min-bionic-x64",
                        "min-focal-x64",
                        "min-jammy-x64",
                        "min-ol-9-x64"     ]
@@ -746,7 +745,7 @@ EOF
                         //build job: 'package-testing-ps-innovation-lts', propagate: false, wait: false, parameters: [string(name: 'product_to_test', value: "${product_to_test}"),string(name: 'install_repo', value: "testing"),string(name: 'node_to_test', value: "all"),string(name: 'action_to_test', value: "all"),string(name: 'check_warnings', value: "yes"),string(name: 'install_mysql_shell', value: "no")]
                                                                                                                                             
                         echo "Trigger PMM_PS Github Actions Workflow"
-/*                        
+                        
                         withCredentials([string(credentialsId: 'GITHUB_API_TOKEN', variable: 'GITHUB_API_TOKEN')]) {
                             sh """
                                 curl -i -v -X POST \
@@ -756,7 +755,7 @@ EOF
                                     -d '{"ref":"main","inputs":{"ps_version":"${PS_RELEASE}"}}'
                             """
                         }
-*/
+
                     }
                 }
                 else{
