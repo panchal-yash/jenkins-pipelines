@@ -1,0 +1,14 @@
+- job:
+    name: pxb-docker-cve
+    project-type: pipeline
+    description: |
+        Do not edit this job through the web!
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/panchal-yash/jenkins-pipelines.git
+            branches:
+            - 'ps-pxb-pxc-docker-cve'
+            wipe-workspace: false
+      lightweight-checkout: true
+      script-path: pxb/jenkins/pxb-docker-cve.groovy
