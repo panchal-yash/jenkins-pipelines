@@ -78,7 +78,7 @@
             stage('Checkout') {
                 steps {
                     deleteDir()
-                    git poll: false, branch: "master", url: "https://github.com/Percona-QA/package-testing.git"
+                    git poll: false, branch: "ps-pt-molecule-mods-1", url: "https://github.com/panchal-yash/package-testing.git"
                 }
             }
 
