@@ -518,7 +518,7 @@ def setup(){
                         sudo yum install -y epel-release 
                         sudo yum install -y git jq
                         rm -rf package-testing                    
-                        git clone https://github.com/Percona-QA/package-testing --branch master
+                        git clone https://github.com/panchal-yash/package-testing --branch pxc80-min-upgrade-fix
                     '''
 }
 
@@ -643,12 +643,12 @@ pipeline {
                             }
                 }
 
-                stage("MIN UPGRADE") {
+                stage("MIN UPGRADE PXC 80") {
                             when {
                                 allOf{
                                     expression{params.test_type == "min_upgrade" || params.test_type == "install_and_upgrade"}
                                     expression{params.test_repo != "main"}
-                                    expression{params.pxc57_repo != "EOL"}                
+                                    expression{params.product_to_test == "pxc80"}           
                                 }
                             }
 
