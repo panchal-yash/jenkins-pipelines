@@ -1,8 +1,8 @@
 
 
-    library changelog: false, identifier: "lib@master", retriever: modernSCM([
+    library changelog: false, identifier: "lib@ps-pt-molecule-mods-1", retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
+        remote: 'https://github.com/panchal-yash/jenkins-pipelines.git'
     ])
 
     pipeline {
