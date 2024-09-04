@@ -695,21 +695,27 @@ pipeline {
                                         }
                                 }
                             }
-                            post{
-                                always{
-                                    script{
+                            post {
+                                always {
+                                    script {
                                         def param_test_type = "min_upgrade"
                                         echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
-                                        setInventories("min_upgrade")
-                                        runlogsbackup(params.product_to_test, "min_upgrade")
+
+                                        try {
+                                            setInventories("min_upgrade")
+                                            runlogsbackup(params.product_to_test, "min_upgrade")
+                                        } catch (Exception e) {
+                                            echo "Failed to backup logs for PXC UPGRADE tests: ${e.getMessage()}"
+                                            currentBuild.result = 'UNSTABLE'
+                                        }
+
                                         echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
                                         runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "min_upgrade", params.test_repo, "yes")
                                     }
-                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz', followSymlinks: false
                                     }
                                 }
-
                             }
                 }
 
