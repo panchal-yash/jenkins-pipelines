@@ -317,14 +317,14 @@ void setInventories(String param_test_type){
                         echo "KEYPATH_COMMON is ${KEYPATH_COMMON}"
 
                         ls -la /home/admin/
-                        sudo -ls -ls /home/admin/.cache/
-                        sudo -ls -ls /home/admin/.ansible/
+                        ls -la /home/admin/.cache/
+                        ls -la /home/admin/.ansible/
 
-                        sudo -ls -ls /home/admin/.cache/molecule/
+                        ls -la /home/admin/.cache/molecule/
 
                         sudo apt-get install tree -y
 
-                        sudo tree -a -L 4 /home/admin/
+                        tree -a -L 4 /home/admin/
 
 
                     
