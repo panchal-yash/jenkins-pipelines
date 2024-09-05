@@ -286,17 +286,17 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     . virtenv/bin/activate
                     export MOLECULE_DEBUG=1
                     #export DESTROY_ENV=no
-
+                    
                     cd package-testing/molecule/pxc
 
                     echo "param_test_type is ${param_test_type}"
 
                     cd ${product_to_test}-bootstrap-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile -i ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/inventory ${action} -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile  ${action} -s ${scenario}
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile  -i ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory ${action} -s ${scenario}
                     cd -
                 """
             }
@@ -660,6 +660,8 @@ pipeline {
                                     """
 
                                     echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
+
+
                                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                         runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
