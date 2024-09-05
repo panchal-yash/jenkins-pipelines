@@ -1,6 +1,6 @@
-library changelog: false, identifier: 'lib@master', retriever: modernSCM([
+library changelog: false, identifier: 'lib@pxc80-min-upgrade-fix', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
+    remote: 'https://github.com/panchal-yash/jenkins-pipelines.git'
 ]) _
 
 import groovy.transform.Field
@@ -513,10 +513,9 @@ def setup(){
                     }                
                 }   
                 echo "${JENWORKSPACE}"
-                installMolecule()
+                installMoleculeBookworm()
                     sh '''
-                        sudo yum install -y epel-release 
-                        sudo yum install -y git jq
+                        sudo apt-get install -y git jq wget
                         rm -rf package-testing                    
                         git clone https://github.com/panchal-yash/package-testing --branch pxc80-min-upgrade-fix
                     '''
@@ -593,7 +592,7 @@ pipeline {
                             }
 
                             agent {
-                                label 'min-centos-7-x64'
+                                label 'min-bookworm-x64'
                             }
                             environment {
 
@@ -655,7 +654,7 @@ pipeline {
 
 
                             agent {
-                                label 'min-centos-7-x64'
+                                label 'min-bookworm-x64'
                             }
 
 
@@ -729,7 +728,7 @@ pipeline {
                             }
 
                             agent {
-                                label 'min-centos-7-x64'
+                                label 'min-bookworm-x64'
                             }
 
                             environment {
@@ -800,7 +799,7 @@ pipeline {
 
 
                             agent {
-                                label 'min-centos-7-x64'
+                                label 'min-bookworm-x64'
                             }
 
 
@@ -871,7 +870,7 @@ pipeline {
 
 
                             agent {
-                                label 'min-centos-7-x64'
+                                label 'min-bookworm-x64'
                             }
 
                             environment {
