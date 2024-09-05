@@ -645,11 +645,14 @@ pipeline {
                                     echo "EXECUTING PREPARE PLAYBOOK"
                                     
                                     sh """
-                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                        . virtenv/bin/activate
+                                        export MOLECULE_DEBUG=1
+
+                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory"
 
                                         echo "EXECUTING PREPARE PLAYBOOK FOR COMMON NODE"
 
-                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory"
                                     """
 
                                     echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
