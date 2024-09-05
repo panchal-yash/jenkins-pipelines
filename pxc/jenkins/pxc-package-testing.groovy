@@ -641,9 +641,9 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-
+                                    echo "SET INVENTORIES"
+                                    setInventories("install")
                                     echo "EXECUTING PREPARE PLAYBOOK"
-                                    
                                     sh """
                                         . virtenv/bin/activate
                                         export MOLECULE_DEBUG=1
@@ -672,7 +672,7 @@ pipeline {
                                         echo "Always INSTALL"
                                         try{
                                             echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                                            setInventories("install")
+                                            //setInventories("install")
                                             runlogsbackup(params.product_to_test, "install")
                                         } catch (Exception e) {
                                             echo "Failed to backup logs for PXC UPGRADE tests: ${e.getMessage()}"
