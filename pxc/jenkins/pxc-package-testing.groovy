@@ -636,13 +636,13 @@ pipeline {
                                             echo "Failed to backup logs for PXC UPGRADE tests: ${e.getMessage()}"
                                             currentBuild.result = 'UNSTABLE'
                                         }
-                                        echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+       //                                 echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+       //                                 runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
 
-                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
-                                    }
+         //                           catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+         //                               archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+         //                           }
 
                                 }
                             }
