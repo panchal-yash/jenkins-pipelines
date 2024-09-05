@@ -393,6 +393,8 @@ void setInventories(String param_test_type){
 
                         echo "BOOTSTRAP PXC INVENTORY"
                         cat ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/inventory
+                        cat ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/ansible.cfg
+                        ls -la ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/
                     """
 
                 }else if(param_test_type == "min_upgrade"){
