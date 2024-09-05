@@ -15,7 +15,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
         ),
         aws(
             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-            credentialsId: '5d78d9c7-2188-4b16-8e31-4d5782c6ceaa',
+            credentialsId: 'c42456e5-c28d-4962-b32c-b75d161bff27',
             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
         )
     ]
@@ -293,14 +293,10 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
 
                     cd ${product_to_test}-bootstrap-${param_test_type}
 
-                    export MOLECULE_INVENTORY_FILE=${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/inventory
-
                     molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common-${param_test_type}
-
-                    export MOLECULE_INVENTORY_FILE=${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory
 
                     molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
                     cd -
@@ -503,7 +499,7 @@ void runlogsbackup(String product_to_test, String param_test_type) {
         ),
         aws(
             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-            credentialsId: '5d78d9c7-2188-4b16-8e31-4d5782c6ceaa',
+            credentialsId: 'c42456e5-c28d-4962-b32c-b75d161bff27',
             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
         )
     ]
