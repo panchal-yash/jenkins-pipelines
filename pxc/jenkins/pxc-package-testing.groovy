@@ -628,9 +628,14 @@ pipeline {
                                     script{
                                         def param_test_type = "install" 
                                         echo "Always INSTALL"
-                                        echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                                        setInventories("install")
-                                        runlogsbackup(params.product_to_test, "install")
+                                        try{
+                                            echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
+                                            setInventories("install")
+                                            runlogsbackup(params.product_to_test, "install")
+                                        } catch (Exception e) {
+                                            echo "Failed to backup logs for PXC UPGRADE tests: ${e.getMessage()}"
+                                            currentBuild.result = 'UNSTABLE'
+                                        }
                                         echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
                                         runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
                                     }
