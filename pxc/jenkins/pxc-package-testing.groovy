@@ -292,11 +292,17 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     echo "param_test_type is ${param_test_type}"
 
                     cd ${product_to_test}-bootstrap-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile -i ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/inventory ${action} -s ${scenario}
+
+                    export MOLECULE_INVENTORY_FILE=${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/install/inventory
+
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
                     cd -
 
                     cd ${product_to_test}-common-${param_test_type}
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile  -i ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory ${action} -s ${scenario}
+
+                    export MOLECULE_INVENTORY_FILE=${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/install/inventory
+
+                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
                     cd -
                 """
             }
