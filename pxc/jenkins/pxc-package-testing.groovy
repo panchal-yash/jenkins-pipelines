@@ -538,6 +538,7 @@ pipeline {
         choice(
             name: 'node_to_test',
             choices: [
+                'ubuntu-noble',
                 'ubuntu-jammy',
                 'ubuntu-focal',
                 'debian-12',
