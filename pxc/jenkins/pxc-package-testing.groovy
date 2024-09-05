@@ -320,12 +320,13 @@ void setInventories(String param_test_type){
                         ls -la /home/admin/.cache/
                         ls -la /home/admin/.ansible/
 
-                        ls -la /home/admin/.cache/molecule/
+                        ls -la /home/admin/.cache/molecule/pxc80-bootstrap-install/ol-9/
 
                         sudo apt-get install tree -y
 
-                        tree -a -L 4 /home/admin/
+                        tree -a -L 4 /home/admin/.cache/molecule/pxc80-bootstrap-install/ol-9/
 
+                        cat /home/admin/.cache/molecule/pxc80-bootstrap-install/ol-9/ssh_key-us-west-1
 
                     
                     """
