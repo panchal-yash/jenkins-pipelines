@@ -641,6 +641,17 @@ pipeline {
                                     def param_test_type = "install"   
                                     echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
                                     runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+
+                                    echo "EXECUTING PREPARE PLAYBOOK"
+                                    
+                                    sh """
+                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+
+                                        echo "EXECUTING PREPARE PLAYBOOK FOR COMMON NODE"
+
+                                        ansible-playbook "${WORKSPACE}/package-testing/molecule/pxc/playbooks/prepare.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile"
+                                    """
+
                                     echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
                                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                                         runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
