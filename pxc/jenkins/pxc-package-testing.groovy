@@ -280,7 +280,7 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
                     molecule ${action} -s ${scenario}
                     cd -
                 """
-            }else{
+            }else if(action == "converge") {
 
                 sh"""
                     . virtenv/bin/activate
@@ -291,16 +291,45 @@ def runMoleculeAction(String action, String product_to_test, String scenario, St
 
                     echo "param_test_type is ${param_test_type}"
 
-                    cd ${product_to_test}-bootstrap-${param_test_type}
+#                    cd ${product_to_test}-bootstrap-${param_test_type}
+#                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+#                    cd -
+#                    cd ${product_to_test}-common-${param_test_type}
+#                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+#                    cd -
 
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
-                    cd -
+                    ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-bootstrap-${param_test_type}/playbooks/playbook.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
 
-                    cd ${product_to_test}-common-${param_test_type}
+                    ansible-playbook ${WORKSPACE}/package-testing/molecule/pxc/${product_to_test}-common-${param_test_type}/playbooks/playbook.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
 
-                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
-                    cd -
+                    
+
                 """
+            }else if (side_effect == "side_effect"){
+
+
+                    sh"""
+                        . virtenv/bin/activate
+                        export MOLECULE_DEBUG=1
+                        #export DESTROY_ENV=no
+                        
+                        cd package-testing/molecule/pxc
+
+                        echo "param_test_type is ${param_test_type}"
+
+    #                    cd ${product_to_test}-bootstrap-${param_test_type}
+    #                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+    #                    cd -
+    #                    cd ${product_to_test}-common-${param_test_type}
+    #                    molecule -e ${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile ${action} -s ${scenario}
+    #                    cd -
+
+                        ansible-playbook ${WORKSPACE}/package-testing/playbooks/pxc80_upgrade_bootstrap.yml -i  ${WORKSPACE}/${product_to_test}-bootstrap/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                        ansible-playbook ${WORKSPACE}/package-testing/playbooks/pxc80_upgrade_common.yml -i  ${WORKSPACE}/${product_to_test}-common/${params.node_to_test}/${param_test_type}/inventory -e @${WORKSPACE}/${product_to_test}/${params.node_to_test}/${param_test_type}/envfile
+                        
+
+                    """
+
             }
     }
 }
