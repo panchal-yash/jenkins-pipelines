@@ -1,7 +1,7 @@
 
-    library changelog: false, identifier: "lib@master", retriever: modernSCM([
+    library changelog: false, identifier: "lib@pxb-mol-pt-fixes", retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
+        remote: 'https://github.com/panchal-yash/jenkins-pipelines.git'
     ])
 
     pipeline {
@@ -27,7 +27,7 @@
             name: 'install_repo'
         )
         string(
-            defaultValue: 'https://github.com/Percona-QA/package-testing.git',
+            defaultValue: 'https://github.com/panchal-yash/package-testing.git',
             description: 'repo name',
             name: 'git_repo',
             trim: false
@@ -73,7 +73,7 @@
             stage('Checkout') {
                 steps {
                     deleteDir()
-                    git poll: false, branch: "master", url: "https://github.com/Percona-QA/package-testing.git"
+                    git poll: false, branch: "pxb-mol-pt-fixes", url: "https://github.com/panchal-yash/package-testing.git"
                 }
             }
 

@@ -1,7 +1,7 @@
 
-    library changelog: false, identifier: "lib@master", retriever: modernSCM([
+    library changelog: false, identifier: "lib@pxb-mol-pt-fixes", retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'https://github.com/Percona-Lab/jenkins-pipelines.git'
+        remote: 'https://github.com/panchal-yash/jenkins-pipelines.git'
     ])
 
     pipeline {
@@ -27,7 +27,7 @@
             name: 'install_repo'
         )
         string(
-            defaultValue: 'https://github.com/Percona-QA/package-testing.git',
+            defaultValue: 'https://github.com/panchal-yash/package-testing.git',
             description: 'repo name',
             name: 'git_repo',
             trim: false
@@ -116,7 +116,7 @@
 
 void runpxbptjob(String scenario_to_test) {
     build(
-        job: 'pxb-package-testing-molecule',
+        job: 'pxb-package-testing-molecule-test',
         parameters: [
             string(name: "scenario_to_test", value: scenario_to_test),
             string(name: "server_to_test", value: params.server_to_test),
