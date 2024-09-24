@@ -37,7 +37,7 @@ void runNodeBuild(String node_to_test) {
     }
 
     build(
-        job: 'pxc-package-testing',
+        job: 'pxc-package-testing-test',
         parameters: [
             string(name: "product_to_test", value: params.product_to_test),
             string(name: "node_to_test", value: node_to_test),
