@@ -546,6 +546,12 @@ pipeline {
                 'centos-7',
                 'ol-8',
                 'ol-9',
+                'ol-8-arm',
+                'ol-9-arm',
+                'rhel-8',
+                'rhel-9',
+                'rhel-8-arm',
+                'rhel-9-arm',
                 'min-amazon-2'
             ],
             description: 'Distribution to run test'
@@ -586,6 +592,7 @@ pipeline {
         }   
         stage("Run parallel Install and UPGRADE"){
             parallel{
+
                 stage("INSTALL") {
                             when {
                                     expression{params.test_type == "install" || params.test_type == "install_and_upgrade"}
@@ -645,6 +652,81 @@ pipeline {
                                 }
                             }
                 }
+
+                stage("MIN UPGRADE PXC INNOVATION LTS") {
+                            when {
+                                allOf{
+                                    expression{params.test_type == "min_upgrade" || params.test_type == "install_and_upgrade"}
+                                    expression{params.test_repo != "main"}
+                                    expression{params.product_to_test == "pxc-innovation-lts"}                
+                                }
+                            }
+
+                            agent {
+                                label 'min-bookworm-x64'
+                            }
+
+
+                            environment {
+
+                                UPGRADE_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/min_upgrade/bootstrap_instance_private_ip.json"
+                                UPGRADE_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/min_upgrade/common_instance_private_ip.json"
+                                
+                                UPGRADE_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/min_upgrade/bootstrap_instance_public_ip.json"
+                                UPGRADE_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/min_upgrade/common_instance_public_ip.json"
+
+                                JENWORKSPACE = "${env.WORKSPACE}"
+
+                                MIN_UPGRADE_TEST = "PXC_INNOVATION_LTS_MINOR_UPGRADE"
+                            }
+
+                            options {
+                                skipDefaultCheckout()
+                            }
+
+
+                            steps {
+                                setup()
+                                script{
+
+                                    echo "UPGRADE STAGE INSIDE"
+                                    def param_test_type = "min_upgrade"   
+                                    echo "1. Creating Molecule Instances for running PXC UPGRADE tests.. Molecule create step"
+                                    runMoleculeAction("create", params.product_to_test, params.node_to_test, "min_upgrade", "main", "no")
+                                    setInventories("min_upgrade")
+                                    echo "2. Run Install scripts and tests for running PXC UPGRADE tests.. Molecule converge step"
+                                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                                            runMoleculeAction("converge", params.product_to_test, params.node_to_test, "min_upgrade", "main", "no")
+                                        }
+                                    echo "3. Run UPGRADE scripts and playbooks for running PXC UPGRADE tests.. Molecule side-effect step"
+                                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                                            runMoleculeAction("side-effect", params.product_to_test, params.node_to_test, "min_upgrade", params.test_repo, "yes")
+                                        }
+                                }
+                            }
+                            post{
+                                always{
+                                    script{
+                                        def param_test_type = "min_upgrade"
+                                        try{
+                                            echo "4. Take Backups of the Logs.. for PXC UPGRADE tests"
+                                            setInventories("min_upgrade")
+                                            runlogsbackup(params.product_to_test, "min_upgrade")
+                                        }catch(Exception e){
+                                            echo "Failed during logs backup"
+                                        }
+                                        echo "5. Destroy the Molecule instances for PXC UPGRADE tests.."
+                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "min_upgrade", params.test_repo, "yes")
+
+                                    }
+                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
+                                    }
+                                }
+
+                            }
+                }
+
 
                 stage("MIN UPGRADE PXC 80") {
                             when {

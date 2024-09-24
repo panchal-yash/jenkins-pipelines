@@ -13,6 +13,12 @@ List all_nodes = [
                 'centos-7',
                 'ol-8',
                 'ol-9',
+                'ol-8-arm',
+                'ol-9-arm',
+                'rhel-8',
+                'rhel-9',
+                'rhel-8-arm',
+                'rhel-9-arm',
                 'min-amazon-2'
 ]
 
@@ -182,6 +188,93 @@ pipeline {
 
                     steps {
                         runNodeBuild("ol-9")
+                    }
+                }
+
+                stage("ol-8-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ol-8-arm")
+
+                            }
+                        }
+                    }
+                    steps {
+                        runNodeBuild("ol-8-arm")
+                    }
+                }
+
+                stage("ol-9-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("ol-9-arm")
+                            
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ol-9-arm")
+                    }
+                }
+
+                stage("rhel-8") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("rhel-8")
+
+                            }
+                        }
+                    }
+                    steps {
+                        runNodeBuild("rhel-8")
+                    }
+                }
+
+                stage("rhel-9") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("rhel-9")
+                            
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("rhel-9")
+                    }
+                }
+
+                stage("rhel-8-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("rhel-8-arm")
+
+                            }
+                        }
+                    }
+                    steps {
+                        runNodeBuild("rhel-8-arm")
+                    }
+                }
+
+                stage("rhel-9-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("rhel-9-arm")
+                            
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("rhel-9-arm")
                     }
                 }
 
