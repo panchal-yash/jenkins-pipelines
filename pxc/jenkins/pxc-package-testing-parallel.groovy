@@ -6,20 +6,21 @@ library changelog: false, identifier: 'lib@master', retriever: modernSCM([
 List all_nodes = [
                 'ubuntu-noble',
                 'ubuntu-jammy',
+                'ubuntu-noble-arm',
+                'ubuntu-jammy-arm',
                 'ubuntu-focal',
                 'debian-12',
                 'debian-11',
+                'debian-12-arm',
+                'debian-11-arm',
                 'debian-10',
                 'centos-7',
                 'ol-8',
                 'ol-9',
-                'ol-8-arm',
-                'ol-9-arm',
                 'rhel-8',
                 'rhel-9',
                 'rhel-8-arm',
-                'rhel-9-arm',
-                'min-amazon-2'
+                'rhel-9-arm'
 ]
 
 product_to_test = params.product_to_test
@@ -147,6 +148,36 @@ pipeline {
                     }
                 }
 
+                stage("Debian-11-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("debian-11-arm")
+
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("debian-11-arm")
+                    }
+                }
+
+                stage("Debian-12-arm") {
+                    when {
+                        expression {
+                            allOf{
+                                nodes_to_test.contains("debian-12-arm")
+
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("debian-12-arm")
+                    }
+                }
+
                 stage("Centos 7") {
                     when {
                         expression {
@@ -188,35 +219,6 @@ pipeline {
 
                     steps {
                         runNodeBuild("ol-9")
-                    }
-                }
-
-                stage("ol-8-arm") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ol-8-arm")
-
-                            }
-                        }
-                    }
-                    steps {
-                        runNodeBuild("ol-8-arm")
-                    }
-                }
-
-                stage("ol-9-arm") {
-                    when {
-                        expression {
-                            allOf{
-                                nodes_to_test.contains("ol-9-arm")
-                            
-                            }
-                        }
-                    }
-
-                    steps {
-                        runNodeBuild("ol-9-arm")
                     }
                 }
 
@@ -308,7 +310,36 @@ pipeline {
                     }
                 }
 
+                stage("ubuntu-noble-arm") {
+                    when {
+                        expression {
+                            allOf{                            
+                                nodes_to_test.contains("ubuntu-noble-arm")
 
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ubuntu-noble-arm")
+                    }
+                }
+
+                stage("ubuntu-jammy-arm") {
+                    when {
+                        expression {
+                            allOf{                            
+                                nodes_to_test.contains("ubuntu-jammy-arm")
+
+                            }
+                        }
+                    }
+
+                    steps {
+                        runNodeBuild("ubuntu-jammy-arm")
+                    }
+                }
+                
                 stage("ubuntu-focal") {
                     when {
                         expression {
@@ -324,19 +355,6 @@ pipeline {
                     }
                 }
 
-                stage("min-amazon-2") { 
-                    when {  
-                        expression {    
-                            allOf{
-                                nodes_to_test.contains("min-amazon-2")  
-
-                            }
-                        }   
-                    }   
-                    steps { 
-                        runNodeBuild("min-amazon-2")    
-                    }   
-                }
             }
         }
     }

@@ -313,11 +313,11 @@ void setInventories(String param_test_type){
                     KEYPATH_COMMON="/home/admin/.cache/molecule/${product_to_test}-common-${param_test_type}/${params.node_to_test}/ssh_key-us-west-1"
 
 
-                    if(("${params.node_to_test}" == "ubuntu-focal")  ||  ("${params.node_to_test}" == "ubuntu-jammy")){
+                    if(("${params.node_to_test}" == "ubuntu-noble") || ("${params.node_to_test}" == "ubuntu-focal") || ("${params.node_to_test}" == "ubuntu-jammy") || ("${params.node_to_test}" == "ubuntu-noble-arm") || ("${params.node_to_test}" == "ubuntu-jammy-arm")){
                         SSH_USER="ubuntu"            
-                    }else if(("${params.node_to_test}" == "debian-11") ||  ("${params.node_to_test}" == "debian-10") ||("${params.node_to_test}" == "debian-12")){
+                    }else if(("${params.node_to_test}" == "debian-11") || ("${params.node_to_test}" == "debian-10") ||("${params.node_to_test}" == "debian-12") || ("${params.node_to_test}" == "debian-11-arm") || ("${params.node_to_test}" == "debian-12-arm")){
                         SSH_USER="admin"
-                    }else if(("${params.node_to_test}" == "ol-8") || ("${params.node_to_test}" == "ol-9") || ("${params.node_to_test}" == "min-amazon-2")){
+                    }else if(("${params.node_to_test}" == "ol-8") || ("${params.node_to_test}" == "ol-9") || ("${params.node_to_test}" == "min-amazon-2") || ("${params.node_to_test}" == "rhel-8") || ("${params.node_to_test}" == "rhel-9") ("${params.node_to_test}" == "rhel-8-arm") || ("${params.node_to_test}" == "rhel-9-arm")){
                         SSH_USER="ec2-user"
                     }else if(("${params.node_to_test}" == "centos-7")){
                         SSH_USER="centos"
@@ -539,20 +539,21 @@ pipeline {
             choices: [
                 'ubuntu-noble',
                 'ubuntu-jammy',
+                'ubuntu-noble-arm',
+                'ubuntu-jammy-arm',
                 'ubuntu-focal',
                 'debian-12',
                 'debian-11',
+                'debian-12-arm',
+                'debian-11-arm',
                 'debian-10',
                 'centos-7',
                 'ol-8',
                 'ol-9',
-                'ol-8-arm',
-                'ol-9-arm',
                 'rhel-8',
                 'rhel-9',
                 'rhel-8-arm',
-                'rhel-9-arm',
-                'min-amazon-2'
+                'rhel-9-arm'
             ],
             description: 'Distribution to run test'
         )
