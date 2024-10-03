@@ -32,14 +32,11 @@ nodes_to_test = all_nodes
 void runNodeBuild(String node_to_test) {
 
     if("${params.test_repo}" == "main"){
-
         test_type = "install"
         echo "${test_type}"
-
     }
     else{
-
-        test_type = "install_and_upgrade"
+    //    test_type = "install_and_upgrade"
         echo "${test_type}"
     }
 
@@ -89,6 +86,16 @@ pipeline {
             description: "PXC-5.7 packages are located in 2 repos: pxc-57 and original and both should be tested. Choose which repo to use for test."
         )
 
+        choice(
+            name: 'test_type',
+            choices: [
+                'install',
+                'install_and_upgrade',
+                'min_upgrade',
+                'maj_upgrade'
+            ],
+            description: 'Set test type for testing'
+        )
     }
 
     stages {
