@@ -63,6 +63,7 @@ pipeline {
         choice(
             name: 'product_to_test',
             choices: [
+                'pxc84',
                 'pxc80',
                 'pxc57',
                 'pxc-innovation-lts'
