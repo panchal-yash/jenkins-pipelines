@@ -594,65 +594,90 @@ pipeline {
         stage("Run parallel Install and UPGRADE"){
             parallel{
 
+
                 stage("INSTALL") {
-                            when {
-                                    expression{params.test_type == "install" || params.test_type == "install_and_upgrade"}
+                    when {
+                        expression { params.test_type == "install" || params.test_type == "install_and_upgrade" }
+                    }
+
+                    agent {
+                        label 'min-bookworm-x64'
+                    }
+                    environment {
+                        INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/bootstrap_instance_private_ip.json"
+                        INSTALL_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/common_instance_private_ip.json"
+
+                        INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/install/bootstrap_instance_public_ip.json"
+                        INSTALL_COMMON_INSTANCE_PUBLIC_IP = "${WORKSPACE}/install/common_instance_public_ip.json"
+
+                        JENWORKSPACE = "${env.WORKSPACE}"
+                    }
+                    options {
+                        skipDefaultCheckout()
+                    }
+
+                    steps {
+                        setup()
+                        script {
+                            def param_test_type = "install"
+                            echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
+                            try {
+                                runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                            } catch (Exception e) {
+                                echo "Failed during Molecule create step: ${e.message}"
+                                throw e
                             }
 
-                            agent {
-                                label 'min-bookworm-x64'
+                            echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
+                            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                                try {
+                                    runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                } catch (Exception e) {
+                                    echo "Failed during Molecule converge step: ${e.message}"
+                                    throw e
+                                }
                             }
-                            environment {
+                        }
+                    }
 
-                                    INSTALL_BOOTSTRAP_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/bootstrap_instance_private_ip.json"
-                                    INSTALL_COMMON_INSTANCE_PRIVATE_IP = "${WORKSPACE}/install/common_instance_private_ip.json"
+                    post {
+                        always {
+                            script {
+                                def param_test_type = "install"
+                                echo "Always INSTALL"
 
-                                    INSTALL_BOOTSTRAP_INSTANCE_PUBLIC_IP = "${WORKSPACE}/install/bootstrap_instance_public_ip.json"
-                                    INSTALL_COMMON_INSTANCE_PUBLIC_IP  = "${WORKSPACE}/install/common_instance_public_ip.json"
+                                // Back up logs if possible, log failure if any
+                                try {
+                                    echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
+                                    setInventories("install")
+                                    runlogsbackup(params.product_to_test, "install")
+                                } catch (Exception e) {
+                                    echo "Failed during logs backup: ${e.message}"
+                                }
 
-                                    JENWORKSPACE = "${env.WORKSPACE}"
-
+                                // Ensure Molecule instances are destroyed no matter what
+                                echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
+                                try {
+                                    runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                                } catch (Exception e) {
+                                    echo "Failed during Molecule destroy step: ${e.message}"
+                                }
                             }
-                            options {
-                                skipDefaultCheckout()
-                            }
-                          
-                            steps {
-                                setup()
-                                script{
 
-                                    def param_test_type = "install"   
-                                    echo "1. Creating Molecule Instances for running INSTALL PXC tests.. Molecule create step"
-                                    runMoleculeAction("create", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    echo "2. Run Install scripts and tests for PXC INSTALL PXC tests.. Molecule converge step"
-                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                        runMoleculeAction("converge", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
+                            // Always try to archive artifacts even if tests fail
+                            script {
+                                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                                    try {
+                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz', followSymlinks: false
+                                    } catch (Exception e) {
+                                        echo "Failed to archive artifacts: ${e.message}"
                                     }
                                 }
                             }
-                            post{
-                                always{
-                                    script{
-                                        def param_test_type = "install" 
-                                        echo "Always INSTALL"
-                                        try{
-                                            echo "3. Take Backups of the Logs.. PXC INSTALL tests.."
-                                            setInventories("install")
-                                            runlogsbackup(params.product_to_test, "install")
-                                        }catch(Exception e){
-                                            echo Failed during logs backup""
-                                        }
-                                        echo "4. Destroy the Molecule instances for the PXC INSTALL tests.."
-                                        runMoleculeAction("destroy", params.product_to_test, params.node_to_test, "install", params.test_repo, "yes")
-                                    }
-
-                                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
-                                        archiveArtifacts artifacts: 'PXC/**/*.tar.gz' , followSymlinks: false
-                                    }
-
-                                }
-                            }
+                        }
+                    }
                 }
+
 
                 stage("MIN UPGRADE PXC INNOVATION LTS") {
                             when {
@@ -727,7 +752,6 @@ pipeline {
 
                             }
                 }
-
 
                 stage("MIN UPGRADE PXC 80") {
                             when {
