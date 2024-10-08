@@ -760,7 +760,7 @@ pipeline {
                                     expression{params.test_type == "min_upgrade" || params.test_type == "install_and_upgrade"}
                                     expression{params.test_repo != "main"}
                                     expression{params.pxc57_repo != "EOL"}
-                                    expression{params.product_to_test == "pxc80"}                
+                                    expression{params.product_to_test == "pxc80" || params.product_to_test == "pxc84"}
                                 }
                             }
 
